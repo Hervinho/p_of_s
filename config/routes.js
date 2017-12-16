@@ -5,6 +5,7 @@ var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
 var PromotionStatus = require('../models/PromotionStatus');
+var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -109,6 +110,31 @@ var PromotionStatusAPIs = function(express){
 	});
 }
 
+var CustomerOrderStatusAPIs = function(express){
+    //get all customer order statuses.
+	express.get('/cust_orderstatuses', function (req, res) {
+		CustomerOrderStatus.getAll(res);
+	});
+
+	//get a single promotion status.
+	express.get('/cust_orderstatuses/:id', function (req, res) {
+		var id = req.params.id;
+		CustomerOrderStatus.getOne(id, res);
+	});
+
+	//create new promotion status.
+	express.post('/cust_orderstatuses', function (req, res) {
+		var customerOrderStatusObj = req.body;
+		CustomerOrderStatus.create(customerOrderStatusObj, res);
+	});
+
+	//update promotion status.
+	express.put('/cust_orderstatuses', function (req, res) {
+		var customerOrderStatusObj = req.body;
+		CustomerOrderStatus.update(customerOrderStatusObj, res);
+	});
+}
+
 var PaymentTypeAPIs = function(express){
     //get all payment types.
 	express.get('/paymenttypes', function (req, res) {
@@ -174,6 +200,7 @@ module.exports = {
         PaymentTypeAPIs(apiRoutes);
         ProductTypeAPIs(apiRoutes);
         PromotionStatusAPIs(apiRoutes);
+        CustomerOrderStatusAPIs(apiRoutes);
     },
     configureAllViews: function(app){
 
