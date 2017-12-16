@@ -2,6 +2,7 @@
 var Gender = require('../models/Gender');
 var Role = require('../models/Role');
 var PaymentStatus = require('../models/PaymentStatus');
+var PaymentType = require('../models/PaymentType');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -76,8 +77,33 @@ var PaymentStatusAPIs = function(express){
 
 	//update new payment status.
 	express.put('/paymentstatuses', function (req, res) {
-		var roleObj = req.body;
-		PaymentStatus.update(roleObj, res);
+		var paymentStatusObj = req.body;
+		PaymentStatus.update(paymentStatusObj, res);
+	});
+}
+
+var PaymentTypeAPIs = function(express){
+    //get all payment types.
+	express.get('/paymenttypes', function (req, res) {
+		PaymentType.getAll(res);
+	});
+
+	//get a single payment type.
+	express.get('/paymenttypes/:id', function (req, res) {
+		var id = req.params.id;
+		PaymentType.getOne(id, res);
+	});
+
+	//create new payment type.
+	express.post('/paymenttypes', function (req, res) {
+		var paymentMethodObj = req.body;
+		PaymentType.create(paymentMethodObj, res);
+	});
+
+	//update new payment type.
+	express.put('/paymenttypes', function (req, res) {
+		var paymentMethodObj = req.body;
+		PaymentType.update(paymentMethodObj, res);
 	});
 }
 
@@ -93,6 +119,7 @@ module.exports = {
         GenderAPIs(apiRoutes);
         RoleAPIs(apiRoutes);
         PaymentStatusAPIs(apiRoutes);
+        PaymentTypeAPIs(apiRoutes);
     },
     configureAllViews: function(app){
 
