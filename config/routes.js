@@ -4,6 +4,7 @@ var Role = require('../models/Role');
 var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
+var PromotionStatus = require('../models/PromotionStatus');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -83,6 +84,31 @@ var PaymentStatusAPIs = function(express){
 	});
 }
 
+var PromotionStatusAPIs = function(express){
+    //get all promotion statuses.
+	express.get('/promotionstatuses', function (req, res) {
+		PromotionStatus.getAll(res);
+	});
+
+	//get a single promotion status.
+	express.get('/promotionstatuses/:id', function (req, res) {
+		var id = req.params.id;
+		PromotionStatus.getOne(id, res);
+	});
+
+	//create new promotion status.
+	express.post('/promotionstatuses', function (req, res) {
+		var promotionStatusObj = req.body;
+		PromotionStatus.create(promotionStatusObj, res);
+	});
+
+	//update promotion status.
+	express.put('/promotionstatuses', function (req, res) {
+		var promotionStatusObj = req.body;
+		PromotionStatus.update(promotionStatusObj, res);
+	});
+}
+
 var PaymentTypeAPIs = function(express){
     //get all payment types.
 	express.get('/paymenttypes', function (req, res) {
@@ -147,6 +173,7 @@ module.exports = {
         PaymentStatusAPIs(apiRoutes);
         PaymentTypeAPIs(apiRoutes);
         ProductTypeAPIs(apiRoutes);
+        PromotionStatusAPIs(apiRoutes);
     },
     configureAllViews: function(app){
 
