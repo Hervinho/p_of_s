@@ -1,10 +1,10 @@
 var connection = require('../config/connection');
 
-function PaymentType() {
-  //get all payment method.
+function ProductType() {
+  //get all product ype.
   this.getAll = function (res) {
     var output = {},
-      query = 'SELECT * FROM payment_type';
+      query = 'SELECT * FROM product_type';
 
     connection.acquire(function (err, con) {
       if (err) {
@@ -23,12 +23,12 @@ function PaymentType() {
           if (result.length > 0) {
             output = {
               status: 1,
-              payment_types: result
+              product_types: result
             };
           } else {
             output = {
               status: 0,
-              message: 'No payment type found'
+              message: 'No product type found'
             };
           }
           res.json(output);
@@ -37,10 +37,10 @@ function PaymentType() {
     });
   };
 
-  //get a single payment method.
+  //get a single product type.
   this.getOne = function (id, res) {
     var output = {},
-      query = 'SELECT * FROM payment_type WHERE payment_type_id = ?';
+      query = 'SELECT * FROM product_type WHERE product_type_id = ?';
 
     connection.acquire(function (err, con) {
       if (err) {
@@ -59,12 +59,12 @@ function PaymentType() {
           if (result.length > 0) {
             output = {
               status: 1,
-              payment_type: result[0]
+              product_type: result[0]
             };
           } else {
             output = {
               status: 0,
-              message: 'No such payment type found'
+              message: 'No such product type found'
             };
           }
           res.json(output);
@@ -73,13 +73,13 @@ function PaymentType() {
     });
   };
 
-  //create payment_type.
-  this.create = function (paymentTypeObj, res) {
+  //create product type.
+  this.create = function (productTypeObj, res) {
     var output = {},
-      query = "INSERT iNTO payment_type(payment_type_name) VALUES(?)";
-    var feedback, payment_type_name = paymentTypeObj.payment_type_name;
+      query = "INSERT iNTO product_type(product_type_name, product_type_desc) VALUES(?,?)";
+    var feedback, product_type_name = productTypeObj.product_type_name, product_type_desc = productTypeObj.product_type_desc;
 
-    if (undefined !== payment_type_name && payment_type_name != '') {
+    if ((undefined !== product_type_name && product_type_name != '') && (undefined !== product_type_desc && product_type_desc != '')) {
       connection.acquire(function (err, con) {
         if (err) {
           res.json({
@@ -89,23 +89,23 @@ function PaymentType() {
           return;
         }
 
-        con.query(query, [payment_type_name], function (err, result) {
+        con.query(query, [product_type_name, product_type_desc], function (err, result) {
           con.release();
           if (err) {
             res.json(err);
           } else {
-            feedback = 'Payment type successfully created';
+            feedback = 'Product type successfully created';
             output = {
               status: 1,
               message: feedback,
-              createdPaymentTypeId: result.insertId
+              createdProductTypeId: result.insertId
             };
             res.json(output);
           }
         });
       });
     } else {
-      feedback = 'Invalid Payment type data submitted';
+      feedback = 'Invalid Product type data submitted';
       output = {
         status: 0,
         message: feedback
@@ -117,14 +117,14 @@ function PaymentType() {
   };
 
   //update payment method.
-  this.update = function (paymentTypeObj, res) {
+  this.update = function (productTypeObj, res) {
     var output = {},
-      queryFind = 'SELECT * FROM payment_type WHERE payment_type_id = ?',
-      query = "UPDATE payment_type SET payment_type_name = ? WHERE payment_type_id = ?";
-    var feedback, payment_type_name = paymentTypeObj.payment_type_name,
-      payment_type_id = paymentTypeObj.payment_type_id;
+      queryFind = 'SELECT * FROM product_type WHERE product_type_id = ?',
+      query = "UPDATE product_type SET product_type_name = ?, product_type_desc = ? WHERE product_type_id = ?";
+    var feedback, product_type_name = productTypeObj.product_type_name, product_type_desc = productTypeObj.product_type_desc, 
+      product_type_id = productTypeObj.product_type_id;
 
-    if ((undefined !== payment_type_name && payment_type_name != '') && (undefined !== payment_type_id && payment_type_id != '')) {
+    if ((undefined !== product_type_name && product_type_name != '') && (undefined !== product_type_desc && product_type_desc != '') && (undefined !== product_type_id && product_type_id != '')) {
       connection.acquire(function (err, con) {
         if (err) {
           res.json({
@@ -134,7 +134,7 @@ function PaymentType() {
           return;
         }
 
-        con.query(queryFind, payment_type_id, function (err, result) {
+        con.query(queryFind, product_type_id, function (err, result) {
           con.release();
           if (err) {
             res.json(err);
@@ -150,7 +150,7 @@ function PaymentType() {
                   return;
                 }
 
-                con.query(query, [payment_type_name, payment_type_id], function (err, result) {
+                con.query(query, [product_type_name, product_type_desc, product_type_id], function (err, result) {
                   con.release();
                   if (err) {
                     res.json(err);
@@ -159,7 +159,7 @@ function PaymentType() {
                     output = {
                       status: 1,
                       message: feedback,
-                      updatedPaymentTypeName: payment_type_name
+                      updatedproductTypeName: product_type_name
                     };
                     res.json(output);
                   }
@@ -190,4 +190,4 @@ function PaymentType() {
   };
 }
 
-module.exports = new PaymentType();
+module.exports = new ProductType();

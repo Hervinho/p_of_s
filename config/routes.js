@@ -3,6 +3,7 @@ var Gender = require('../models/Gender');
 var Role = require('../models/Role');
 var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
+var ProductType = require('../models/ProductType');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -107,6 +108,31 @@ var PaymentTypeAPIs = function(express){
 	});
 }
 
+var ProductTypeAPIs = function(express){
+    //get all product types.
+	express.get('/producttypes', function (req, res) {
+		ProductType.getAll(res);
+	});
+
+	//get a single prduct type.
+	express.get('/producttypes/:id', function (req, res) {
+		var id = req.params.id;
+		ProductType.getOne(id, res);
+	});
+
+	//create new payment type.
+	express.post('/producttypes', function (req, res) {
+		var productTypeObj = req.body;
+		ProductType.create(productTypeObj, res);
+	});
+
+	//update new payment type.
+	express.put('/producttypes', function (req, res) {
+		var productTypeObj = req.body;
+		ProductType.update(productTypeObj, res);
+	});
+}
+
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
@@ -120,6 +146,7 @@ module.exports = {
         RoleAPIs(apiRoutes);
         PaymentStatusAPIs(apiRoutes);
         PaymentTypeAPIs(apiRoutes);
+        ProductTypeAPIs(apiRoutes);
     },
     configureAllViews: function(app){
 
