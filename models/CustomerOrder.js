@@ -75,6 +75,114 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
 };
 
 function CustomerOrder() {
+    //get all customer orders.
+    this.getAll = function (res) {
+        var output = {},
+            query = 'SELECT * FROM customer_order';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer_orders: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No orders found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
+    //get all orders of a specific customer.
+    this.getAllPerCustomer = function (customerId, res) {
+        var output = {},
+            query = 'SELECT * FROM customer_order WHERE customer_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [customerId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer_orders: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No orders found for this customer'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
+    //get a specific order.
+    this.getOne = function (orderId, res) {
+        var output = {},
+            query = 'SELECT * FROM customer_order WHERE customer_order_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [orderId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer_order: result[0]
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such order found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //submit customer order.
     this.create = function(orderObj, res){
         var insertedOrderID, feedback, output = {};
@@ -113,6 +221,46 @@ function CustomerOrder() {
            });
         }
 
+    };
+
+    //update order status.
+    this.updateStatus = function(orderObj, res){
+        var output = {}, feedback, queryUpdate = 'UPDATE customer_order SET order_status_id = ? WHERE customer_order_id = ?';
+        var customrOrderId = orderObj.customer_order_id, orderStatusId = orderObj.order_status_id;
+
+        if((undefined !== customrOrderId && customrOrderId != '') && (undefined !== orderStatusId && orderStatusId != '')){
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+    
+                con.query(queryUpdate, [customrOrderId, orderStatusId], function (err, result) {
+                    con.release();
+                    if (err) {
+                        res.json({status: 0, message: err});
+                    } else {
+                        feedback = 'Customer Order status successfully updated';
+                        output = {
+                            status: 1,
+                            message: feedback
+                        };
+                        res.json(output);
+                    }
+                });
+            });
+        }
+        else{
+            feedback = 'Invalid Customer Order data submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+        }
     };
 }
 

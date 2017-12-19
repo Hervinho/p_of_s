@@ -187,6 +187,23 @@ var ProductTypeAPIs = function (express) {
 }
 
 var CustomerOrderAPIs = function (express) {
+	//get all customer orders.
+	express.get('/customerorders', function (req, res) {
+		CustomerOrder.getAll(res);
+	});
+
+	//get all orders for a specific customer.
+	express.get('/customerorders/customers/:id', function (req, res) {
+		var customerId = req.params.id;
+		CustomerOrder.getAllPerCustomer(customerId, res);
+	});
+
+	//get a specific order.
+	express.get('/customerorders/:id', function (req, res) {
+		var orderId = req.params.id;
+		CustomerOrder.getOne(orderId, res);
+	});
+
 	//create new customer order.
 	express.post('/customerorders', function (req, res) {
 		var orderObj = req.body;
@@ -200,6 +217,12 @@ var CustomerOrderAPIs = function (express) {
 			amount: 50
 		}]; //just for testing until UI is ready
 		CustomerOrder.create(orderObj, res);
+	});
+
+	//update order status
+	express.put('/customerorders', function (req, res) {
+		var orderObj = req.body;
+		CustomerOrder.updateStatus(orderObj, res);
 	});
 }
 
