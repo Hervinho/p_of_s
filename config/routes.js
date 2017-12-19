@@ -6,12 +6,13 @@ var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
+var CustomerOrder = require('../models/CustomerOrder');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
 
-var GenderAPIs = function(express){
-    //get all genders.
+var GenderAPIs = function (express) {
+	//get all genders.
 	express.get('/genders', function (req, res) {
 		Gender.getAll(res);
 	});
@@ -35,8 +36,8 @@ var GenderAPIs = function(express){
 	});
 }
 
-var RoleAPIs = function(express){
-    //get all roles.
+var RoleAPIs = function (express) {
+	//get all roles.
 	express.get('/roles', function (req, res) {
 		Role.getAll(res);
 	});
@@ -60,8 +61,8 @@ var RoleAPIs = function(express){
 	});
 }
 
-var PaymentStatusAPIs = function(express){
-    //get all payment statuses.
+var PaymentStatusAPIs = function (express) {
+	//get all payment statuses.
 	express.get('/paymentstatuses', function (req, res) {
 		PaymentStatus.getAll(res);
 	});
@@ -85,8 +86,8 @@ var PaymentStatusAPIs = function(express){
 	});
 }
 
-var PromotionStatusAPIs = function(express){
-    //get all promotion statuses.
+var PromotionStatusAPIs = function (express) {
+	//get all promotion statuses.
 	express.get('/promotionstatuses', function (req, res) {
 		PromotionStatus.getAll(res);
 	});
@@ -110,8 +111,8 @@ var PromotionStatusAPIs = function(express){
 	});
 }
 
-var CustomerOrderStatusAPIs = function(express){
-    //get all customer order statuses.
+var CustomerOrderStatusAPIs = function (express) {
+	//get all customer order statuses.
 	express.get('/cust_orderstatuses', function (req, res) {
 		CustomerOrderStatus.getAll(res);
 	});
@@ -135,8 +136,8 @@ var CustomerOrderStatusAPIs = function(express){
 	});
 }
 
-var PaymentTypeAPIs = function(express){
-    //get all payment types.
+var PaymentTypeAPIs = function (express) {
+	//get all payment types.
 	express.get('/paymenttypes', function (req, res) {
 		PaymentType.getAll(res);
 	});
@@ -160,8 +161,8 @@ var PaymentTypeAPIs = function(express){
 	});
 }
 
-var ProductTypeAPIs = function(express){
-    //get all product types.
+var ProductTypeAPIs = function (express) {
+	//get all product types.
 	express.get('/producttypes', function (req, res) {
 		ProductType.getAll(res);
 	});
@@ -185,6 +186,23 @@ var ProductTypeAPIs = function(express){
 	});
 }
 
+var CustomerOrderAPIs = function (express) {
+	//create new customer order.
+	express.post('/customerorders', function (req, res) {
+		var orderObj = req.body;
+		orderObj.orderItems = [{
+			product_id: 1,
+			product_quantity: 1,
+			amount: 10
+		}, {
+			product_id: 2,
+			product_quantity: 2,
+			amount: 50
+		}]; //just for testing until UI is ready
+		CustomerOrder.create(orderObj, res);
+	});
+}
+
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
@@ -193,16 +211,17 @@ var ProductTypeAPIs = function(express){
 /* ---------------------------------------------------- */
 
 module.exports = {
-    configureAllAPIs: function (apiRoutes){
-        GenderAPIs(apiRoutes);
-        RoleAPIs(apiRoutes);
-        PaymentStatusAPIs(apiRoutes);
-        PaymentTypeAPIs(apiRoutes);
-        ProductTypeAPIs(apiRoutes);
-        PromotionStatusAPIs(apiRoutes);
-        CustomerOrderStatusAPIs(apiRoutes);
-    },
-    configureAllViews: function(app){
+	configureAllAPIs: function (apiRoutes) {
+		GenderAPIs(apiRoutes);
+		RoleAPIs(apiRoutes);
+		PaymentStatusAPIs(apiRoutes);
+		PaymentTypeAPIs(apiRoutes);
+		ProductTypeAPIs(apiRoutes);
+		PromotionStatusAPIs(apiRoutes);
+		CustomerOrderStatusAPIs(apiRoutes);
+		CustomerOrderAPIs(apiRoutes);
+	},
+	configureAllViews: function (app) {
 
-    }
+	}
 };
