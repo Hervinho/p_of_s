@@ -1,10 +1,10 @@
 var connection = require('../config/connection');
 
-function Shift() {
-    //get all shifts.
+function Employee() {
+    //get all employees
     this.getAll = function (res) {
         var output = {},
-            query = 'SELECT * FROM shift';
+            query = "SELECT * FROM employee";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -23,12 +23,12 @@ function Shift() {
                     if (result.length > 0) {
                         output = {
                             status: 1,
-                            shifts: result
+                            employees: result
                         };
                     } else {
                         output = {
                             status: 0,
-                            message: 'No shifts found'
+                            message: 'No employees found'
                         };
                     }
                     res.json(output);
@@ -37,10 +37,10 @@ function Shift() {
         });
     };
 
-    //get a single shift.
-    this.getOne = function (shiftId, res) {
+    //get a single employee.
+    this.getOne = function (employeeId, res) {
         var output = {},
-            query = 'SELECT * FROM shift WHERE shift_id = ?';
+            query = "SELECT * FROM employee WHERE employee_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -51,7 +51,7 @@ function Shift() {
                 return;
             }
 
-            con.query(query, [shiftId], function (err, result) {
+            con.query(query, [employeeId], function (err, result) {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -59,12 +59,12 @@ function Shift() {
                     if (result.length > 0) {
                         output = {
                             status: 1,
-                            shift: result[0]
+                            employee: result[0]
                         };
                     } else {
                         output = {
                             status: 0,
-                            message: 'No such shift found'
+                            message: 'No such employee found'
                         };
                     }
                     res.json(output);
@@ -73,16 +73,19 @@ function Shift() {
         });
     };
 
-    //create new shift.
-    this.create = function (shiftObj, res) {
-        var feedback, output = {},
-            query = "INSERT INTO shift (shift_name, shift_start_time, shift_end_time) VALUES (?,?,?)";
-        var shift_name = shiftObj.shift_name,
-            shift_start_time = shiftObj.shift_start_time,
-            shift_end_time = shiftObj.shift_end_time;
-        console.log(shift_end_time);
-        if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
-            (undefined !== shift_end_time && shift_end_time != '')) {
+    //create employee.
+    this.create = function (employeeObj, res) {
+        var output = {},
+            feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?)";
+        var employee_id_number = employeeObj.employee_id_number,
+            employee_name = employeeObj.employee_name,
+            employee_gender_id = employeeObj.employee_gender_id,
+            employee_role_id = employeeObj.employee_role_id,
+            employee_code = employeeObj.employee_code;
+
+        if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
+            (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
+            (undefined !== employee_code && employee_code != '')) {
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -92,23 +95,23 @@ function Shift() {
                     return;
                 }
 
-                con.query(query, [shift_name, shift_start_time, shift_end_time], function (err, result) {
+                con.query(query, [null, employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code], function (err, result) {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
-                        feedback = 'Shift successfully created';
+                        feedback = 'Employee successfully added';
                         output = {
                             status: 1,
                             message: feedback,
-                            createdShiftId: result.insertId
+                            createdEmployeeId: result.insertId
                         };
                         res.json(output);
                     }
                 });
             });
         } else {
-            feedback = 'Invalid Customer order Status data submitted';
+            feedback = 'Invalid Employee data submitted';
             output = {
                 status: 0,
                 message: feedback
@@ -117,17 +120,21 @@ function Shift() {
         }
     };
 
-    //update shift.
-    this.update = function (shiftObj, res) {
-        var feedback, output = {},
-            query = "UPDATE shift SET shift_name=?, shift_start_time=?, shift_end_time=? WHERE shift_id=?";
-        var shift_name = shiftObj.shift_name,
-            shift_start_time = shiftObj.shift_start_time,
-            shift_end_time = shiftObj.shift_end_time,
-            shift_id = shiftObj.shift_id;
+    //update employee.
+    this.update = function (employeeObj, res) {
+        var output = {},
+            feedback, query = "UPDATE employee SET employee_name=?, employee_gender_id=?, employee_role_id=?, employee_code=? " +
+            "WHERE employee_id=?";
+        var employee_id_number = employeeObj.employee_id_number,
+            employee_name = employeeObj.employee_name,
+            employee_gender_id = employeeObj.employee_gender_id,
+            employee_role_id = employeeObj.employee_role_id,
+            employee_code = employeeObj.employee_code,
+            employee_id = employeeObj.employee_id;
 
-        if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
-            (undefined !== shift_end_time && shift_end_time != '') && (undefined !== shift_id && shift_id != '')) {
+        if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
+            (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
+            (undefined !== employee_code && employee_code != '') && (undefined !== employee_id && employee_id != '')) {
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -137,31 +144,30 @@ function Shift() {
                     return;
                 }
 
-                con.query(query, [shift_name, shift_start_time, shift_end_time, shift_id], function (err, result) {
+                con.query(query, [employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code, employee_id], function (err, result) {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
-                        feedback = 'Shift successfully updated';
+                        feedback = 'Employee successfully updated';
                         output = {
                             status: 1,
                             message: feedback,
-                            updatedatedShiftId: shift_name
+                            updatedEmployeeIdNumber: employee_id_number
                         };
                         res.json(output);
                     }
                 });
             });
         } else {
-            feedback = 'Invalid Customer Status data submitted';
+            feedback = 'Invalid Employee data submitted';
             output = {
                 status: 0,
                 message: feedback
             };
             res.json(output);
         }
-
-    };
+    }
 }
 
-module.exports = new Shift();
+module.exports = new Employee();

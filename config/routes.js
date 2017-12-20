@@ -8,6 +8,7 @@ var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 var CustomerOrder = require('../models/CustomerOrder');
 var Shift = require('../models/Shift');
+var Employee = require('../models/Employee');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -252,6 +253,31 @@ var ShiftAPIs = function(express){
 	});
 };
 
+var EmployeeAPIs = function(express){
+	//get all employees.
+	express.get('/employees', function (req, res) {
+		Employee.getAll(res);
+	});
+
+	//get a specific employee.
+	express.get('/employees/:id', function (req, res) {
+		var employeeId = req.params.id;
+		Employee.getOne(employeeId, res);
+	});
+
+	//create new employee.
+	express.post('/employees', function (req, res) {
+		var employeeObj = req.body;
+		Employee.create(employeeObj, res);
+	});
+
+	//update order employee
+	express.put('/employees', function (req, res) {
+		var employeeObj = req.body;
+		Employee.update(employeeObj, res);
+	});
+};
+
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
@@ -270,6 +296,7 @@ module.exports = {
 		CustomerOrderStatusAPIs(apiRoutes);
 		CustomerOrderAPIs(apiRoutes);
 		ShiftAPIs(apiRoutes);
+		EmployeeAPIs(apiRoutes);
 	},
 	configureAllViews: function (app) {
 
