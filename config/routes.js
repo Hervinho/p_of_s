@@ -7,6 +7,7 @@ var ProductType = require('../models/ProductType');
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 var CustomerOrder = require('../models/CustomerOrder');
+var Shift = require('../models/Shift');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -34,7 +35,7 @@ var GenderAPIs = function (express) {
 		var genderObj = req.body;
 		Gender.update(genderObj, res);
 	});
-}
+};
 
 var RoleAPIs = function (express) {
 	//get all roles.
@@ -59,7 +60,7 @@ var RoleAPIs = function (express) {
 		var roleObj = req.body;
 		Role.update(roleObj, res);
 	});
-}
+};
 
 var PaymentStatusAPIs = function (express) {
 	//get all payment statuses.
@@ -84,7 +85,7 @@ var PaymentStatusAPIs = function (express) {
 		var paymentStatusObj = req.body;
 		PaymentStatus.update(paymentStatusObj, res);
 	});
-}
+};
 
 var PromotionStatusAPIs = function (express) {
 	//get all promotion statuses.
@@ -109,7 +110,7 @@ var PromotionStatusAPIs = function (express) {
 		var promotionStatusObj = req.body;
 		PromotionStatus.update(promotionStatusObj, res);
 	});
-}
+};
 
 var CustomerOrderStatusAPIs = function (express) {
 	//get all customer order statuses.
@@ -134,7 +135,7 @@ var CustomerOrderStatusAPIs = function (express) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.update(customerOrderStatusObj, res);
 	});
-}
+};
 
 var PaymentTypeAPIs = function (express) {
 	//get all payment types.
@@ -159,7 +160,7 @@ var PaymentTypeAPIs = function (express) {
 		var paymentMethodObj = req.body;
 		PaymentType.update(paymentMethodObj, res);
 	});
-}
+};
 
 var ProductTypeAPIs = function (express) {
 	//get all product types.
@@ -184,7 +185,7 @@ var ProductTypeAPIs = function (express) {
 		var productTypeObj = req.body;
 		ProductType.update(productTypeObj, res);
 	});
-}
+};
 
 var CustomerOrderAPIs = function (express) {
 	//get all customer orders.
@@ -224,7 +225,32 @@ var CustomerOrderAPIs = function (express) {
 		var orderObj = req.body;
 		CustomerOrder.updateStatus(orderObj, res);
 	});
-}
+};
+
+var ShiftAPIs = function(express){
+	//get all shifts.
+	express.get('/shifts', function (req, res) {
+		Shift.getAll(res);
+	});
+
+	//get a specific shift.
+	express.get('/shifts/:id', function (req, res) {
+		var shiftId = req.params.id;
+		Shift.getOne(shiftId, res);
+	});
+
+	//create new shift.
+	express.post('/shifts', function (req, res) {
+		var shiftObj = req.body;
+		Shift.create(shiftObj, res);
+	});
+
+	//update order status
+	express.put('/shifts', function (req, res) {
+		var shiftObj = req.body;
+		Shift.update(shiftObj, res);
+	});
+};
 
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
@@ -243,6 +269,7 @@ module.exports = {
 		PromotionStatusAPIs(apiRoutes);
 		CustomerOrderStatusAPIs(apiRoutes);
 		CustomerOrderAPIs(apiRoutes);
+		ShiftAPIs(apiRoutes);
 	},
 	configureAllViews: function (app) {
 
