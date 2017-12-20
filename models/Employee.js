@@ -282,7 +282,7 @@ function Employee() {
                     });
                     return;
                 }
-                console.log(employee_shift_id);
+                
                 con.query(query, [employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_shift_id, employee_id], function (err, result) {
                     con.release();
                     if (err) {

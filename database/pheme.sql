@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2017 at 01:47 PM
+-- Generation Time: Dec 20, 2017 at 03:22 PM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.1
 
@@ -127,21 +127,24 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `employee_phone` varchar(10) NOT NULL,
   `employee_email` varchar(50) NOT NULL,
   `employee_password` varchar(1000) NOT NULL,
+  `shift_id` int(11) NOT NULL,
   PRIMARY KEY (`employee_id`),
   UNIQUE KEY `employee_id_number` (`employee_id_number`),
   UNIQUE KEY `employee_code` (`employee_code`),
   UNIQUE KEY `employee_phone` (`employee_phone`),
   UNIQUE KEY `employee_email` (`employee_email`),
   KEY `employee_gender_id` (`employee_gender_id`),
-  KEY `employee_role_id` (`employee_role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+  KEY `employee_role_id` (`employee_role_id`),
+  KEY `shift_id` (`shift_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`employee_id`, `employee_id_number`, `employee_name`, `employee_gender_id`, `employee_role_id`, `employee_code`, `employee_phone`, `employee_email`, `employee_password`) VALUES
-(7, '1111112', 'Hetttt', 1, 1, 'code', '3535353', 'a@a.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b');
+INSERT INTO `employee` (`employee_id`, `employee_id_number`, `employee_name`, `employee_gender_id`, `employee_role_id`, `employee_code`, `employee_phone`, `employee_email`, `employee_password`, `shift_id`) VALUES
+(1, '1111112', 'Here', 1, 1, 'ABCDE12', '12121212', 'gh@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 0),
+(2, '1111112bbb', 'Hervinhoiiii', 1, 2, 'ABCDE1', '2222222222', 'g@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 2);
 
 -- --------------------------------------------------------
 
@@ -178,6 +181,15 @@ CREATE TABLE IF NOT EXISTS `login_record` (
   KEY `employee_id` (`employee_id`),
   KEY `login_timestamp` (`login_timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `login_record`
+--
+
+INSERT INTO `login_record` (`employee_id`, `login_timestamp`) VALUES
+(1, '2017-12-20 15:40:33'),
+(1, '2017-12-20 15:41:17'),
+(1, '2017-12-20 15:44:07');
 
 -- --------------------------------------------------------
 
