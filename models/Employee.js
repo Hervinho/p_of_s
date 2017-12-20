@@ -1,6 +1,42 @@
 var connection = require('../config/connection');
 var crypto = require("crypto-js");
 var SHA256 = require("crypto-js/sha256");
+var moment = require('moment');
+
+var recordLogin = function(employeeId, callback){
+    var output ={}, now = moment().format('YYYY-MM-DD HH:mm:ss');
+    var query = "INSERT INTO login_record VALUES(?,?)";
+
+    connection.acquire(function (err, con) {
+        if (err) {
+            output = {
+                status: 100,
+                message: "Error in connection database"
+            };
+            
+            callback(null, output);
+        }
+        
+        
+        con.query(query, [employeeId, now], function (err, result) {
+            con.release();
+            if (err) {
+                output = {
+                    status: 0,
+                    message: "Error inserting login record",
+                    error: err
+                };               
+            } else {
+                output = {
+                    status: 1,
+                    message: "Login record successfully inserted"
+                };               
+            }
+
+            callback(null, output);
+        });
+    });
+};
 
 function Employee() {
     //get all employees
@@ -78,7 +114,7 @@ function Employee() {
     //Employee login
     this.login = function(req, res){
         var employeeObj = req.body;
-        console.log(employeeObj);
+        //console.log(employeeObj);
         var output = {}, feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
         var employee_code = employeeObj.employee_code, employee_password = String(employeeObj.employee_password);
 
@@ -103,17 +139,34 @@ function Employee() {
                         if (result.length > 0) {
                             var user = result[0];
                             feedback = "Login success";
-                            output = {
-                                status: 1,
-                                message: feedback
-                            };
-                            res.json(output);
 
-                        //sets a cookie with the user's info
-                        /*req.ganiAgilePMSession.user = user;
-                        res.send({
-                            redirect: '/dashboard'
-                        });*/
+                            //Record login attempt into login_record table.
+                            recordLogin(user.employee_id, function(err, result){
+                                if(err){
+                                    output = {
+                                        status: 1,
+                                        message: feedback,
+                                        recordlogin: 0
+                                    };
+                                }
+                                else{
+                                    output = {
+                                        status: 1,
+                                        message: feedback,
+                                        recordlogin: 1
+                                    };
+                                }
+
+                                res.json(output);
+                            });
+
+                            //res.json(output);
+
+                            //sets a cookie with the user's info
+                            /*req.ganiAgilePMSession.user = user;
+                            res.send({
+                                redirect: '/dashboard'
+                            });*/
                         } else {
                             output = {
                                 status: 0,
