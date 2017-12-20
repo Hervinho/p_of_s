@@ -1,4 +1,5 @@
 var connection = require('../config/connection');
+var crypto = require("crypto-js");
 var SHA256 = require("crypto-js/sha256");
 
 function Employee() {
@@ -75,9 +76,64 @@ function Employee() {
     };
 
     //Employee login
-    this.login = function(employeeObj, res){
-        var output = {},
-        feedback, query = "SELECT * FROM employee WHERE";
+    this.login = function(req, res){
+        var employeeObj = req.body;
+        console.log(employeeObj);
+        var output = {}, feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
+        var employee_code = employeeObj.employee_code, employee_password = String(employeeObj.employee_password);
+
+        if((undefined !== employee_code && employee_code != '') && (undefined !== employee_password && employee_password != '')){
+            
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+                
+                employee_password = SHA256(employee_password).toString();
+                console.log(employee_password);
+                con.query(query, [employee_code, employee_password], function (err, result) {
+                    con.release();
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        if (result.length > 0) {
+                            var user = result[0];
+                            feedback = "Login success";
+                            output = {
+                                status: 1,
+                                message: feedback
+                            };
+                            res.json(output);
+
+                        //sets a cookie with the user's info
+                        /*req.ganiAgilePMSession.user = user;
+                        res.send({
+                            redirect: '/dashboard'
+                        });*/
+                        } else {
+                            output = {
+                                status: 0,
+                                message: 'No employee with such credentials found'
+                            };
+                            res.json(output);
+                        }
+                        
+                    }
+                });
+            });
+        }
+        else{
+            feedback = 'Invalid Employee login details submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+        }
     };
 
     //create employee.

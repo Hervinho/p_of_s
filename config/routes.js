@@ -276,6 +276,11 @@ var EmployeeAPIs = function(express){
 		var employeeObj = req.body;
 		Employee.update(employeeObj, res);
 	});
+
+	//login.
+	express.post('/employees/login', function (req, res) {
+		Employee.login(req, res);
+	});
 };
 
 /*********** Views Configurations ************/
