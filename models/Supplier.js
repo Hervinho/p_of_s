@@ -97,11 +97,21 @@ function Supplier() {
                 con.query(query, [null, supplier_name, supplier_location, supplier_phone, supplier_email], function (err, result) {
                     con.release();
                     if (err) {
-                        output = {
-                            status: 0,
-                            message: 'Error adding supplier',
-                            error: err
-                        };
+                        if(err.code == 'ER_DUP_ENTRY'){
+                            output = {
+                                status: 0,
+                                message: 'Supplier with such name/phone/email already exists',
+                                error: err
+                            };
+                        }
+                        else{
+                            output = {
+                                status: 0,
+                                message: 'Error adding supplier',
+                                error: err
+                            };
+                        }
+                        
                         res.json(output);
                     } else {
                         feedback = 'Supplier successfully added';
@@ -150,11 +160,20 @@ function Supplier() {
                 con.query(query, [supplier_name, supplier_location, supplier_phone, supplier_email, supplier_id], function (err, result) {
                     con.release();
                     if (err) {
-                        output = {
-                            status: 0,
-                            message: 'Error updating supplier',
-                            error: err
-                        };
+                        if(err.code == 'ER_DUP_ENTRY'){
+                            output = {
+                                status: 0,
+                                message: 'Supplier with such name/phone/email already exists',
+                                error: err
+                            };
+                        }
+                        else{
+                            output = {
+                                status: 0,
+                                message: 'Error updating supplier',
+                                error: err
+                            };
+                        }
                         res.json(output);
                     } else {
                         feedback = 'Supplier successfully updated';
