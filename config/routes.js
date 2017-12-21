@@ -10,6 +10,7 @@ var CustomerOrder = require('../models/CustomerOrder');
 var Shift = require('../models/Shift');
 var Employee = require('../models/Employee');
 var Customer = require('../models/Customer');
+var Product = require('../models/Product');
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
@@ -309,6 +310,31 @@ var CustomerAPIs = function(express){
 	});
 };
 
+var ProductAPIs = function(express){
+	//get all products.
+	express.get('/products', function (req, res) {
+		Product.getAll(res);
+	});
+
+	//get a specific product.
+	express.get('/products/:id', function (req, res) {
+		var productId = req.params.id;
+		Product.getOne(productId, res);
+	});
+
+	//create new product.
+	express.post('/products', function (req, res) {
+		var productObj = req.body;
+		Product.create(productObj, res);
+	});
+
+	//update product.
+	express.put('/products', function (req, res) {
+		var productObj = req.body;
+		Product.update(productObj, res);
+	});
+};
+
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
@@ -329,6 +355,7 @@ module.exports = {
 		ShiftAPIs(apiRoutes);
 		EmployeeAPIs(apiRoutes);
 		CustomerAPIs(apiRoutes);
+		ProductAPIs(apiRoutes);
 	},
 	configureAllViews: function (app) {
 
