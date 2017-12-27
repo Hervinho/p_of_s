@@ -292,26 +292,26 @@ var EmployeeAPIs = function(express){
 		Employee.getOne(employeeId, res);
 	});
 
+	//Logout and redirect to index/login page
+	express.get('/logout', function (req, res) {
+		Employee.logout(req, res);
+	});
+
 	//create new employee.
 	express.post('/employees', function (req, res) {
 		var employeeObj = req.body;
 		Employee.create(employeeObj, res);
 	});
 
-	//Logout and redirect to index/login page
-	express.get('/logout', function (req, res) {
-		Employee.logout(req, res);
+	//login.
+	express.post('/employees/login', function (req, res) {
+		Employee.login(req, res);
 	});
 
 	//update order employee
 	express.put('/employees', function (req, res) {
 		var employeeObj = req.body;
 		Employee.update(employeeObj, res);
-	});
-
-	//login.
-	express.post('/employees/login', function (req, res) {
-		Employee.login(req, res);
 	});
 };
 

@@ -19,8 +19,8 @@ function UpdateProduct() {
 
     //Validations
     if (validateEditProductForm(productObj) == true) {
-        toastr.success('Oui');
-        /*$.ajax({
+        //toastr.success('Oui');
+        $.ajax({
             type: 'PUT',
             crossDomain: true,
             data: JSON.stringify(productObj),
@@ -51,7 +51,7 @@ function UpdateProduct() {
                 toastr.error(message);
             }
 
-        });*/
+        });
     } else {
         toastr.error(message);
     }
@@ -62,7 +62,6 @@ function validateEditProductForm(productObj) {
     var flag = true;
     var name_format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var no_numbers = /\d/;
-    var numbers_format = /^\d*(.\d{2})?$/;
 
     if (name_format.test(productObj.product_name) || no_numbers.test(productObj.product_name)) {
         flag = false;

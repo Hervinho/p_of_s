@@ -18,14 +18,17 @@
             <header class="back-end-drawer-header"> <img src="public/images/user.jpg" class="back-end-avatar">
                 <div class="back-end-avatar-dropdown"> <span></span>
                     <div class="mdl-layout-spacer"> <b> <%= employeeCode %> </b> </div>
-                    <a href="/logout" id="logout" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"> <i class="material-icons" role="presentation">power_settings_new</i> <span class="visuallyhidden">Accounts</span> </a>
+                    <a href="/api/v1/logout" id="logout" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"> <i class="material-icons" role="presentation">power_settings_new</i> <span class="visuallyhidden">Accounts</span> </a>
                 </div>
             </header>
             <nav class="back-end-navigation mdl-navigation mdl-color--blue-grey-800">
                 <a class="mdl-navigation__link" href="/home">
-                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">event</i>Events
+                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">add_shopping_cart</i>Products
                 </a>
-                <a class="mdl-navigation__link" href="/activities">
+                <a class="mdl-navigation__link" href="#">
+                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">group_add</i>Employees
+                </a>
+                <!--<a class="mdl-navigation__link" href="/activities">
                     <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">people</i>Activities
                 </a>
                 <a class="mdl-navigation__link" href="/programs">
@@ -66,10 +69,7 @@
                 </a>
                 <a class="mdl-navigation__link" href="/stages">
                     <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">panorama_wide_angle</i>Stages
-                </a>
-                <a class="mdl-navigation__link" href="/portal_users">
-                    <i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">group_add</i>System Users
-                </a>
+                </a>-->
             </nav>
         </div>
         <!-- HEADER END -->
