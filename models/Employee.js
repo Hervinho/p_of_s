@@ -197,6 +197,7 @@ function Employee() {
 
                                 console.log(output);
                                 //res.json(output);
+                                
                                 //sets a cookie with the employee's info
                                 req.PhemePointOfSaleProjectSession.employee = employee;
                                 res.send({
@@ -226,6 +227,14 @@ function Employee() {
             res.json(output);
         }
     };
+
+    //Employee logout.
+	this.logout = function (req, res) {
+		//clear session content
+		req.PhemePointOfSaleProjectSession.reset();
+
+		res.redirect('/');
+	};
 
     //create employee.
     this.create = function (employeeObj, res) {

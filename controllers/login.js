@@ -27,8 +27,8 @@ function Login() {
                 if (data.status == 0) {
                     toastr.error(data.message);
                 } else if (data.status == 1 && typeof data.redirect == 'string') {
-                    console.log(data);
-                    //window.location.replace(window.location.protocol + "//" + window.location.host + data.redirect);
+                    //console.log(data);
+                    window.location.replace(window.location.protocol + "//" + window.location.host + data.redirect);
                 }
             },
             error: function (e) {

@@ -298,6 +298,11 @@ var EmployeeAPIs = function(express){
 		Employee.create(employeeObj, res);
 	});
 
+	//Logout and redirect to index/login page
+	express.get('/logout', function (req, res) {
+		Employee.logout(req, res);
+	});
+
 	//update order employee
 	express.put('/employees', function (req, res) {
 		var employeeObj = req.body;
@@ -392,6 +397,11 @@ var configViews = function(express){
 	//Login Page (index)
 	express.get('/', function (req, res) {
 		res.render('index');
+	});
+
+	//Home page
+	express.get('/home', isUserLoggedIn, function (req, res) {
+		res.render('home', {employeeCode: employeeCode});
 	});
 };
 

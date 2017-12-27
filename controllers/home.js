@@ -1,0 +1,157 @@
+$(document).ready(function () {
+    var message, productID, productFilterTypeVal;
+
+    LoadAllProducts();
+
+    $(document).on('change', '.form-control', function() {
+        productFilterTypeVal = $("#productFilterType").val();
+
+        if(productFilterTypeVal != 0){
+          FilterEventsByTypeOnly(productFilterTypeVal);
+        }
+        else{
+          LoadAllProducts();
+        }
+    });
+});
+
+function LoadAllProducts(){
+
+  //LoadAllProductTypes();
+
+  //Reset all filters.
+  $("#productFilterType").val(0);
+
+  $.ajax({
+          type: 'GET',
+          crossDomain: true,
+          contentType: 'application/json; charset=utf-8',
+          url: '/api/v1/products',
+          dataType: "json",
+          cache: false,
+          beforeSend: function() {
+              var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+              $("#tblProducts tbody").html(wait);
+          },
+          success: handleProductsData,
+          error: function(e){
+            message = "Something went wrong";
+            toastr.error(message);
+          }
+
+        });
+}
+
+function ViewEventInfo(id) {
+    productID = id;
+    $("#lbSelectedEvent").text(productID);
+
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/events/' + productID,
+        dataType: "json",
+        cache: false,
+        success: function(data) {
+            //toastr.info(data[0].event_id);
+            var eventName = data[0].event_name;
+            var eventDesc = data[0].event_desc;
+            var eventBackground = data[0].event_background;
+            var eventDays = data[0].num_days;
+            var eventType = data[0].event_type_name;
+            var eventTypeId = data[0].event_type_id;
+
+            $("#txtViewEventName").val(eventName);
+            $("#txtViewEventType").val(eventTypeId);
+            $("#txtViewEventDescription").val(eventDesc);
+            $("#txtViewEventBackground").val(eventBackground);
+            $("#txtViewEventNumOfDays").val(eventDays);
+        },
+        error: function(e) {
+          message = "Something went wrong";
+          toastr.error(message);
+        }
+
+    });
+}
+
+function LoadAllProductTypes() {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/eventTypes/getAll/',
+        dataType: "json",
+        cache: false,
+        success: function(data) {
+            var html = '<option value = "0"></option>';
+            if (data.length > 0) {
+                for (var key = 0, size = data.length; key < size; key++) {
+                  html += '<option value =' + data[key].event_type_id + ' >' +
+                      data[key].event_type_name +
+                      '</option>';
+                }
+            } else {
+                html += '<option value = "0">No event types found</option>';
+            }
+
+            $("#eventFilterType").html(html);
+
+            //Also Populate event types in the dialogViewEvent
+            $("#txtViewEventType").html(html);
+        },
+        error: function(e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterEventsByTypeOnly(eventTypeId){
+  $.ajax({
+          type: 'GET',
+          crossDomain: true,
+          contentType: 'application/json; charset=utf-8',
+          url: '/api/events/type/' + eventTypeId,
+          dataType: "json",
+          cache: false,
+          beforeSend: function() {
+              var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+              $("#tbEvents tbody").html(wait);
+          },
+          success: handleProductsData,
+          error: function(e){
+            message = "Something went wrong";
+            toastr.error(message);
+          }
+
+        });
+}
+
+/*********** AJAX Callback functions ***********/
+
+function handleProductsData(data){
+    
+      var html = '';
+      if(data && data.status == 1 && data.products.length > 0){
+          var products = data.products;
+        for (var key = 0, size = products.length; key < size; key++) {
+          html += '<tr ><td class="mdl-data-table__cell--non-numeric">'
+          + products[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">'
+          + products[key].product_desc + '</td><td class="mdl-data-table__cell--non-numeric">'
+          + products[key].product_type + '</td><td class="mdl-data-table__cell--non-numeric">'
+          + 'R ' + products[key].product_price + '<td class="mdl-data-table__cell--non-numeric">'
+          + '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewEvent" onclick="return ViewEventInfo(\'' + products[key].product_id + '\' )">'
+          + '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">'
+          + '</tr>';
+        }
+      }
+      else{
+        html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
+      }
+      //console.log(html);
+      $("#tblProducts tbody").html(html);
+}
+
