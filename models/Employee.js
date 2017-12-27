@@ -3,8 +3,9 @@ var crypto = require("crypto-js");
 var SHA256 = require("crypto-js/sha256");
 var moment = require('moment');
 
-var recordLogin = function(employeeId, callback){
-    var output ={}, now = moment().format('YYYY-MM-DD HH:mm:ss');
+var recordLogin = function (employeeId, callback) {
+    var output = {},
+        now = moment().format('YYYY-MM-DD HH:mm:ss');
     var query = "INSERT INTO login_record VALUES(?,?)";
 
     connection.acquire(function (err, con) {
@@ -13,11 +14,11 @@ var recordLogin = function(employeeId, callback){
                 status: 100,
                 message: "Error in connection database"
             };
-            
+
             callback(null, output);
         }
-        
-        
+
+
         con.query(query, [employeeId, now], function (err, result) {
             con.release();
             if (err) {
@@ -25,12 +26,12 @@ var recordLogin = function(employeeId, callback){
                     status: 0,
                     message: "Error inserting login record",
                     error: err
-                };               
+                };
             } else {
                 output = {
                     status: 1,
                     message: "Login record successfully inserted"
-                };               
+                };
             }
 
             callback(null, output);
@@ -76,39 +77,39 @@ function Employee() {
     };
 
     //get all employees of a certain status (active/inactive)
-    this.getByStatus = function(statusId, res){
+    this.getByStatus = function (statusId, res) {
         var output = {},
-        query = "SELECT * FROM employee WHERE employee_status_id = ?";
+            query = "SELECT * FROM employee WHERE employee_status_id = ?";
 
-    connection.acquire(function (err, con) {
-        if (err) {
-            res.json({
-                status: 100,
-                message: "Error in connection database"
-            });
-            return;
-        }
-
-        con.query(query, [statusId], function (err, result) {
-            con.release();
+        connection.acquire(function (err, con) {
             if (err) {
-                res.json(err);
-            } else {
-                if (result.length > 0) {
-                    output = {
-                        status: 1,
-                        employees: result
-                    };
-                } else {
-                    output = {
-                        status: 0,
-                        message: 'No employee with such status was found'
-                    };
-                }
-                res.json(output);
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
             }
+
+            con.query(query, [statusId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            employees: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No employee with such status was found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
         });
-    });
     };
 
     //get a single employee.
@@ -148,14 +149,16 @@ function Employee() {
     };
 
     //Employee login
-    this.login = function(req, res){
+    this.login = function (req, res) {
         var employeeObj = req.body;
         //console.log(employeeObj);
-        var output = {}, feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
-        var employee_code = employeeObj.employee_code, employee_password = String(employeeObj.employee_password);
+        var output = {},
+            feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
+        var employee_code = employeeObj.employee_code,
+            employee_password = String(employeeObj.employee_password);
 
-        if((undefined !== employee_code && employee_code != '') && (undefined !== employee_password && employee_password != '')){
-            
+        if ((undefined !== employee_code && employee_code != '') && (undefined !== employee_password && employee_password != '')) {
+
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -164,28 +167,27 @@ function Employee() {
                     });
                     return;
                 }
-                
+
                 employee_password = SHA256(employee_password).toString();
-                console.log(employee_password);
+                console.log('Password: ', employee_password);
                 con.query(query, [employee_code, employee_password], function (err, result) {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
-                            var user = result[0];
+                            var employee = result[0];
                             feedback = "Login success";
 
                             //Record login attempt into login_record table.
-                            recordLogin(user.employee_id, function(err, result){
-                                if(err){
+                            recordLogin(employee.employee_id, function (err, result) {
+                                if (err) {
                                     output = {
                                         status: 1,
                                         message: feedback,
                                         recordlogin: 0
                                     };
-                                }
-                                else{
+                                } else {
                                     output = {
                                         status: 1,
                                         message: feedback,
@@ -193,15 +195,17 @@ function Employee() {
                                     };
                                 }
 
-                                res.json(output);
-                                //sets a cookie with the user's info
-                                /*req.ganiAgilePMSession.user = user;
+                                console.log(output);
+                                //res.json(output);
+                                //sets a cookie with the employee's info
+                                req.PhemePointOfSaleProjectSession.employee = employee;
                                 res.send({
-                                    redirect: '/dashboard'
-                                });*/
+                                    status: 1,
+                                    redirect: '/home'
+                                });
                             });
 
-                           
+
                         } else {
                             output = {
                                 status: 0,
@@ -209,12 +213,11 @@ function Employee() {
                             };
                             res.json(output);
                         }
-                        
+
                     }
                 });
             });
-        }
-        else{
+        } else {
             feedback = 'Invalid Employee login details submitted';
             output = {
                 status: 0,
@@ -238,13 +241,15 @@ function Employee() {
             employee_email = employeeObj.employee_email,
             employee_password = String(employeeObj.employee_password),
             employee_status_id = 1;
-        
+
         if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
             (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
-            (undefined !== employee_code && employee_code != '') && (undefined !== employee_phone && employee_phone != '') && 
+            (undefined !== employee_code && employee_code != '') && (undefined !== employee_phone && employee_phone != '') &&
             (undefined !== employee_email && employee_email != '') && (undefined !== employee_password && employee_password != '')
         ) {
-            if(undefined === employee_shift_id || employee_shift_id == ''){employee_shift_id = 0;}
+            if (undefined === employee_shift_id || employee_shift_id == '') {
+                employee_shift_id = 0;
+            }
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -255,19 +260,18 @@ function Employee() {
                 }
 
                 employee_password = SHA256(employee_password).toString();
-                
+
                 con.query(query, [null, employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_shift_id, employee_status_id], function (err, result) {
                     con.release();
                     if (err) {
                         //console.log(err);
-                        if(err.code == 'ER_DUP_ENTRY'){
+                        if (err.code == 'ER_DUP_ENTRY') {
                             output = {
                                 status: 0,
                                 message: 'Same IDnumber/Code/email/phone number already exists',
                                 error: err
                             };
-                        }
-                        else{
+                        } else {
                             output = err;
                         }
                         res.json(output);
@@ -312,7 +316,9 @@ function Employee() {
             (undefined !== employee_phone && employee_phone != '') && (undefined !== employee_email && employee_email != '') &&
             (undefined !== employee_status_id && employee_status_id != '')
         ) {
-            if(undefined === employee_shift_id || employee_shift_id == ''){employee_shift_id = 0;}
+            if (undefined === employee_shift_id || employee_shift_id == '') {
+                employee_shift_id = 0;
+            }
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -321,23 +327,22 @@ function Employee() {
                     });
                     return;
                 }
-                
+
                 con.query(query, [employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_shift_id, employee_status_id, employee_id], function (err, result) {
                     con.release();
                     if (err) {
                         //console.log(err);
-                        if(err.code == 'ER_DUP_ENTRY'){
+                        if (err.code == 'ER_DUP_ENTRY') {
                             output = {
                                 status: 0,
                                 message: 'Same IDnumber/Code/email/phone number already exists',
                                 error: err
                             };
-                        }
-                        else{
+                        } else {
                             output = err;
                         }
                         res.json(output);
-                        
+
                     } else {
                         //console.log(result);
                         feedback = 'Employee successfully updated';

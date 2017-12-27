@@ -13,6 +13,24 @@ var Customer = require('../models/Customer');
 var Product = require('../models/Product');
 var Supplier = require('../models/Supplier');
 
+//global variables.
+var employeeCode, roleID;
+
+//check if user is logged in before displaying the pages.
+//It will do so by checking if the session cookie exists
+function isUserLoggedIn(req, res, next) {
+	if (!req.PhemePointOfSaleProjectSession.employee) {
+		res.redirect('/');
+	} else {
+		//Get role ID from session cookie
+		roleID = req.PhemePointOfSaleProjectSession.employee.role_id;
+
+		//Get username from session cookie
+		employeeCode = req.PhemePointOfSaleProjectSession.employee.employee_code;
+		next();
+	}
+};
+
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
 
@@ -370,6 +388,12 @@ var SupplierAPIs = function(express){
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
+var configViews = function(express){
+	//Login Page (index)
+	express.get('/', function (req, res) {
+		res.render('index');
+	});
+};
 
 /*********** Export all models and functions ************/
 /* ---------------------------------------------------- */
@@ -391,6 +415,6 @@ module.exports = {
 		SupplierAPIs(apiRoutes);
 	},
 	configureAllViews: function (app) {
-
+		configViews(app);
 	}
 };
