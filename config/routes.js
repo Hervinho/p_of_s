@@ -262,6 +262,12 @@ var EmployeeAPIs = function(express){
 		Employee.getAll(res);
 	});
 
+	//get all employees of a certain status.
+	express.get('/employees/statuses/:id', function (req, res) {
+		var statusId = req.params.id;
+		Employee.getByStatus(statusId, res);
+	});
+
 	//get a specific employee.
 	express.get('/employees/:id', function (req, res) {
 		var employeeId = req.params.id;

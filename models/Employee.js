@@ -75,6 +75,42 @@ function Employee() {
         });
     };
 
+    //get all employees of a certain status (active/inactive)
+    this.getByStatus = function(statusId, res){
+        var output = {},
+        query = "SELECT * FROM employee WHERE employee_status_id = ?";
+
+    connection.acquire(function (err, con) {
+        if (err) {
+            res.json({
+                status: 100,
+                message: "Error in connection database"
+            });
+            return;
+        }
+
+        con.query(query, [statusId], function (err, result) {
+            con.release();
+            if (err) {
+                res.json(err);
+            } else {
+                if (result.length > 0) {
+                    output = {
+                        status: 1,
+                        employees: result
+                    };
+                } else {
+                    output = {
+                        status: 0,
+                        message: 'No employee with such status was found'
+                    };
+                }
+                res.json(output);
+            }
+        });
+    });
+    };
+
     //get a single employee.
     this.getOne = function (employeeId, res) {
         var output = {},
@@ -191,7 +227,7 @@ function Employee() {
     //create employee.
     this.create = function (employeeObj, res) {
         var output = {},
-            feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?,?,?,?,?)";
+            feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?,?,?,?,?,?)";
         var employee_id_number = employeeObj.employee_id_number,
             employee_name = employeeObj.employee_name,
             employee_gender_id = employeeObj.employee_gender_id,
@@ -200,7 +236,8 @@ function Employee() {
             employee_shift_id = employeeObj.employee_shift_id,
             employee_phone = employeeObj.employee_phone,
             employee_email = employeeObj.employee_email,
-            employee_password = String(employeeObj.employee_password);
+            employee_password = String(employeeObj.employee_password),
+            employee_status_id = 1;
         
         if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
             (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
@@ -219,7 +256,7 @@ function Employee() {
 
                 employee_password = SHA256(employee_password).toString();
                 
-                con.query(query, [null, employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_shift_id], function (err, result) {
+                con.query(query, [null, employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_shift_id, employee_status_id], function (err, result) {
                     con.release();
                     if (err) {
                         //console.log(err);
@@ -259,7 +296,7 @@ function Employee() {
     this.update = function (employeeObj, res) {
         var output = {},
             feedback, query = "UPDATE employee SET employee_name=?, employee_gender_id=?, employee_role_id=?, employee_code=?, " +
-            "employee_phone=?, employee_email=?, shift_id=? WHERE employee_id=?";
+            "employee_phone=?, employee_email=?, shift_id=?, employee_status_id=? WHERE employee_id=?";
         var employee_name = employeeObj.employee_name,
             employee_gender_id = employeeObj.employee_gender_id,
             employee_role_id = employeeObj.employee_role_id,
@@ -267,11 +304,13 @@ function Employee() {
             employee_id = employeeObj.employee_id,
             employee_shift_id = employeeObj.employee_shift_id,
             employee_phone = employeeObj.employee_phone,
-            employee_email = employeeObj.employee_email;
+            employee_email = employeeObj.employee_email,
+            employee_status_id = employeeObj.employee_status_id;
 
         if ((undefined !== employee_name && employee_name != '') && (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
             (undefined !== employee_code && employee_code != '') && (undefined !== employee_id && employee_id != '') &&
-            (undefined !== employee_phone && employee_phone != '') && (undefined !== employee_email && employee_email != '')
+            (undefined !== employee_phone && employee_phone != '') && (undefined !== employee_email && employee_email != '') &&
+            (undefined !== employee_status_id && employee_status_id != '')
         ) {
             if(undefined === employee_shift_id || employee_shift_id == ''){employee_shift_id = 0;}
             connection.acquire(function (err, con) {
@@ -283,7 +322,7 @@ function Employee() {
                     return;
                 }
                 
-                con.query(query, [employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_shift_id, employee_id], function (err, result) {
+                con.query(query, [employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_shift_id, employee_status_id, employee_id], function (err, result) {
                     con.release();
                     if (err) {
                         //console.log(err);

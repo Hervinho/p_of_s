@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2017 at 03:22 PM
+-- Generation Time: Dec 27, 2017 at 09:48 AM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.1
 
@@ -33,9 +33,17 @@ CREATE TABLE IF NOT EXISTS `customer` (
   `customer_name` varchar(100) NOT NULL,
   `customer_gender_id` int(11) NOT NULL,
   `customer_date_added` datetime NOT NULL,
+  `customer_phone` varchar(10) NOT NULL,
   PRIMARY KEY (`customer_id`),
   KEY `customer_gender_id` (`customer_gender_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`customer_id`, `customer_name`, `customer_gender_id`, `customer_date_added`, `customer_phone`) VALUES
+(1, 'Customer XY', 1, '2017-12-21 14:56:58', '1111122');
 
 -- --------------------------------------------------------
 
@@ -128,6 +136,7 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `employee_email` varchar(50) NOT NULL,
   `employee_password` varchar(1000) NOT NULL,
   `shift_id` int(11) NOT NULL,
+  `employee_status_id` int(11) NOT NULL,
   PRIMARY KEY (`employee_id`),
   UNIQUE KEY `employee_id_number` (`employee_id_number`),
   UNIQUE KEY `employee_code` (`employee_code`),
@@ -135,16 +144,38 @@ CREATE TABLE IF NOT EXISTS `employee` (
   UNIQUE KEY `employee_email` (`employee_email`),
   KEY `employee_gender_id` (`employee_gender_id`),
   KEY `employee_role_id` (`employee_role_id`),
-  KEY `shift_id` (`shift_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
+  KEY `shift_id` (`shift_id`),
+  KEY `employee_status_id` (`employee_status_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`employee_id`, `employee_id_number`, `employee_name`, `employee_gender_id`, `employee_role_id`, `employee_code`, `employee_phone`, `employee_email`, `employee_password`, `shift_id`) VALUES
-(1, '1111112', 'Here', 1, 1, 'ABCDE12', '12121212', 'gh@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 0),
-(2, '1111112bbb', 'Hervinhoiiii', 1, 2, 'ABCDE1', '2222222222', 'g@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 2);
+INSERT INTO `employee` (`employee_id`, `employee_id_number`, `employee_name`, `employee_gender_id`, `employee_role_id`, `employee_code`, `employee_phone`, `employee_email`, `employee_password`, `shift_id`, `employee_status_id`) VALUES
+(1, '1111112', 'Here11', 1, 1, 'ABCDE12', '12121212', 'gh@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 1, 1),
+(2, '1111112bbb', 'Hervinhoiiii', 1, 2, 'ABCDE1', '2222222222', 'g@g.com', '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b', 2, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employee_status`
+--
+
+CREATE TABLE IF NOT EXISTS `employee_status` (
+  `employee_status_id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_status_name` varchar(50) NOT NULL,
+  `employee_status_desc` varchar(1000) NOT NULL,
+  PRIMARY KEY (`employee_status_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `employee_status`
+--
+
+INSERT INTO `employee_status` (`employee_status_id`, `employee_status_name`, `employee_status_desc`) VALUES
+(1, 'ACTIVE', 'Employee is still employed by the restaurant on a full-time basis'),
+(2, 'INACTIVE', 'Employee is no longer employed at the restaurant');
 
 -- --------------------------------------------------------
 
@@ -249,7 +280,14 @@ CREATE TABLE IF NOT EXISTS `product` (
   `product_price` double NOT NULL,
   PRIMARY KEY (`product_id`),
   KEY `product_type_id` (`product_type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`product_id`, `product_type_id`, `product_name`, `product_desc`, `product_price`) VALUES
+(1, 1, 'Product ZZ', 'blablabla11', 45);
 
 -- --------------------------------------------------------
 
@@ -364,10 +402,20 @@ CREATE TABLE IF NOT EXISTS `supplier` (
   `supplier_id` int(11) NOT NULL AUTO_INCREMENT,
   `supplier_name` varchar(50) NOT NULL,
   `supplier_location` varchar(100) NOT NULL,
-  `supplier_contact` varchar(100) NOT NULL,
+  `supplier_phone` varchar(100) NOT NULL,
   `supplier_email` varchar(100) NOT NULL,
-  PRIMARY KEY (`supplier_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`supplier_id`),
+  UNIQUE KEY `supplier_name` (`supplier_name`),
+  UNIQUE KEY `supplier_phone` (`supplier_phone`),
+  UNIQUE KEY `supplier_email` (`supplier_email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Dumping data for table `supplier`
+--
+
+INSERT INTO `supplier` (`supplier_id`, `supplier_name`, `supplier_location`, `supplier_phone`, `supplier_email`) VALUES
+(1, 'Supplier YY', 'Pretoria', '1234567890', 's@s.co.za');
 
 --
 -- Constraints for dumped tables
@@ -391,6 +439,7 @@ ALTER TABLE `customer_order`
 -- Constraints for table `employee`
 --
 ALTER TABLE `employee`
+  ADD CONSTRAINT `employee_ibfk_3` FOREIGN KEY (`employee_status_id`) REFERENCES `employee_status` (`employee_status_id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`employee_gender_id`) REFERENCES `gender` (`gender_id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `employee_ibfk_2` FOREIGN KEY (`employee_role_id`) REFERENCES `role` (`role_id`) ON UPDATE CASCADE;
 
