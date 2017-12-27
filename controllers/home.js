@@ -17,7 +17,7 @@ $(document).ready(function () {
 
 function LoadAllProducts(){
 
-  //LoadAllProductTypes();
+  LoadAllProductTypes();
 
   //Reset all filters.
   $("#productFilterType").val(0);
@@ -81,27 +81,29 @@ function LoadAllProductTypes() {
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/eventTypes/getAll/',
+        url: '/api/v1/producttypes',
         dataType: "json",
         cache: false,
         success: function(data) {
             var html = '<option value = "0"></option>';
-            if (data.length > 0) {
-                for (var key = 0, size = data.length; key < size; key++) {
-                  html += '<option value =' + data[key].event_type_id + ' >' +
-                      data[key].event_type_name +
+            if (data.status == 1 && data.product_types.length > 0) {
+                var product_types = data.product_types;
+                for (var key = 0, size = product_types.length; key < size; key++) {
+                  html += '<option value =' + product_types[key].product_type_id + ' >' +
+                  product_types[key].product_type_name +
                       '</option>';
                 }
             } else {
-                html += '<option value = "0">No event types found</option>';
+                html += '<option value = "0">No product types found</option>';
             }
 
-            $("#eventFilterType").html(html);
+            $("#productFilterType").html(html);
 
-            //Also Populate event types in the dialogViewEvent
-            $("#txtViewEventType").html(html);
+            //Also Populate product types in the dialogViewProduct
+            //$("#txtViewEventType").html(html);
         },
         error: function(e) {
+            console.log(e);
             message = "Something went wrong";
             toastr.error(message);
         }
