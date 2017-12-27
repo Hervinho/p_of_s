@@ -57,7 +57,7 @@ function ViewProductInfo(id) {
             var product = data.product;
             var productName = product.product_name;
             var productDesc = product.product_desc;
-            var productPrice = product.productprice;
+            var productPrice = product.product_price;
             var productTypeId = product.product_type_id;
 
             $("#txtViewProductName").val(productName);
