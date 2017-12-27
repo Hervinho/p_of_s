@@ -346,6 +346,12 @@ var ProductAPIs = function(express){
 		Product.getAll(res);
 	});
 
+	//get all products of certain type.
+	express.get('/products/types/:id', function (req, res) {
+		var productTypeId = req.params.id;
+		Product.getByType(productTypeId, res);
+	});
+
 	//get a specific product.
 	express.get('/products/:id', function (req, res) {
 		var productId = req.params.id;

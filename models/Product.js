@@ -37,6 +37,42 @@ function Product() {
         });
     };
 
+    //get all products of a specific type.
+    this.getByType = function (productTypeId, res) {
+        var output = {},
+            query = 'SELECT * FROM product WHERE product_type_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [productTypeId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            products: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No products found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get a specific product.
     this.getOne = function (productId, res) {
         var output = {},

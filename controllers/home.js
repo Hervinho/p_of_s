@@ -7,7 +7,7 @@ $(document).ready(function () {
         productFilterTypeVal = $("#productFilterType").val();
 
         if(productFilterTypeVal != 0){
-          FilterEventsByTypeOnly(productFilterTypeVal);
+          FilterProductsByType(productFilterTypeVal);
         }
         else{
           LoadAllProducts();
@@ -60,10 +60,10 @@ function ViewEventInfo(id) {
             var eventBackground = data[0].event_background;
             var eventDays = data[0].num_days;
             var eventType = data[0].event_type_name;
-            var eventTypeId = data[0].event_type_id;
+            var productTypeId = data[0].event_type_id;
 
             $("#txtViewEventName").val(eventName);
-            $("#txtViewEventType").val(eventTypeId);
+            $("#txtViewEventType").val(productTypeId);
             $("#txtViewEventDescription").val(eventDesc);
             $("#txtViewEventBackground").val(eventBackground);
             $("#txtViewEventNumOfDays").val(eventDays);
@@ -111,20 +111,21 @@ function LoadAllProductTypes() {
     });
 }
 
-function FilterEventsByTypeOnly(eventTypeId){
+function FilterProductsByType(productTypeId){
   $.ajax({
           type: 'GET',
           crossDomain: true,
           contentType: 'application/json; charset=utf-8',
-          url: '/api/events/type/' + eventTypeId,
+          url: '/api/v1/products/types/' + productTypeId,
           dataType: "json",
           cache: false,
           beforeSend: function() {
               var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
-              $("#tbEvents tbody").html(wait);
+              $("#tblProducts tbody").html(wait);
           },
           success: handleProductsData,
           error: function(e){
+              console.log(e);
             message = "Something went wrong";
             toastr.error(message);
           }
