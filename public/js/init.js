@@ -36,7 +36,7 @@
             orientation: 'PORTRAIT'
         });
         // Event
-        $('#start_date').on('click', function () {
+        /*$('#start_date').on('click', function () {
             modalOpen = !modalOpen;
             _date.toggle();
             _date.trigger = document.getElementById('start_date');
@@ -47,9 +47,9 @@
         });
         $('#start_date').on('onCancel', function () {
             modalOpen = !modalOpen;
-        });
+        });*/
         // PROGRAM
-        $('.program-date').each(function () {
+        $('.employee-date').each(function () {
             $(this).on('click', function () {
                 modalOpen = !modalOpen;
                 _date.toggle();

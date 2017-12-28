@@ -311,8 +311,9 @@ function Employee() {
     //create employee.
     this.create = function (employeeObj, res) {
         var output = {},
-            feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+            feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
         var employee_id_number = employeeObj.employee_id_number,
+            employee_dob = employeeObj.employee_dob
             employee_name = employeeObj.employee_name,
             employee_gender_id = employeeObj.employee_gender_id,
             employee_role_id = employeeObj.employee_role_id,
@@ -326,11 +327,15 @@ function Employee() {
         if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
             (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
             (undefined !== employee_code && employee_code != '') && (undefined !== employee_phone && employee_phone != '') &&
-            (undefined !== employee_email && employee_email != '') && (undefined !== employee_password && employee_password != '')
+            (undefined !== employee_email && employee_email != '') && (undefined !== employee_password && employee_password != '') &&
+            (undefined !== employee_dob && employee_dob != '')
         ) {
             if (undefined === employee_shift_id || employee_shift_id == '') {
                 employee_shift_id = 0;
             }
+
+            //employee_dob = moment(employee_dob).format('YYYY-MM-DD');
+
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -342,7 +347,7 @@ function Employee() {
 
                 employee_password = SHA256(employee_password).toString();
 
-                con.query(query, [null, employee_id_number, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_shift_id, employee_status_id], function (err, result) {
+                con.query(query, [null, employee_id_number, employee_dob, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_shift_id, employee_status_id], function (err, result) {
                     con.release();
                     if (err) {
                         //console.log(err);

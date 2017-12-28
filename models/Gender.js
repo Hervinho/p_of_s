@@ -18,7 +18,7 @@ function Gender() {
         }
         else{
           if(result.length > 0){
-            output = {status: 1, Genders: result};
+            output = {status: 1, genders: result};
         }
         else{
             output = {status: 0, message:'No genders found'};
@@ -46,7 +46,7 @@ function Gender() {
       }
       else{
         if(result.length > 0){
-          output = {status: 1, Gender: result[0]};
+          output = {status: 1, gender: result[0]};
       }
       else{
           output = {status: 0, message:'No such gender found'};

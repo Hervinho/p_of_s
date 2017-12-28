@@ -26,6 +26,7 @@ function LoadAllEmployees() {
     LoadAllRoles();
     LoadAllStatuses();
     LoadAllShifts();
+    LoadAllGenders();
 
     //Reset all filters.
     $("#employeeFilterRole").val(0);
@@ -53,11 +54,47 @@ function LoadAllEmployees() {
     });
 }
 
-function ViewProductInfo(id) {
-    employeeID = id;
-    $("#lbSelectedProduct").text(employeeID);
-
+function LoadAllGenders() {
     $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/genders',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            //console.log(data);
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.genders.length > 0) {
+                var genders = data.genders;
+                for (var key = 0, size = genders.length; key < size; key++) {
+                    html += '<option value =' + genders[key].gender_id + ' >' +
+                    genders[key].gender_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No genders found</option>';
+            }
+
+            //$("#employeeFilterGender").html(html);
+
+            //Also Populate dialogViewEmployee
+            $("#txtViewEmployeeGender").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function ViewEmployeeInfo(id) {
+    employeeID = id;
+    $("#lbSelectedEmployee").text(employeeID);
+
+    /*$.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
@@ -83,7 +120,7 @@ function ViewProductInfo(id) {
             toastr.error(message);
         }
 
-    });
+    });*/
 }
 
 function LoadAllRoles() {
@@ -110,8 +147,8 @@ function LoadAllRoles() {
 
             $("#employeeFilterRole").html(html);
 
-            //Also Populate product types in the dialogViewProduct
-            $("#txtViewProductType").html(html);
+            //Also Populate dialogViewEmployee
+            $("#txtViewEmployeeRole").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -146,8 +183,8 @@ function LoadAllStatuses(){
 
             $("#employeeFilterStatus").html(html);
 
-            //Also Populate product types in the dialogViewProduct
-            $("#txtViewProductType").html(html);
+            //Also Populate dialogViewEmployee
+            $("#txtViewEmployeeStatus").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -182,8 +219,8 @@ function LoadAllShifts() {
 
             $("#employeeFilterShift").html(html);
 
-            //Also Populate product types in the dialogViewProduct
-            $("#txtViewProductType").html(html);
+            //Also Populate dialogViewEmployee
+            $("#txtViewEmployeeShift").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -273,7 +310,7 @@ function handleEmployeesData(data) {
             employees[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 employees[key].employee_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 employees[key].employee_code + '<td class="mdl-data-table__cell--non-numeric">' +
-                '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewProduct" onclick="return ViewProductInfo(\'' + employees[key].employee_id + '\' )">' +
+                '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewEmployee" onclick="return ViewEmployeeInfo(\'' + employees[key].employee_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">' +
                 '</tr>';
         }

@@ -1,0 +1,106 @@
+<!-- The Modal  dialogViewEmployee -->
+<div id="dialogViewEmployee" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">View Employee Info</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewEmployeeRole" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeRole">Employee Role</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewEmployeeGender" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeGender">Employee Gender</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewEmployeeStatus" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeStatus">Employee Status</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewEmployeeShift" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeShift">Employee Shift</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input size="4" class="mdl-textfield__input" placeholder="ID Number..." type="text" id="txtViewEmployeeIdNumber">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeIdNumber">ID Number</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="datePicker mdl-textfield__input program-date employee-date" placeholder="Employee Date of Birth..." type="text" id="txtViewEmployeeDOB">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeDOB">Employee Date of Birth</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input size="4" class="mdl-textfield__input" placeholder="Employee Name..." type="text" id="txtViewEmployeeName">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeName">Employee Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input readonly="readonly" class="mdl-textfield__input" placeholder="Employee Code..." type="text" id="txtViewEmployeeCode">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeCode">Employee Code</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Employee Phone Number..." type="text" id="txtViewEmployeePhone">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeePhone">Employee Phone Number</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Employee Email..." type="text" id="txtViewEmployeeEmail">
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeEmail">Employee Email</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return UpdateEmployee();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<script type="text/javascript" src="/controllers/update/update_employee.js"></script>-->
