@@ -12,6 +12,7 @@ var Employee = require('../models/Employee');
 var Customer = require('../models/Customer');
 var Product = require('../models/Product');
 var Supplier = require('../models/Supplier');
+var EmployeeStatus = require('../models/EmployeeStatus');
 
 //global variables.
 var employeeCode, roleID;
@@ -23,7 +24,7 @@ function isUserLoggedIn(req, res, next) {
 		res.redirect('/');
 	} else {
 		//Get role ID from session cookie
-		roleID = req.PhemePointOfSaleProjectSession.employee.role_id;
+		roleID = req.PhemePointOfSaleProjectSession.employee.employee_role_id;
 
 		//Get username from session cookie
 		employeeCode = req.PhemePointOfSaleProjectSession.employee.employee_code;
@@ -81,6 +82,13 @@ var RoleAPIs = function (express) {
 	express.put('/roles', function (req, res) {
 		var roleObj = req.body;
 		Role.update(roleObj, res);
+	});
+};
+
+var EmployeeStatusAPIs = function(express){
+	//get all employee statuses.
+	express.get('/employeestatuses', function (req, res) {
+		EmployeeStatus.getAll(res);
 	});
 };
 
@@ -286,6 +294,18 @@ var EmployeeAPIs = function(express){
 		Employee.getByStatus(statusId, res);
 	});
 
+	//get all employees of a certain role.
+	express.get('/employees/roles/:id', function (req, res) {
+		var roleId = req.params.id;
+		Employee.getByRole(roleId, res);
+	});
+
+	//get all employees of a certain shift.
+	express.get('/employees/shifts/:id', function (req, res) {
+		var shiftId = req.params.id;
+		Employee.getByShift(shiftId, res);
+	});
+
 	//get a specific employee.
 	express.get('/employees/:id', function (req, res) {
 		var employeeId = req.params.id;
@@ -407,7 +427,13 @@ var configViews = function(express){
 
 	//Employees page.
 	express.get('/staff', isUserLoggedIn, function (req, res) {
-		res.render('staff', {employeeCode: employeeCode});
+		if(roleID == 1){
+			res.render('staff', {employeeCode: employeeCode});
+		}
+		else{
+			res.render('401', {employeeCode: employeeCode});
+		}
+		
 	});
 };
 
@@ -436,6 +462,7 @@ module.exports = {
 		CustomerAPIs(apiRoutes);
 		ProductAPIs(apiRoutes);
 		SupplierAPIs(apiRoutes);
+		EmployeeStatusAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

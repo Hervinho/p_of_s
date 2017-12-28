@@ -1,14 +1,21 @@
 $(document).ready(function () {
-    var message, employeeID, roleFilterTypeVal;
+    var message, employeeID, roleFilterTypeVal, statusFilterTypeVal, shiftFilterTypeVal;
 
     LoadAllEmployees();
 
     $(document).on('change', '.form-control', function () {
-        roleFilterTypeVal = $("#roleFilterType").val();
+        roleFilterTypeVal = $("#employeeFilterRole").val();
+        statusFilterTypeVal = $("#employeeFilterStatus").val();
+        shiftFilterTypeVal = $("#employeeFilterShift").val();
 
-        if (roleFilterTypeVal != 0) {
+        if (roleFilterTypeVal != 0 && statusFilterTypeVal == 0 && shiftFilterTypeVal == 0) {
             FilterEmployeesByRole(roleFilterTypeVal);
-        } else {
+        } else if(roleFilterTypeVal == 0 && statusFilterTypeVal != 0 && shiftFilterTypeVal == 0){
+            FilterEmployeesByStatus(statusFilterTypeVal);
+        } else if(roleFilterTypeVal == 0 && statusFilterTypeVal == 0 && shiftFilterTypeVal != 0){
+            FilterEmployeesByShift(shiftFilterTypeVal);
+        }
+        else {
             LoadAllEmployees();
         }
     });
@@ -17,9 +24,13 @@ $(document).ready(function () {
 function LoadAllEmployees() {
 
     LoadAllRoles();
+    LoadAllStatuses();
+    LoadAllShifts();
 
     //Reset all filters.
-    $("#roleFilterType").val(0);
+    $("#employeeFilterRole").val(0);
+    $("#employeeFilterStatus").val(0);
+    $("#employeeFilterShift").val(0);
 
     $.ajax({
         type: 'GET',
@@ -34,6 +45,7 @@ function LoadAllEmployees() {
         },
         success: handleEmployeesData,
         error: function (e) {
+            console.log(e);
             message = "Something went wrong";
             toastr.error(message);
         }
@@ -83,7 +95,7 @@ function LoadAllRoles() {
         dataType: "json",
         cache: false,
         success: function (data) {
-            console.log(data);
+            //console.log(data);
             var html = '<option value = "0"></option>';
             if (data.status == 1 && data.roles.length > 0) {
                 var roles = data.roles;
@@ -110,17 +122,133 @@ function LoadAllRoles() {
     });
 }
 
-function FilterEmployeesByRole(productTypeId) {
+function LoadAllStatuses(){
     $.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/products/types/' + productTypeId,
+        url: '/api/v1/employeestatuses',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            //console.log(data);
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.employee_statuses.length > 0) {
+                var employee_statuses = data.employee_statuses;
+                for (var key = 0, size = employee_statuses.length; key < size; key++) {
+                    html += '<option value =' + employee_statuses[key].employee_status_id + ' >' +
+                    employee_statuses[key].employee_status_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No statuses found</option>';
+            }
+
+            $("#employeeFilterStatus").html(html);
+
+            //Also Populate product types in the dialogViewProduct
+            $("#txtViewProductType").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function LoadAllShifts() {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/shifts',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            //console.log(data);
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.shifts.length > 0) {
+                var shifts = data.shifts;
+                for (var key = 0, size = shifts.length; key < size; key++) {
+                    html += '<option value =' + shifts[key].shift_id + ' >' +
+                    shifts[key].shift_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No shifts found</option>';
+            }
+
+            $("#employeeFilterShift").html(html);
+
+            //Also Populate product types in the dialogViewProduct
+            $("#txtViewProductType").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterEmployeesByStatus(statusId) {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/employees/statuses/' + statusId,
         dataType: "json",
         cache: false,
         beforeSend: function () {
             var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
-            $("#tblProducts tbody").html(wait);
+            $("#tblEmployees tbody").html(wait);
+        },
+        success: handleEmployeesData,
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterEmployeesByShift(shiftId) {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/employees/shifts/' + shiftId,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblEmployees tbody").html(wait);
+        },
+        success: handleEmployeesData,
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterEmployeesByRole(roleId) {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/employees/roles/' + roleId,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblEmployees tbody").html(wait);
         },
         success: handleEmployeesData,
         error: function (e) {

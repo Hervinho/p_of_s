@@ -112,6 +112,78 @@ function Employee() {
         });
     };
 
+    //get all employees of a certain role
+    this.getByRole = function (roleId, res) {
+        var output = {},
+            query = "SELECT * FROM employee WHERE employee_role_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [roleId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            employees: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No employee with such role was found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
+    //get all employees of a certain shift
+    this.getByShift = function (shiftId, res) {
+        var output = {},
+            query = "SELECT * FROM employee WHERE shift_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [shiftId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            employees: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No employee with such shift was found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get a single employee.
     this.getOne = function (employeeId, res) {
         var output = {},
