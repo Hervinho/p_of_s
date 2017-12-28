@@ -119,7 +119,6 @@ function ViewEmployeeInfo(id) {
             $("#txtViewEmployeeCode").val(code);
             $("#txtViewEmployeePhone").val(phone);
             $("#txtViewEmployeeEmail").val(email);
-            console.log(phone);
         },
         error: function (e) {
             console.log(e);
