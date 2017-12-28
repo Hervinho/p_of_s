@@ -94,25 +94,32 @@ function ViewEmployeeInfo(id) {
     employeeID = id;
     $("#lbSelectedEmployee").text(employeeID);
 
-    /*$.ajax({
+    $.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/products/' + employeeID,
+        url: '/api/v1/employees/' + employeeID,
         dataType: "json",
         cache: false,
         success: function (data) {
             //console.log(data);
-            var product = data.product;
-            var productName = product.product_name;
-            var productDesc = product.product_desc;
-            var productPrice = product.product_price;
-            var productTypeId = product.product_type_id;
+            var employee = data.employee;
+            var IdNumber = employee.employee_id_number, dob = employee.employee_dob, name = employee.employee_name, 
+                genderId = employee.employee_gender_id, roleId = employee.employee_role_id, code = employee.employee_code,
+                phone = employee.employee_phone, email = employee.employee_email, shiftId = employee.shift_id,
+                statusId = employee.employee_status_id;
 
-            $("#txtViewProductName").val(productName);
-            $("#txtViewProductType").val(productTypeId);
-            $("#txtViewProductDescription").val(productDesc);
-            $("#txtViewProductPrice").val(productPrice);
+            $("#txtViewEmployeeRole").val(roleId);
+            $("#txtViewEmployeeGender").val(genderId);
+            $("#txtViewEmployeeStatus").val(statusId);
+            $("#txtViewEmployeeShift").val(shiftId);
+            $("#txtViewEmployeeIdNumber").val(IdNumber);
+            $("#txtViewEmployeeDOB").val(dob);
+            $("#txtViewEmployeeName").val(name);
+            $("#txtViewEmployeeCode").val(code);
+            $("#txtViewEmployeePhone").val(phone);
+            $("#txtViewEmployeeEmail").val(email);
+            console.log(phone);
         },
         error: function (e) {
             console.log(e);
@@ -120,7 +127,7 @@ function ViewEmployeeInfo(id) {
             toastr.error(message);
         }
 
-    });*/
+    });
 }
 
 function LoadAllRoles() {
