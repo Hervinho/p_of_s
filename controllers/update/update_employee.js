@@ -49,8 +49,6 @@ function UpdateEmployee(){
 
                     //Reset label for selected event.
                     $("#lbSelectedEmployee").text('Selected Employee');
-
-                    //Refresh page.
                 }
             },
             error: function (e) {
