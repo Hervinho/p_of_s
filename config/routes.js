@@ -404,6 +404,11 @@ var configViews = function(express){
 	express.get('/home', isUserLoggedIn, function (req, res) {
 		res.render('home', {employeeCode: employeeCode});
 	});
+
+	//Employees page.
+	express.get('/staff', isUserLoggedIn, function (req, res) {
+		res.render('staff', {employeeCode: employeeCode});
+	});
 };
 
 var configIndex = function(express){
