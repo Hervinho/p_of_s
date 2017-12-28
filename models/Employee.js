@@ -202,7 +202,7 @@ function Employee() {
                                 req.PhemePointOfSaleProjectSession.employee = employee;
                                 res.send({
                                     status: 1,
-                                    redirect: '/home'
+                                    redirect: '/page/home'
                                 });
                             });
 

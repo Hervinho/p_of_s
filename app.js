@@ -13,7 +13,7 @@ var routes = require('./config/routes');
 var PORT = 8080;
 
 // get an instance of the router for api routes
-var apiRoutes = express.Router();
+var apiRoutes = express.Router(), viewRoutes = express.Router();
 
 //Set up session.
 app.use(session({
@@ -34,6 +34,7 @@ app.use(bodyParser.json());
 
 // apply prefix to all API routes.
 app.use('/api/v1', apiRoutes);
+app.use('/page', viewRoutes);
 
 //Set up EJS view engine.
 app.engine('ejs', engine);
@@ -46,7 +47,8 @@ connection.init();
 
 //Configure all routes.
 routes.configureAllAPIs(apiRoutes);
-routes.configureAllViews(app);
+routes.configureIndex(app);
+routes.configureAllViews(viewRoutes);
 
 var server = app.listen(PORT, function(){
   console.info('Server listening on port ' + server.address().port);

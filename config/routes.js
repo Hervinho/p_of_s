@@ -400,16 +400,18 @@ var SupplierAPIs = function(express){
 /* ---------------------------------------- */
 
 var configViews = function(express){
-	//Login Page (index)
-	express.get('/', function (req, res) {
-		res.render('index');
-	});
-
 	//Home page
 	express.get('/home', isUserLoggedIn, function (req, res) {
 		res.render('home', {employeeCode: employeeCode});
 	});
 };
+
+var configIndex = function(express){
+	//Login Page (index)
+	express.get('/', function (req, res) {
+		res.render('index');
+	});
+}
 
 /*********** Export all models and functions ************/
 /* ---------------------------------------------------- */
@@ -430,7 +432,10 @@ module.exports = {
 		ProductAPIs(apiRoutes);
 		SupplierAPIs(apiRoutes);
 	},
-	configureAllViews: function (app) {
-		configViews(app);
+	configureAllViews: function (viewRoutes) {
+		configViews(viewRoutes);
+	},
+	configureIndex: function(app){
+		configIndex(app);
 	}
 };
