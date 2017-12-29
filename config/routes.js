@@ -458,7 +458,11 @@ var configViews = function(express){
 	express.get('/customers', isUserLoggedIn, function (req, res) {
 		res.render('customers', {employeeCode: employeeCode});
 	});
-	
+
+	//Shifts page.
+	express.get('/shifts', isUserLoggedIn, function (req, res) {
+		res.render('shifts', {employeeCode: employeeCode});
+	});
 };
 
 var configIndex = function(express){

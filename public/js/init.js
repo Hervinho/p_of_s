@@ -63,7 +63,7 @@
                 modalOpen = !modalOpen;
             });
         });
-        $('.program-time').each(function () {
+        $('.shift-time').each(function () {
             $(this).on('click', function () {
                 modalOpen = !modalOpen;
                 _time.toggle();
