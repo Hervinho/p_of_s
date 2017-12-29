@@ -6,6 +6,7 @@ var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
+var CustomerOrderDetails = require('../models/CustomerOrderDetails');
 var CustomerOrder = require('../models/CustomerOrder');
 var Shift = require('../models/Shift');
 var Employee = require('../models/Employee');
@@ -148,7 +149,7 @@ var CustomerOrderStatusAPIs = function (express) {
 		CustomerOrderStatus.getAll(res);
 	});
 
-	//get a single promotion status.
+	//get a single order status.
 	express.get('/cust_orderstatuses/:id', function (req, res) {
 		var id = req.params.id;
 		CustomerOrderStatus.getOne(id, res);
@@ -164,6 +165,14 @@ var CustomerOrderStatusAPIs = function (express) {
 	express.put('/cust_orderstatuses', function (req, res) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.update(customerOrderStatusObj, res);
+	});
+};
+
+var CustomerOrderDetailsAPIs = function(express){
+	//get details of single customer order.
+	express.get('/cust_orderdetails/:id', function (req, res) {
+		var id = req.params.id;
+		CustomerOrderDetails.getOne(id, res);
 	});
 };
 
@@ -478,6 +487,7 @@ module.exports = {
 		ProductAPIs(apiRoutes);
 		SupplierAPIs(apiRoutes);
 		EmployeeStatusAPIs(apiRoutes);
+		CustomerOrderDetailsAPIs(apiRoutes)
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

@@ -17,12 +17,12 @@
                         <p>Date Added: <strong><%= customer.customer_date_added %></strong></p>
 
                         <div class="mdl-grid">
-                          <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                          <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
                               <label class="control-label">Filter Orders</label>
                               <select id="orderFilter" class="form-control" required="required">
 
                               </select>
-                          </div>
+                          </div>-->
 
 
                         </div>
@@ -58,6 +58,7 @@
                   </div>
 
                 <!-- Dialog -->
+                <% include partials/view/dialogViewCustomerOrder.ejs %>
 
                 </div>
             </div>
