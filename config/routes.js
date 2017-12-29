@@ -344,7 +344,16 @@ var CustomerAPIs = function(express){
 	//get a specific customer.
 	express.get('/customers/:id', function (req, res) {
 		var customerId = req.params.id;
-		Customer.getOne(customerId, res);
+		//Customer.getOne(customerId, res);
+		
+		Customer.getOne(customerId, res, function (customerObj) {
+			var customer = customerObj.customer;
+			//console.log(customer);
+			res.render('customer', {
+			  customer: customer,
+			  employeeCode: employeeCode
+			});
+		  });
 	});
 
 	//create new customer.
@@ -435,6 +444,12 @@ var configViews = function(express){
 		}
 		
 	});
+
+	//Customers page.
+	express.get('/customers', isUserLoggedIn, function (req, res) {
+		res.render('customers', {employeeCode: employeeCode});
+	});
+	
 };
 
 var configIndex = function(express){

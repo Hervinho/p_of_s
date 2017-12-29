@@ -39,7 +39,7 @@ function Customer() {
     };
 
     //get a specific customer.
-    this.getOne = function (customerId, res) {
+    this.getOne = function (customerId, res, callback) {
         var output = {},
             query = "SELECT * FROM customer WHERE customer_id = ?";
 
@@ -62,13 +62,16 @@ function Customer() {
                             status: 1,
                             customer: result[0]
                         };
+                        callback(output);
                     } else {
                         output = {
                             status: 0,
                             message: 'No such customer found'
                         };
+
+                        res.json(output);
                     }
-                    res.json(output);
+                    
                 }
             });
         });
