@@ -67,9 +67,9 @@ function handleShiftsData(data) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
                 shifts[key].shift_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
                 shifts[key].shift_start_time + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                shifts[key].shift_end_time + '<td class="mdl-data-table__cell--non-numeric">' +
+                shifts[key].shift_end_time + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewShift" onclick="return ViewShiftInfo(\'' + shifts[key].shift_id + '\' )">' +
-                '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">' +
+                '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';
         }
     } else {
@@ -77,4 +77,5 @@ function handleShiftsData(data) {
     }
     //console.log(html);
     $("#tblShifts tbody").html(html);
+    $("#tblShifts").dataTable({processing:true});
 }

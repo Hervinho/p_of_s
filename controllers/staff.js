@@ -315,9 +315,9 @@ function handleEmployeesData(data) {
             employees[key].employee_id_number + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             employees[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 employees[key].employee_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                employees[key].employee_code + '<td class="mdl-data-table__cell--non-numeric">' +
+                employees[key].employee_code + '</td><<td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewEmployee" onclick="return ViewEmployeeInfo(\'' + employees[key].employee_id + '\' )">' +
-                '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">' +
+                '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';
         }
     } else {
@@ -325,4 +325,5 @@ function handleEmployeesData(data) {
     }
     //console.log(html);
     $("#tblEmployees tbody").html(html);
+    $('#tblEmployees').dataTable({processing:true});
 }

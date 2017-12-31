@@ -108,10 +108,8 @@ function handleCustomersData(data) {
         for (var key = 0, size = customers.length; key < size; key++) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
-            //customers[key].customer_gender_id + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             customers[key].customer_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customers[key].customer_date_added + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            //customers[key].employee_code + '<td class="mdl-data-table__cell--non-numeric">' +
+            customers[key].customer_date_added + '</td>' +
             '</tr>';
         }
     } else {
@@ -119,4 +117,5 @@ function handleCustomersData(data) {
     }
     //console.log(html);
     $("#tblCustomers tbody").html(html);
+    $('#tblCustomers').dataTable({processing:true});
 }

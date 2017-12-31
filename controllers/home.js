@@ -142,10 +142,9 @@ function handleProductsData(data) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
                 products[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
                 products[key].product_desc + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                //products[key].product_type + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                'R ' + products[key].product_price + '<td class="mdl-data-table__cell--non-numeric">' +
+                'R ' + products[key].product_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewProduct" onclick="return ViewProductInfo(\'' + products[key].product_id + '\' )">' +
-                '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">' +
+                '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';
         }
     } else {
@@ -153,4 +152,5 @@ function handleProductsData(data) {
     }
     //console.log(html);
     $("#tblProducts tbody").html(html);
+    $('#tblProducts').dataTable({processing:true});
 }
