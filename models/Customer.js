@@ -38,6 +38,42 @@ function Customer() {
         });
     };
 
+    //get all customers of a specific gender.
+    this.getPerGender = function(genderId, res){
+        var output = {},
+            query = "SELECT * FROM customer WHERE customer_gender_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [genderId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customers: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such customers found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get a specific customer.
     this.getOne = function (customerId, res, callback) {
         var output = {},

@@ -76,6 +76,28 @@ function LoadAllGenders() {
     });
 }
 
+function FilterCustomersByGender(genderId){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/customers/genders/' + genderId,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblCustomers tbody").html(wait);
+        },
+        success: handleCustomersData,
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 /*********** AJAX Callback functions ***********/
 
 function handleCustomersData(data) {
@@ -86,11 +108,10 @@ function handleCustomersData(data) {
         for (var key = 0, size = customers.length; key < size; key++) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
+            //customers[key].customer_gender_id + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             customers[key].customer_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_date_added + '</td><td class="mdl-data-table__cell--non-numeric">' +
             //customers[key].employee_code + '<td class="mdl-data-table__cell--non-numeric">' +
-            '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  href="/api/v1/customers/' + customers[key].customer_id + '">' +
-            '<i class="material-icons">visibility</i></a></td><td class="mdl-data-table__cell--non-numeric">' +
             '</tr>';
         }
     } else {

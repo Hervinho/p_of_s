@@ -33,6 +33,7 @@ function CustomerOrderDetails() {
                             message: 'No data found'
                         };
                     }
+                    //console.log(output);
                     res.json(output);
                 }
             });

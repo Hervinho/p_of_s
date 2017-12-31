@@ -86,7 +86,7 @@ var RoleAPIs = function (express) {
 	});
 };
 
-var EmployeeStatusAPIs = function(express){
+var EmployeeStatusAPIs = function (express) {
 	//get all employee statuses.
 	express.get('/employeestatuses', function (req, res) {
 		EmployeeStatus.getAll(res);
@@ -168,7 +168,7 @@ var CustomerOrderStatusAPIs = function (express) {
 	});
 };
 
-var CustomerOrderDetailsAPIs = function(express){
+var CustomerOrderDetailsAPIs = function (express) {
 	//get details of single customer order.
 	express.get('/cust_orderdetails/:id', function (req, res) {
 		var id = req.params.id;
@@ -266,7 +266,7 @@ var CustomerOrderAPIs = function (express) {
 	});
 };
 
-var ShiftAPIs = function(express){
+var ShiftAPIs = function (express) {
 	//get all shifts.
 	express.get('/shifts', function (req, res) {
 		Shift.getAll(res);
@@ -291,7 +291,7 @@ var ShiftAPIs = function(express){
 	});
 };
 
-var EmployeeAPIs = function(express){
+var EmployeeAPIs = function (express) {
 	//get all employees.
 	express.get('/employees', function (req, res) {
 		Employee.getAll(res);
@@ -344,25 +344,31 @@ var EmployeeAPIs = function(express){
 	});
 };
 
-var CustomerAPIs = function(express){
+var CustomerAPIs = function (express) {
 	//get all customers.
 	express.get('/customers', function (req, res) {
 		Customer.getAll(res);
+	});
+
+	//get all customers of specific gender
+	express.get('/customers/genders/:id', function (req, res) {
+		var genderId = req.params.id;
+		Customer.getPerGender(genderId, res);
 	});
 
 	//get a specific customer.
 	express.get('/customers/:id', function (req, res) {
 		var customerId = req.params.id;
 		//Customer.getOne(customerId, res);
-		
+
 		Customer.getOne(customerId, res, function (customerObj) {
 			var customer = customerObj.customer;
 			//console.log(customer);
 			res.render('customer', {
-			  customer: customer,
-			  employeeCode: employeeCode
+				customer: customer,
+				employeeCode: employeeCode
 			});
-		  });
+		});
 	});
 
 	//create new customer.
@@ -378,7 +384,7 @@ var CustomerAPIs = function(express){
 	});
 };
 
-var ProductAPIs = function(express){
+var ProductAPIs = function (express) {
 	//get all products.
 	express.get('/products', function (req, res) {
 		Product.getAll(res);
@@ -409,7 +415,7 @@ var ProductAPIs = function(express){
 	});
 };
 
-var SupplierAPIs = function(express){
+var SupplierAPIs = function (express) {
 	//get all suppliers.
 	express.get('/suppliers', function (req, res) {
 		Supplier.getAll(res);
@@ -437,35 +443,44 @@ var SupplierAPIs = function(express){
 /*********** Views Configurations ************/
 /* ---------------------------------------- */
 
-var configViews = function(express){
+var configViews = function (express) {
 	//Home page
 	express.get('/home', isUserLoggedIn, function (req, res) {
-		res.render('home', {employeeCode: employeeCode});
+		res.render('home', {
+			employeeCode: employeeCode
+		});
 	});
 
 	//Employees page.
 	express.get('/staff', isUserLoggedIn, function (req, res) {
-		if(roleID == 1){
-			res.render('staff', {employeeCode: employeeCode});
+		if (roleID == 1) {
+			res.render('staff', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode
+			});
 		}
-		else{
-			res.render('401', {employeeCode: employeeCode});
-		}
-		
+
 	});
 
 	//Customers page.
 	express.get('/customers', isUserLoggedIn, function (req, res) {
-		res.render('customers', {employeeCode: employeeCode});
+		res.render('customers', {
+			employeeCode: employeeCode
+		});
 	});
 
 	//Shifts page.
 	express.get('/shifts', isUserLoggedIn, function (req, res) {
-		res.render('shifts', {employeeCode: employeeCode});
+		res.render('shifts', {
+			employeeCode: employeeCode
+		});
 	});
 };
 
-var configIndex = function(express){
+var configIndex = function (express) {
 	//Login Page (index)
 	express.get('/', function (req, res) {
 		res.render('index');
@@ -496,7 +511,7 @@ module.exports = {
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
 	},
-	configureIndex: function(app){
+	configureIndex: function (app) {
 		configIndex(app);
 	}
 };
