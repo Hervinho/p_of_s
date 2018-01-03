@@ -1,11 +1,12 @@
 var connection = require('../config/connection');
-var moment = require('moment');
+var moment = require('moment'),
+    request = require('request');
 var emailAPI = "http://54.210.132.91:6060/notifications/email";
 var Customer = require('./Customer');
 
-function Promotion(){
+function Promotion() {
     //get all promotions.
-    this.getAll = function(res){
+    this.getAll = function (res) {
         var output = {},
             query = "SELECT * FROM promotion";
 
@@ -41,13 +42,13 @@ function Promotion(){
     };
 
     //get all promotions of a certain status.
-    this.getPerStatus = function(statusId, res){
-        var output = {}, query;
+    this.getPerStatus = function (statusId, res) {
+        var output = {},
+            query;
 
-        if(statusId == 1){
+        if (statusId == 1) {
             query = "SELECT * FROM promotion WHERE promotion_status_id = 1 AND valid_to_date > CURDATE()";
-        }
-        else if(statusId == 2){
+        } else if (statusId == 2) {
             query = "SELECT * FROM promotion WHERE promotion_status_id = 2";
         }
 
@@ -83,7 +84,7 @@ function Promotion(){
     };
 
     //get a specific promotion.
-    this.getOne = function(id, res){
+    this.getOne = function (id, res) {
         var output = {},
             query = "SELECT * FROM promotion WHERE promotion_id = ?";
 
@@ -119,29 +120,33 @@ function Promotion(){
     };
 
     //create promotion.
-    this.create = function(promotionObj, res){
-        var output = {}, query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?)", today = moment().format('YYYY-MM-DD');
-        var promotion_name = promotionObj.promotion_name, promotion_desc = promotionObj.promotion_desc, 
-            promotion_status_id = 2, valid_from_date = promotionObj.valid_from_date, 
-            valid_to_date = promotionObj.valid_to_date, promotion_price = promotionObj.promotion_price;
+    this.create = function (promotionObj, res) {
+        var output = {},
+            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?)",
+            today = moment().format('YYYY-MM-DD');
+        var promotion_name = promotionObj.promotion_name,
+            promotion_desc = promotionObj.promotion_desc,
+            promotion_status_id = 2,
+            valid_from_date = promotionObj.valid_from_date,
+            valid_to_date = promotionObj.valid_to_date,
+            promotion_price = promotionObj.promotion_price;
 
-        if((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
-            (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') && 
+        if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
+            (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
             (undefined !== promotion_price && promotion_price != '')
-        ){
+        ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
             valid_to_date = moment(valid_to_date).format('YYYY-MM-DD');
 
-            if(valid_from_date < today || valid_to_date < today){
+            if (valid_from_date < today || valid_to_date < today) {
                 feedback = "Dates must not be prior to current date";
                 res.json({
                     status: 0,
                     message: feedback
                 });
                 return;
-            }
-            else if(valid_from_date > valid_to_date){
+            } else if (valid_from_date > valid_to_date) {
                 feedback = "Valid from Date must not be greater than valid to Date";
                 res.json({
                     status: 0,
@@ -158,9 +163,10 @@ function Promotion(){
                     });
                     return;
                 }
-    
-                con.query(query, [null, promotion_name, promotion_desc, promotion_status_id, valid_from_date, 
-                    valid_to_date, promotion_price], function (err, result) {
+
+                con.query(query, [null, promotion_name, promotion_desc, promotion_status_id, valid_from_date,
+                    valid_to_date, promotion_price
+                ], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error adding new promotion';
@@ -183,44 +189,47 @@ function Promotion(){
                     }
                 });
             });
-        }
-        else{
+        } else {
             feedback = 'Invalid Promotion data submitted';
             output = {
                 status: 0,
                 message: feedback
             };
-    
+
             res.json(output);
         }
-        
+
     };
 
     //update promotion.
-    this.update = function(promotionObj, res){
-        var output = {}, today = moment().format('YYYY-MM-DD'), query = "UPDATE promotion SET promotion_name=?, " + 
+    this.update = function (promotionObj, res) {
+        var output = {},
+            today = moment().format('YYYY-MM-DD'),
+            query = "UPDATE promotion SET promotion_name=?, " +
             "promotion_desc=?, valid_from_date=?, valid_to_date=?, promotion_price=? WHERE promotion_id=?";
-        var promotion_name = promotionObj.promotion_name, promotion_desc = promotionObj.promotion_desc, 
-            promotion_id = promotionObj.promotion_id, valid_from_date = promotionObj.valid_from_date, 
-            valid_to_date = promotionObj.valid_to_date, promotion_price = promotionObj.promotion_price;
+        var promotion_name = promotionObj.promotion_name,
+            promotion_desc = promotionObj.promotion_desc,
+            promotion_id = promotionObj.promotion_id,
+            valid_from_date = promotionObj.valid_from_date,
+            valid_to_date = promotionObj.valid_to_date,
+            promotion_price = promotionObj.promotion_price;
 
-        if((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
-            (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') && 
+        if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
+            (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
             (undefined !== promotion_price && promotion_price != '') && (undefined !== promotion_id && promotion_id != '')
-        ){
+        ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
             valid_to_date = moment(valid_to_date).format('YYYY-MM-DD');
 
-            if(valid_from_date < today || valid_to_date < today){
+            if (valid_from_date < today || valid_to_date < today) {
                 feedback = "Dates must not be prior to current date";
                 res.json({
                     status: 0,
                     message: feedback
                 });
                 return;
-            }
-            else if(valid_from_date > valid_to_date){
+            } else if (valid_from_date > valid_to_date) {
                 feedback = "Valid from Date must not be greater than valid to Date";
                 res.json({
                     status: 0,
@@ -237,9 +246,10 @@ function Promotion(){
                     });
                     return;
                 }
-    
-                con.query(query, [promotion_name, promotion_desc, valid_from_date, valid_to_date, promotion_price, 
-                    promotion_id], function (err, result) {
+
+                con.query(query, [promotion_name, promotion_desc, valid_from_date, valid_to_date, promotion_price,
+                    promotion_id
+                ], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error updating promotion';
@@ -262,26 +272,26 @@ function Promotion(){
                     }
                 });
             });
-        }
-        else{
+        } else {
             feedback = 'Invalid Promotion data submitted';
             output = {
                 status: 0,
                 message: feedback
             };
-    
+
             res.json(output);
         }
-        
+
     };
 
     //change promotion status.
-    this.updateStatus = function(promotionObj, res){
-        var promotion_id = promotionObj.promotion_id, op_value = promotionObj.operation_value, 
+    this.updateStatus = function (promotionObj, res) {
+        var promotion_id = promotionObj.promotion_id,
+            op_value = promotionObj.operation_value,
             keyword, promotion_status_id, query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
-        var emailList, messageObj = {subject: 'New promo', content: []};//testing email.
-        
-        if((undefined !== promotion_id && promotion_id != '') && (undefined !== op_value && op_value != '')){
+        var emailList; //testing email.
+
+        if ((undefined !== promotion_id && promotion_id != '') && (undefined !== op_value && op_value != '')) {
             if (op_value == 1) {
                 keyword = 'Activation';
                 promotion_status_id = 1;
@@ -298,7 +308,7 @@ function Promotion(){
                     });
                     return;
                 }
-    
+
                 con.query(query, [promotion_status_id, promotion_id], function (err, result) {
                     con.release();
                     if (err) {
@@ -319,22 +329,83 @@ function Promotion(){
                         };
 
                         //Get email list.
-                        emailList = Customer.getEmailList(function (err, emails){
-                            console.log('Pro: ', emails);
+                        emailList = Customer.getEmailList(function (err, result) {
+                            //console.log(result.emails);
+                            var emailArray = result.emails;
+                            var messageObj = {
+                                subject: 'New promo',
+                                content: ['New promo', 'Promotion id = ' + promotion_id]
+                            };
+
+                            //Send to each email in the customer emails array.
+                            emailArray.forEach(function (email) {
+                                messageObj.destination = email.customer_email;
+                                request.post(emailAPI, {
+                                    body: JSON.stringify(messageObj),
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                }, function (error, response, body) {
+                                    var emailOutput;
+                                    if (error) {
+                                        emailOutput = {
+                                            status: 0,
+                                            response: response,
+                                            error: error
+                                        };
+                                        console.log(err);
+
+                                    } else if (response && response.statusCode == 200) {
+                                        emailOutput = {
+                                            status: 1,
+                                            message: 'Message sent'
+                                        };
+                                        console.log('Email Status', response.statusCode);
+                                    }
+                                    // console.log(emailOutput);
+
+                                });
+                            });
+
+                            //messageObj.destination = emailArray[0].customer_email;
+
+                            //send emails.
+                            /*request.post(emailAPI, {
+                                body: JSON.stringify(messageObj),
+                                headers: {'Content-Type': 'application/json'},
+                            }, function (error, response, body) {
+                                var emailOutput;
+                                if (error) {
+                                    emailOutput = {
+                                        status: 0,
+                                        response: response,
+                                        error: error
+                                    };
+                                    console.log(err);
+                                    
+                                } else if (response && response.statusCode == 200) {
+                                    emailOutput = {
+                                        status: 1,
+                                        message: 'Message sent'
+                                    };
+                                    console.log('Email Status', response.statusCode);
+                                }
+                               // console.log(emailOutput);
+            
+                            });*/
                         });
-                        
+
                         res.json(output);
                     }
                 });
             });
-        }
-        else{
+        } else {
             feedback = 'Invalid Promotion data submitted';
             output = {
                 status: 0,
                 message: feedback
             };
-    
+
             res.json(output);
         }
     };
