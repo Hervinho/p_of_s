@@ -1,8 +1,7 @@
 var connection = require('../config/connection');
 var moment = require('moment');
-//var request = require('request');
-//var emailUrl = "http://54.210.132.91:8080/GaniAgilePM-APIS/notifications/email";
-//var sendmail = require('sendmail')();
+var emailAPI = "http://54.210.132.91:6060/notifications/email";
+var Customer = require('./Customer');
 
 function Promotion(){
     //get all promotions.
@@ -278,8 +277,9 @@ function Promotion(){
 
     //change promotion status.
     this.updateStatus = function(promotionObj, res){
-        var promotion_id = promotionObj.promotion_id, op_value = promotionObj.operation_value,
+        var promotion_id = promotionObj.promotion_id, op_value = promotionObj.operation_value, 
             keyword, promotion_status_id, query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
+        var emailList, messageObj = {subject: 'New promo', content: []};//testing email.
         
         if((undefined !== promotion_id && promotion_id != '') && (undefined !== op_value && op_value != '')){
             if (op_value == 1) {
@@ -318,17 +318,11 @@ function Promotion(){
                             updatedPromotionId: promotion_id
                         };
 
-                        //email.
-                        /*sendmail({
-                            from: 'no-reply@yourdomain.com',
-                            to: 'hervinho.mastermind@gmail.com',
-                            subject: 'test sendmail',
-                            html: 'Mail of test sendmail ',
-                          }, function(err, reply) {
-                            console.log(err && err.stack);
-                            console.dir(reply);
-                        });*/
-
+                        //Get email list.
+                        emailList = Customer.getEmailList(function (err, emails){
+                            console.log('Pro: ', emails);
+                        });
+                        
                         res.json(output);
                     }
                 });

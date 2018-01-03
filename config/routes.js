@@ -169,7 +169,7 @@ var PromotionAPIs = function(express){
 	//Activate/deactivate promotion. Only by Admin
 	express.put('/promotions/statuses', function (req, res) {
 		var promotionObj = req.body;
-		if(roleID == 1){
+		/*if(roleID == 1){
 			Promotion.updateStatus(promotionObj, res);
 		}
 		else{
@@ -177,8 +177,8 @@ var PromotionAPIs = function(express){
 				status: 0,
 				message: roleMessage
 			});
-		}
-		
+		}*/
+		Promotion.updateStatus(promotionObj, res);
 	});
 };
 

@@ -62,7 +62,7 @@ function validateEditPromotionForm(promotionObj) {
     var fromdate = promotionObj.valid_from_date, todate = promotionObj.valid_to_date;
     var isValid_from_date = moment(fromdate.toString(), "YYYY-MM-DD", true).isValid(), 
         isValid_to_date = moment(todate, "YYYY-MM-DD", true).isValid();
-    console.log(isValid_to_date);
+    //console.log(isValid_to_date);
 
     if (name_format.test(promotionObj.promotion_name) || no_numbers.test(promotionObj.promotion_name)) {
         flag = false;
