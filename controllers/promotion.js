@@ -108,7 +108,7 @@ function ViewPromotionInfo(id){
         dataType: "json",
         cache: false,
         success: function (data) {
-            console.log(data);
+            //console.log(data);
             var promotion = data.promotion;
             var promotionName = promotion.promotion_name;
             var promotionDesc = promotion.promotion_desc;

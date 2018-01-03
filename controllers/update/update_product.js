@@ -35,7 +35,7 @@ function UpdateProduct() {
                     toastr.success(data.message);
                     //clear form.
                     $("#txtViewProductName").val("");
-                    $("#txtViewProducttDescription").val("");
+                    $("#txtViewProductDescription").val("");
                     $("#txtViewProductPrice").val("");
                     $("#txtViewProductType").val("");
 

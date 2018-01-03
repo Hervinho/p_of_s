@@ -49,7 +49,7 @@
             modalOpen = !modalOpen;
         });*/
         // PROGRAM
-        $('.employee-date').each(function () {
+        $('.employee-date, .any-date').each(function () {
             $(this).on('click', function () {
                 modalOpen = !modalOpen;
                 _date.toggle();
