@@ -14,6 +14,7 @@ var Customer = require('../models/Customer');
 var Product = require('../models/Product');
 var Supplier = require('../models/Supplier');
 var EmployeeStatus = require('../models/EmployeeStatus');
+var Promotion = require('../models/Promotion');
 
 //global variables.
 var employeeCode, roleID;
@@ -115,6 +116,43 @@ var PaymentStatusAPIs = function (express) {
 	express.put('/paymentstatuses', function (req, res) {
 		var paymentStatusObj = req.body;
 		PaymentStatus.update(paymentStatusObj, res);
+	});
+};
+
+var PromotionAPIs = function(express){
+	//get all promotions.
+	express.get('/promotions', function (req, res) {
+		Promotion.getAll(res);
+	});
+
+	//get get all promotions of a certain status.
+	express.get('/promotions/statuses/:id', function (req, res) {
+		var id = req.params.id;
+		Promotion.getPerStatus(id, res);
+	});
+
+	//get a specific promotion.
+	express.get('/promotions/:id', function (req, res) {
+		var id = req.params.id;
+		Promotion.getOne(id, res);
+	});
+
+	//create promotion.
+	express.post('/promotions', function (req, res) {
+		var promotionObj = req.body;
+		Promotion.create(promotionObj, res);
+	});
+
+	//update promotion.
+	express.put('/promotions', function (req, res) {
+		var promotionObj = req.body;
+		Promotion.update(promotionObj, res);
+	});
+
+	//Activate/deactivate promotion.
+	express.put('/promotions/statuses', function (req, res) {
+		var promotionObj = req.body;
+		Promotion.updateStatus(promotionObj, res);
 	});
 };
 
@@ -506,7 +544,8 @@ module.exports = {
 		ProductAPIs(apiRoutes);
 		SupplierAPIs(apiRoutes);
 		EmployeeStatusAPIs(apiRoutes);
-		CustomerOrderDetailsAPIs(apiRoutes)
+		CustomerOrderDetailsAPIs(apiRoutes);
+		PromotionAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
