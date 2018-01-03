@@ -117,5 +117,5 @@ function handleCustomersData(data) {
     }
     //console.log(html);
     $("#tblCustomers tbody").html(html);
-    $('#tblCustomers').dataTable({processing:true});
+    //$('#tblCustomers').dataTable({processing:true});
 }

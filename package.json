@@ -16,7 +16,10 @@
     "ejs-locals": "^1.0.2",
     "express": "^4.16.2",
     "moment": "^2.19.4",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "request": "^2.83.0",
+    "sendemail": "^3.3.0",
+    "sendmail": "^1.2.0"
   },
   "devDependencies": {
     "expect": "^21.2.1",

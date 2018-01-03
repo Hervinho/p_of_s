@@ -17,7 +17,7 @@ var EmployeeStatus = require('../models/EmployeeStatus');
 var Promotion = require('../models/Promotion');
 
 //global variables.
-var employeeCode, roleID;
+var employeeCode, roleID, roleMessage = "You do not have privileges to perform this operation";
 
 //check if user is logged in before displaying the pages.
 //It will do so by checking if the session cookie exists
@@ -137,22 +137,48 @@ var PromotionAPIs = function(express){
 		Promotion.getOne(id, res);
 	});
 
-	//create promotion.
+	//create promotion. Only by Admin
 	express.post('/promotions', function (req, res) {
 		var promotionObj = req.body;
-		Promotion.create(promotionObj, res);
+		if(roleID == 1){
+			Promotion.create(promotionObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
 	});
 
-	//update promotion.
+	//update promotion. Only by Admin
 	express.put('/promotions', function (req, res) {
 		var promotionObj = req.body;
-		Promotion.update(promotionObj, res);
+		if(roleID == 1){
+			Promotion.update(promotionObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 
-	//Activate/deactivate promotion.
+	//Activate/deactivate promotion. Only by Admin
 	express.put('/promotions/statuses', function (req, res) {
 		var promotionObj = req.body;
-		Promotion.updateStatus(promotionObj, res);
+		if(roleID == 1){
+			Promotion.updateStatus(promotionObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 };
 
@@ -513,6 +539,13 @@ var configViews = function (express) {
 	//Shifts page.
 	express.get('/shifts', isUserLoggedIn, function (req, res) {
 		res.render('shifts', {
+			employeeCode: employeeCode
+		});
+	});
+
+	//Promotions Page.
+	express.get('/promotions', isUserLoggedIn, function (req, res) {
+		res.render('promotions', {
 			employeeCode: employeeCode
 		});
 	});

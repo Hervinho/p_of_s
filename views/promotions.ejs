@@ -16,8 +16,8 @@
                       <div class="entertainer-content">
                         <div class="mdl-grid">
                           <div class="extra-button mdl-cell mdl-cell--6-col">
-                              <label class="control-label">Filter Type</label>
-                              <select id="productFilterType" class="form-control" required="required">
+                              <label class="control-label">Filter By Status</label>
+                              <select id="promotionFilterStatus" class="form-control" required="required">
 
                               </select>
                           </div>
@@ -25,18 +25,18 @@
 
                         <div class="mdl-grid">
                             <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
-                                <button type="button" onclick="return LoadAllProducts();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Reset Filter </button>
+                                <button type="button" onclick="return LoadAllPromotions();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Reset Filter </button>
                             </div>
                         </div>
 
-                          <table id="tblProducts" class="mdl-data-table mdl-js-data-table">
+                          <table id="tblPromotions" class="mdl-data-table mdl-js-data-table">
                               <!-- class="mdl-data-table mdl-js-data-table" -->
                               <thead>
                                   <tr>
-                                      <th class="mdl-data-table__cell--non-numeric">Product Name</th>
-                                      <th class="mdl-data-table__cell--non-numeric">Description</th>
-                                      <!--<th class="mdl-data-table__cell--non-numeric">Product Type</th>-->
-                                      <th class="mdl-data-table__cell--non-numeric">Product Price</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Promotion Name</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Valid From</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Valid Until</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Promotion Price</th>
                                       <th class="mdl-data-table__cell--non-numeric">View</th>
 
                                   </tr>
@@ -48,7 +48,7 @@
                           <!-- /block -->
 
                           <div hidden class="alert-info" style="overflow:auto;height:20px;">
-                              <span class="label label-default" id="lbSelectedProduct"></span>
+                              <span class="label label-default" id="lbSelectedPromotion"></span>
                           </div>
 
                       </div>
@@ -56,13 +56,13 @@
 
 
                     <!-- Dialog -->
-                    <% include partials/view/dialogViewProduct.ejs %>
+                    <% include partials/view/dialogViewPromotion.ejs %>
 
                 </div>
             </div>
 
         </main>
         <!-- MAIN PAGE CONTENT END -->
-        <script type="text/javascript" src="/controllers/home.js"></script>
+        <script type="text/javascript" src="/controllers/promotion.js"></script>
 
         <%- include layout/footer.ejs %>

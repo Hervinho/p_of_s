@@ -152,5 +152,5 @@ function handleProductsData(data) {
     }
     //console.log(html);
     $("#tblProducts tbody").html(html);
-    $('#tblProducts').dataTable({processing:true});
+    //$('#tblProducts').dataTable({processing:true});
 }

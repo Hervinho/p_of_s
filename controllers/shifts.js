@@ -77,5 +77,5 @@ function handleShiftsData(data) {
     }
     //console.log(html);
     $("#tblShifts tbody").html(html);
-    $("#tblShifts").dataTable({processing:true});
+    //$("#tblShifts").dataTable({processing:true});
 }

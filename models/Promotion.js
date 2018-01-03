@@ -1,5 +1,8 @@
 var connection = require('../config/connection');
 var moment = require('moment');
+//var request = require('request');
+//var emailUrl = "http://54.210.132.91:8080/GaniAgilePM-APIS/notifications/email";
+//var sendmail = require('sendmail')();
 
 function Promotion(){
     //get all promotions.
@@ -102,7 +105,7 @@ function Promotion(){
                     if (result.length > 0) {
                         output = {
                             status: 1,
-                            promotion: result
+                            promotion: result[0]
                         };
                     } else {
                         output = {
@@ -314,6 +317,17 @@ function Promotion(){
                             message: feedback,
                             updatedPromotionId: promotion_id
                         };
+
+                        //email.
+                        /*sendmail({
+                            from: 'no-reply@yourdomain.com',
+                            to: 'hervinho.mastermind@gmail.com',
+                            subject: 'test sendmail',
+                            html: 'Mail of test sendmail ',
+                          }, function(err, reply) {
+                            console.log(err && err.stack);
+                            console.dir(reply);
+                        });*/
 
                         res.json(output);
                     }

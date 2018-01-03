@@ -325,5 +325,5 @@ function handleEmployeesData(data) {
     }
     //console.log(html);
     $("#tblEmployees tbody").html(html);
-    $('#tblEmployees').dataTable({processing:true});
+    //$('#tblEmployees').dataTable({processing:true});
 }

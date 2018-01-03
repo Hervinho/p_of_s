@@ -1,0 +1,75 @@
+<!-- The Modal  dialogViewPromotion -->
+<div id="dialogViewPromotion" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">View Promotion Info</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewPromotionStatus" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewPromotionStatus">Promotion Status</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input size="4" class="mdl-textfield__input" placeholder="Promotion Name..." type="text" id="txtViewPromotionName">
+                                    <label class="mdl-textfield__label" for="txtViewPromotionName">Promotion Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="4..." type="text" id="txtViewPromotionPrice">
+                                    <label class="mdl-textfield__label" for="txtViewPromotionPrice">Promotion Price</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Valid From..." type="text" id="txtViewPromotionValidFrom">
+                                    <label class="mdl-textfield__label" for="txtViewPromotionValidFrom">Valid From</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Valid Until..." type="text" id="txtViewPromotionValidUntil">
+                                    <label class="mdl-textfield__label" for="txtViewPromotionValidUntil">Valid Until</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <textarea class="mdl-textfield__input" placeholder="Promotion Description..." type="text" rows="3" id="txtViewPromotionDescription"></textarea>
+                                    <label class="mdl-textfield__label" for="txtViewPromotionDescription">Promotion Description</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return UpdatePromotion();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<script type="text/javascript" src="/controllers/update/update_promotion.js"></script>-->
