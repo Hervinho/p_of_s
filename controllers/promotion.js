@@ -133,6 +133,39 @@ function ViewPromotionInfo(id){
     });
 }
 
+function UpdatePromotionStatus(opval, promId, promName){
+    var obj = {
+        operation_value: opval,
+        promotion_id: promId,
+        promotion_name: promName
+    };
+
+    console.log(obj);
+    $.ajax({
+        type: 'PUT',
+        crossDomain: true,
+        data: JSON.stringify(obj),
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/promotions/statuses',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            if (data.status == 0) {
+                toastr.error(data.message);
+            } else {
+                toastr.success(data.message);
+                
+            }
+        },
+        error: function (e) {
+            console.log(e);
+            message = 'Something went wrong';
+            toastr.error(message);
+        }
+
+    });
+}
+
 /*********** AJAX Callback functions ***********/
 
 function handlePromotionsData(data) {
@@ -145,6 +178,8 @@ function handlePromotionsData(data) {
                 promotions[key].valid_from_date + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 promotions[key].valid_to_date + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + promotions[key].promotion_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #2ECF33;" type="button" onclick="return UpdatePromotionStatus(1,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Activate</button>  ' + 
+                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #EE4A4A;" type="button" onclick="return UpdatePromotionStatus(2,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Expire</button></td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewPromotion" onclick="return ViewPromotionInfo(\'' + promotions[key].promotion_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';

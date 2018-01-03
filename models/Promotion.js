@@ -287,15 +287,19 @@ function Promotion() {
     //change promotion status.
     this.updateStatus = function (promotionObj, res) {
         var promotion_id = promotionObj.promotion_id,
-            op_value = promotionObj.operation_value,
-            keyword, promotion_status_id, query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
+            operation_value = promotionObj.operation_value,
+            promotion_name = promotionObj.promotion_name,
+            keyword, promotion_status_id,
+            query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
         var emailList; //testing email.
-
-        if ((undefined !== promotion_id && promotion_id != '') && (undefined !== op_value && op_value != '')) {
-            if (op_value == 1) {
+        
+        if ((undefined !== promotion_id && promotion_id != '') && (undefined !== operation_value && operation_value != '') &&
+            (undefined !== promotion_name && promotion_name != '')
+        ) {
+            if (operation_value == 1) {
                 keyword = 'Activation';
                 promotion_status_id = 1;
-            } else if (op_value == 0) {
+            } else if (operation_value == 2) {
                 keyword = 'Deactivation';
                 promotion_status_id = 2;
             }
@@ -328,72 +332,40 @@ function Promotion() {
                             updatedPromotionId: promotion_id
                         };
 
-                        //Get email list.
-                        emailList = Customer.getEmailList(function (err, result) {
-                            //console.log(result.emails);
-                            var emailArray = result.emails;
-                            var messageObj = {
-                                subject: 'New promo',
-                                content: ['New promo', 'Promotion id = ' + promotion_id]
-                            };
+                        //Only email if promotion is activated
+                        if (operation_value == 1) {
+                            //Get email list.
+                            emailList = Customer.getEmailList(function (err, result) {
+                                //console.log(result.emails);
+                                var emailArray = result.emails;
+                                var messageObj = {
+                                    subject: 'New promo',
+                                    content: ['New promo', 'Product Name = ' + promotion_name]
+                                };
 
-                            //Send to each email in the customer emails array.
-                            emailArray.forEach(function (email) {
-                                messageObj.destination = email.customer_email;
-                                request.post(emailAPI, {
-                                    body: JSON.stringify(messageObj),
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                }, function (error, response, body) {
-                                    var emailOutput;
-                                    if (error) {
-                                        emailOutput = {
-                                            status: 0,
-                                            response: response,
-                                            error: error
-                                        };
-                                        console.log(err);
+                                //Send to each email in the customer emails array.
+                                emailArray.forEach(function (email) {
+                                    messageObj.destination = email.customer_email;
+                                    request.post(emailAPI, {
+                                        body: JSON.stringify(messageObj),
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                    }, function (error, response, body) {
+                                        if (error) {
+                                            console.log(err);
 
-                                    } else if (response && response.statusCode == 200) {
-                                        emailOutput = {
-                                            status: 1,
-                                            message: 'Message sent'
-                                        };
-                                        console.log('Email Status', response.statusCode);
-                                    }
-                                    // console.log(emailOutput);
+                                        } else if (response && response.statusCode == 200) {
+                                            console.log('Email successfully sent to: ', email.customer_email);
+                                        }
 
+                                    });
                                 });
                             });
-
-                            //messageObj.destination = emailArray[0].customer_email;
-
-                            //send emails.
-                            /*request.post(emailAPI, {
-                                body: JSON.stringify(messageObj),
-                                headers: {'Content-Type': 'application/json'},
-                            }, function (error, response, body) {
-                                var emailOutput;
-                                if (error) {
-                                    emailOutput = {
-                                        status: 0,
-                                        response: response,
-                                        error: error
-                                    };
-                                    console.log(err);
-                                    
-                                } else if (response && response.statusCode == 200) {
-                                    emailOutput = {
-                                        status: 1,
-                                        message: 'Message sent'
-                                    };
-                                    console.log('Email Status', response.statusCode);
-                                }
-                               // console.log(emailOutput);
-            
-                            });*/
-                        });
+                        }
+                        else{
+                            console.log(feedback);
+                        }
 
                         res.json(output);
                     }
