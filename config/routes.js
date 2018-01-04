@@ -42,7 +42,7 @@ function isUserLoggedIn(req, res, next) {
 /* ---------------------------------------- */
 
 var ShiftBookingAPIs = function (express) {
-	////get all shift bookings.
+	//get all shift bookings.
 	express.get('/shiftbookings', function (req, res) {
 		ShiftBooking.getAll(res);
 	});
@@ -59,16 +59,41 @@ var ShiftBookingAPIs = function (express) {
 		ShiftBooking.getPerEmployee(employeeId, res);
 	});
 
+	//get a specific shift bookings.
+	express.get('/shiftbookings/:id', function (req, res) {
+		var bookingId = req.params.id;
+		ShiftBooking.getOne(bookingId, res);
+	});
+
 	//book a shift.
 	express.post('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
-		ShiftBooking.create(bookingObj, res);
+		
+		if(bookingObj.employee_id == employeeID){//employee books a shift for him/herself ONLY!!
+			ShiftBooking.create(bookingObj, res);
+		}
+		else{
+			res.json({
+				status:0, message: 'You cannot book a shift on behalf of someone else.'
+			});
+			return;
+		}
 	});
 
 	//update a shift booking.
 	express.put('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
-		ShiftBooking.update(bookingObj, res);
+		
+		if(bookingObj.employee_id == employeeID){//employee books a shift for him/herself ONLY!!
+			ShiftBooking.update(bookingObj, res);
+		}
+		else{
+			res.json({
+				status:0, message: 'You cannot update a booking on behalf of someone else.'
+			});
+			return;
+		}
+		
 	});
 };
 
@@ -558,7 +583,7 @@ var configViews = function (express) {
 			});
 		} else {
 			res.render('401', {
-				employeeCode: employeeCode
+				employeeCode: employeeCode, roleMessage: roleMessage
 			});
 		}
 
@@ -583,6 +608,14 @@ var configViews = function (express) {
 		res.render('promotions', {
 			employeeCode: employeeCode
 		});
+	});
+
+	//Shift Bookings page.
+	express.get('/shiftbookings', isUserLoggedIn, function (req, res) {
+		res.render('shift_bookings', {
+			employeeCode: employeeCode
+		});
+
 	});
 };
 
