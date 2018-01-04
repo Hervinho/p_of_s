@@ -1,4 +1,4 @@
-var message, productId, productObj = {};
+var message, productObj = {};
 
 $(document).ready(function () {
     //Pick up changes in all select elements.
@@ -7,21 +7,20 @@ $(document).ready(function () {
     });
 });
 
-function UpdateProduct() {
-    productId = $("#lbSelectedProduct").html().toString();
+function AddProduct() {
     productObj = {
-        product_id: productId,
-        product_name: $("#txtViewProductName").val(),
-        product_type_id: parseInt($("#txtViewProductType").val()),
-        product_desc: $("#txtViewProductDescription").val(),
-        product_price: parseInt($("#txtViewProductPrice").val())
+        product_name: $("#txtAddProductName").val(),
+        product_type_id: parseInt($("#txtAddProductType").val()),
+        product_desc: $("#txtAddProductDescription").val(),
+        product_price: parseInt($("#txtAddProductPrice").val())
     };
 
     //Validations
-    if (validateEditProductForm(productObj) == true) {
-        //toastr.success('Oui');
+    if (validateAddProductForm(productObj) == true) {
+        //toastr.success('HEY');
+        //console.log(productObj);
         $.ajax({
-            type: 'PUT',
+            type: 'POST',
             crossDomain: true,
             data: JSON.stringify(productObj),
             contentType: 'application/json; charset=utf-8',
@@ -34,13 +33,11 @@ function UpdateProduct() {
                 } else {
                     toastr.success(data.message);
                     //clear form.
-                    $("#txtViewProductName").val("");
-                    $("#txtViewProductDescription").val("");
-                    $("#txtViewProductPrice").val("");
-                    $("#txtViewProductType").val("");
+                    $("#txtAddProductName").val("");
+                    $("#txtAddProductDescription").val("");
+                    $("#txtAddProductPrice").val("");
+                    $("#txtAddProductType").val(0);
 
-                    //Reset label for selected event.
-                    $("#lbSelectedProduct").text('Selected Product');
                 }
             },
             error: function (e) {
@@ -56,7 +53,7 @@ function UpdateProduct() {
 
 }
 
-function validateEditProductForm(productObj) {
+function validateAddProductForm(productObj) {
     var flag = true;
     var name_format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var no_numbers = /\d/;

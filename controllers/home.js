@@ -97,8 +97,9 @@ function LoadAllProductTypes() {
 
             $("#productFilterType").html(html);
 
-            //Also Populate product types in the dialogViewProduct
+            //Also Populate product types in the dialogViewProduct and dialogAddProduct
             $("#txtViewProductType").html(html);
+            $("#txtAddProductType").html(html);
         },
         error: function (e) {
             console.log(e);
