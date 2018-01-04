@@ -173,7 +173,7 @@ function ViewBookingInfo(id) {
         dataType: "json",
         cache: false,
         success: function (data) {
-            console.log(data);
+            //console.log(data);
             var booking = data.booking;
             var employeeId = booking.employee_id, shiftId = booking.shift_id,
                 timestamp = booking.booking_timestamp, bookingDate = booking.booking_date;
