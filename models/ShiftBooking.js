@@ -248,6 +248,16 @@ function ShiftBooking(){
                 return;
             }
 
+            //Only make bookings at least one day in advance.
+            if(booking_date == today){
+                feedback = "Only make bookings at least a day in advance";
+                res.json({
+                    status: 0,
+                    message: feedback
+                });
+                return;
+            }
+
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
