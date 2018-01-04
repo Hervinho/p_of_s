@@ -189,5 +189,4 @@ function handlePromotionsData(data) {
     }
     //console.log(html);
     $("#tblPromotions tbody").html(html);
-    //$('#tblPromotions').dataTable({processing:true});
 }

@@ -6,14 +6,12 @@ $(document).ready(function () {
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
         statusFilterTypeVal = $("#employeeFilterStatus").val();
-        shiftFilterTypeVal = $("#employeeFilterShift").val();
+        //shiftFilterTypeVal = $("#employeeFilterShift").val();
 
         if (roleFilterTypeVal != 0 && statusFilterTypeVal == 0 && shiftFilterTypeVal == 0) {
             FilterEmployeesByRole(roleFilterTypeVal);
         } else if(roleFilterTypeVal == 0 && statusFilterTypeVal != 0 && shiftFilterTypeVal == 0){
             FilterEmployeesByStatus(statusFilterTypeVal);
-        } else if(roleFilterTypeVal == 0 && statusFilterTypeVal == 0 && shiftFilterTypeVal != 0){
-            FilterEmployeesByShift(shiftFilterTypeVal);
         }
         else {
             LoadAllEmployees();
@@ -243,28 +241,6 @@ function FilterEmployeesByStatus(statusId) {
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         url: '/api/v1/employees/statuses/' + statusId,
-        dataType: "json",
-        cache: false,
-        beforeSend: function () {
-            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
-            $("#tblEmployees tbody").html(wait);
-        },
-        success: handleEmployeesData,
-        error: function (e) {
-            console.log(e);
-            message = "Something went wrong";
-            toastr.error(message);
-        }
-
-    });
-}
-
-function FilterEmployeesByShift(shiftId) {
-    $.ajax({
-        type: 'GET',
-        crossDomain: true,
-        contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/employees/shifts/' + shiftId,
         dataType: "json",
         cache: false,
         beforeSend: function () {

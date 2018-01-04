@@ -2,7 +2,7 @@ var message, employeeId, employeeObj = {};
 
 $(document).ready(function () {
     //Pick up changes in all select elements.
-    $(document).on('change', '.employee-shift-change, .employee-status-change, .employee-gender-change, .employee-role-change', function () {
+    $(document).on('change', '.employee-status-change, .employee-gender-change, .employee-role-change', function () {
 
     });
 });
@@ -17,7 +17,7 @@ function UpdateEmployee(){
         employee_email: $("#txtViewEmployeeEmail").val(),
         employee_gender_id: parseInt($("#txtViewEmployeeGender").val()),
         employee_role_id: parseInt($("#txtViewEmployeeRole").val()),
-        employee_shift_id: parseInt($("#txtViewEmployeeShift").val()),
+        //employee_shift_id: parseInt($("#txtViewEmployeeShift").val()),
         employee_status_id: parseInt($("#txtViewEmployeeStatus").val())
     };
 
@@ -44,7 +44,7 @@ function UpdateEmployee(){
                     $("#txtViewEmployeeEmail").val("");
                     $("#txtViewEmployeeGender").val(0);
                     $("#txtViewEmployeeRole").val(0);
-                    $("#txtViewEmployeeShift").val(0);
+                    //$("#txtViewEmployeeShift").val(0);
                     $("#txtViewEmployeeStatus").val(0);
 
                     //Reset label for selected event.
@@ -107,10 +107,10 @@ function validateEditEmployeeForm(employee) {
         flag = false;
         message = 'No status selected. Please select a status.';
     }
-    if(employee.employee_role_id !== 1 && employee.employee_shift_id === 0){
+    /*if(employee.employee_role_id !== 1 && employee.employee_shift_id === 0){
         flag = false;
         message = 'No shift selected. Please select a shift.';
-    }
+    }*/
 
     return flag;
 }
