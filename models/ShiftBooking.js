@@ -1,6 +1,5 @@
 var connection = require('../config/connection');
 var moment = require('moment');
-var Shift = require('./Shift');
 
 function ShiftBooking(){
     //get all shift bookings.

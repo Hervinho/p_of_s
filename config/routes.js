@@ -231,7 +231,6 @@ var PromotionAPIs = function(express){
 				message: roleMessage
 			});
 		}
-		//Promotion.updateStatus(promotionObj, res);//just for testing.
 	});
 };
 

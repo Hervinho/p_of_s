@@ -1,0 +1,68 @@
+<!-- The Modal  dialogAddPromotion -->
+<div id="dialogAddPromotion" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">Add Promotion</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                        
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Promotion Name..." type="text" id="txtAddPromoName">
+                                    <label class="mdl-textfield__label" for="txtAddPromoName">Promotion Name</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="any-date mdl-textfield__input" placeholder="Valid From Date..." type="text" id="txtAddPromoValidFrom">
+                                    <label class="mdl-textfield__label" for="txtAddPromoValidFrom">Valid From Date</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="any-date mdl-textfield__input" placeholder="Valid Until Date..." type="text" id="txtAddPromoValidUntil">
+                                    <label class="mdl-textfield__label" for="txtAddPromoValidUntil">Valid Until Date</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Promotion Price..." type="text" id="txtAddPromoPrice">
+                                    <label class="mdl-textfield__label" for="txtAddPromoPrice">Promotion Price</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <textarea class="mdl-textfield__input" placeholder="Promotion Description..." type="text" rows="3" id="txtAddPromoDescription"></textarea>
+                                    <label class="mdl-textfield__label" for="txtAddPromoDescription">Promo Description</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return AddPromotion();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/add/add_promotion.js"></script>
