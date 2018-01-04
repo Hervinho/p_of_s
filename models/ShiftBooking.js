@@ -1,5 +1,5 @@
 var connection = require('../config/connection');
-var moment = require('moment'),
+var moment = require('moment');
 
 function ShiftBooking(){
     //get all shift bookings.
@@ -42,7 +42,7 @@ function ShiftBooking(){
     this.getPerShift = function(shiftId, res){
         var output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
-            "WHERE shift_id = ?";
+            "WHERE shift_booking.shift_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -79,7 +79,7 @@ function ShiftBooking(){
     this.getPerEmployee = function(employeeId, res){
         var output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
-            "WHERE employee_id = ?";
+            "WHERE shift_booking.employee_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {

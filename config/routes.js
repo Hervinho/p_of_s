@@ -15,9 +15,10 @@ var Product = require('../models/Product');
 var Supplier = require('../models/Supplier');
 var EmployeeStatus = require('../models/EmployeeStatus');
 var Promotion = require('../models/Promotion');
+var ShiftBooking = require('../models/ShiftBooking');
 
 //global variables.
-var employeeCode, roleID, roleMessage = "You do not have privileges to perform this operation";
+var employeeID, employeeCode, roleID, roleMessage = "You do not have privileges to perform this operation";
 
 //check if user is logged in before displaying the pages.
 //It will do so by checking if the session cookie exists
@@ -25,6 +26,9 @@ function isUserLoggedIn(req, res, next) {
 	if (!req.PhemePointOfSaleProjectSession.employee) {
 		res.redirect('/');
 	} else {
+		//Get employee ID from session cookie
+		employeeID = req.PhemePointOfSaleProjectSession.employee.employee_id;
+
 		//Get role ID from session cookie
 		roleID = req.PhemePointOfSaleProjectSession.employee.employee_role_id;
 
@@ -36,6 +40,37 @@ function isUserLoggedIn(req, res, next) {
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
+
+var ShiftBookingAPIs = function (express) {
+	////get all shift bookings.
+	express.get('/shiftbookings', function (req, res) {
+		ShiftBooking.getAll(res);
+	});
+
+	//get all bookings of specific shift.
+	express.get('/shiftbookings/shifts/:id', function (req, res) {
+		var shiftId = req.params.id;
+		ShiftBooking.getPerShift(shiftId, res);
+	});
+
+	//get all bookings of a specific employee.
+	express.get('/shiftbookings/employees/:id', function (req, res) {
+		var employeeId = req.params.id;
+		ShiftBooking.getPerEmployee(employeeId, res);
+	});
+
+	//book a shift.
+	express.post('/shiftbookings', function (req, res) {
+		var bookingObj = req.body;
+		ShiftBooking.create(bookingObj, res);
+	});
+
+	//update a shift booking.
+	express.put('/shiftbookings', function (req, res) {
+		var bookingObj = req.body;
+		ShiftBooking.update(bookingObj, res);
+	});
+};
 
 var GenderAPIs = function (express) {
 	//get all genders.
@@ -579,6 +614,7 @@ module.exports = {
 		EmployeeStatusAPIs(apiRoutes);
 		CustomerOrderDetailsAPIs(apiRoutes);
 		PromotionAPIs(apiRoutes);
+		ShiftBookingAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

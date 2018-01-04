@@ -11,13 +11,12 @@ function UpdateEmployee(){
     employeeId = $("#lbSelectedEmployee").html().toString();
     employeeObj = {
         employee_id: employeeId,
-        employee_name: $("#txtViewEmployeeName").val(),
+        /*employee_name: $("#txtViewEmployeeName").val(),
         employee_code: $("#txtViewEmployeeCode").val(),
         employee_phone: $("#txtViewEmployeePhone").val(),
         employee_email: $("#txtViewEmployeeEmail").val(),
-        employee_gender_id: parseInt($("#txtViewEmployeeGender").val()),
+        employee_gender_id: parseInt($("#txtViewEmployeeGender").val()),*/
         employee_role_id: parseInt($("#txtViewEmployeeRole").val()),
-        //employee_shift_id: parseInt($("#txtViewEmployeeShift").val()),
         employee_status_id: parseInt($("#txtViewEmployeeStatus").val())
     };
 
@@ -44,7 +43,6 @@ function UpdateEmployee(){
                     $("#txtViewEmployeeEmail").val("");
                     $("#txtViewEmployeeGender").val(0);
                     $("#txtViewEmployeeRole").val(0);
-                    //$("#txtViewEmployeeShift").val(0);
                     $("#txtViewEmployeeStatus").val(0);
 
                     //Reset label for selected event.
@@ -67,12 +65,10 @@ function validateEditEmployeeForm(employee) {
     var flag = true;
     var name_format = /[!@#$%^&*()_+\-=\[\]{};.:"\\|,<>\/?]/;
     var no_numbers = /\d/;
-    var isMobilePhone = validator.isMobilePhone(employee.employee_phone, 'en-ZA');
-    var isEmail = validator.isEmail(employee.employee_email);
-    //console.log('Name format: ', name_format.test(employee.employee_name));
-    //console.log('No numbers: ', no_numbers.test(employee.employee_name));
+    //var isMobilePhone = validator.isMobilePhone(employee.employee_phone, 'en-ZA');
+    //var isEmail = validator.isEmail(employee.employee_email);
 
-    if(name_format.test(employee.employee_name) === true || no_numbers.test(employee.employee_name) === true) {
+    /*if(name_format.test(employee.employee_name) === true || no_numbers.test(employee.employee_name) === true) {
         flag = false;
         message = 'Employee Name contains illegal characters.';
     }
@@ -98,7 +94,7 @@ function validateEditEmployeeForm(employee) {
     if(employee.employee_gender_id === 0){
         flag = false;
         message = 'No gender selected. Please select a gender.';
-    }
+    }*/
     if(employee.employee_role_id === 0){
         flag = false;
         message = 'No role selected. Please select a role.';
