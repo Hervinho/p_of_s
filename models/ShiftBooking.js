@@ -1,12 +1,13 @@
 var connection = require('../config/connection');
 var moment = require('moment');
+var Shift = require('./Shift');
 
 function ShiftBooking(){
     //get all shift bookings.
     this.getAll = function(res){
         var output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id";
-
+        
         connection.acquire(function (err, con) {
             if (err) {
                 res.json({
@@ -154,6 +155,7 @@ function ShiftBooking(){
         var output = {}, feedback, query = "INSERT INTO shift_booking VALUES(?,?,?,?,?)";
         var employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
             timestamp = moment().format("YYYY-MM-DD HH:mm:ss"), today = moment().format('YYYY-MM-DD');
+        var shiftObj, shift_start_time, shift_end_time;
 
         if((undefined !== employee_id && employee_id != '') && (undefined !== shift_id && shift_id != '') && 
             (undefined !== booking_date && booking_date != '')
@@ -163,6 +165,16 @@ function ShiftBooking(){
 
             if (booking_date < today) {
                 feedback = "Date must not be prior to current date";
+                res.json({
+                    status: 0,
+                    message: feedback
+                });
+                return;
+            }
+            
+            //Only make bookings at least one day in advance.
+            if(booking_date == today){
+                feedback = "Only make bookings at least a day in advance";
                 res.json({
                     status: 0,
                     message: feedback

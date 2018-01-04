@@ -3,43 +3,43 @@ var moment = require('moment');
 
 function Customer() {
     //get customer email list.
-    this.getEmailList = function(callback){
+    this.getEmailList = function (callback) {
         var output = {},
-        query = "SELECT customer_email FROM customer";
+            query = "SELECT customer_email FROM customer";
 
-    connection.acquire(function (err, con) {
-        if (err) {
-            output = {
-                status: 100,
-                message: "Error in connection database"
-            };
-            return;
-        }
-
-        con.query(query, function (err, result) {
-            con.release();
+        connection.acquire(function (err, con) {
             if (err) {
-                callback(null, err);
-            } else {
-                if (result.length > 0) {
-                    output = {
-                        status: 1,
-                        emails: result
-                    };
-                    callback(null, output);
-                } else {
-                    output = {
-                        status: 0,
-                        message: 'No emails found'
-                    };
-                    callback(null, output);
-                }
-                //console.log(output);
+                output = {
+                    status: 100,
+                    message: "Error in connection database"
+                };
+                return;
             }
+
+            con.query(query, function (err, result) {
+                con.release();
+                if (err) {
+                    callback(null, err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            emails: result
+                        };
+                        callback(null, output);
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No emails found'
+                        };
+                        callback(null, output);
+                    }
+                    //console.log(output);
+                }
+            });
         });
-    });
     };
-    
+
     //get all customers.
     this.getAll = function (res) {
         var output = {},
@@ -77,7 +77,7 @@ function Customer() {
     };
 
     //get all customers of a specific gender.
-    this.getPerGender = function(genderId, res){
+    this.getPerGender = function (genderId, res) {
         var output = {},
             query = "SELECT * FROM customer WHERE customer_gender_id = ?";
 
@@ -145,7 +145,7 @@ function Customer() {
 
                         res.json(output);
                     }
-                    
+
                 }
             });
         });
