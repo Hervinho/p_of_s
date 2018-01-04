@@ -1,16 +1,15 @@
 $(document).ready(function () {
-    var message, employeeID, roleFilterTypeVal, statusFilterTypeVal, shiftFilterTypeVal;
+    var message, employeeID, roleFilterTypeVal, statusFilterTypeVal;
 
     LoadAllEmployees();
 
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
         statusFilterTypeVal = $("#employeeFilterStatus").val();
-        //shiftFilterTypeVal = $("#employeeFilterShift").val();
 
-        if (roleFilterTypeVal != 0 && statusFilterTypeVal == 0 && shiftFilterTypeVal == 0) {
+        if (roleFilterTypeVal != 0 && statusFilterTypeVal == 0) {
             FilterEmployeesByRole(roleFilterTypeVal);
-        } else if(roleFilterTypeVal == 0 && statusFilterTypeVal != 0 && shiftFilterTypeVal == 0){
+        } else if(roleFilterTypeVal == 0 && statusFilterTypeVal != 0){
             FilterEmployeesByStatus(statusFilterTypeVal);
         }
         else {

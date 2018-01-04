@@ -395,10 +395,16 @@ var EmployeeAPIs = function (express) {
 		Employee.login(req, res);
 	});
 
-	//update order employee
+	//update employee by admin. Can only change role and/or status.
 	express.put('/employees', function (req, res) {
 		var employeeObj = req.body;
 		Employee.update(employeeObj, res);
+	});
+
+	//update employee info/profile. Done by employee him/herself.
+	express.put('/employees/profile', function (req, res) {
+		var employeeObj = req.body;
+		Employee.updateProfile(employeeObj, res);
 	});
 };
 

@@ -346,8 +346,63 @@ function Employee() {
         }
     };
 
-    //update employee.
+    //update employee by admin. Can only change role and/or status.
     this.update = function (employeeObj, res) {
+        var output = {},
+            feedback, query = "UPDATE employee SET employee_role_id=?, employee_status_id=? " +
+            "WHERE employee_id=?";
+        var employee_role_id = employeeObj.employee_role_id,
+            employee_id = employeeObj.employee_id,
+            employee_status_id = employeeObj.employee_status_id;
+
+        if ((undefined !== employee_id && employee_id != '') && (undefined !== employee_status_id && employee_status_id != '') &&
+            (undefined !== employee_role_id && employee_role_id != '')
+        ) {
+            
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+
+                con.query(query, [employee_role_id, employee_status_id, employee_id], function (err, result) {
+                    con.release();
+                    if (err) {
+                        //console.log(err);
+                        output = {
+                            status: 0,
+                            message: 'Error updating employee',
+                            error: err
+                        };
+                        res.json(output);
+
+                    } else {
+                        //console.log(result);
+                        feedback = 'Employee successfully updated';
+                        output = {
+                            status: 1,
+                            message: feedback,
+                            updatedEmployeeId: employee_id
+                        };
+                        res.json(output);
+                    }
+                });
+            });
+        } else {
+            feedback = 'Invalid Employee data submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+        }
+    };
+
+    //update employee info/profile. Done by employee him/herself.
+    this.updateProfile = function (employeeObj, res) {
         var output = {},
             feedback, query = "UPDATE employee SET employee_name=?, employee_gender_id=?, employee_role_id=?, employee_code=?, " +
             "employee_phone=?, employee_email=?, employee_status_id=? WHERE employee_id=?";
@@ -395,7 +450,7 @@ function Employee() {
 
                     } else {
                         //console.log(result);
-                        feedback = 'Employee successfully updated';
+                        feedback = 'Employee profile successfully updated';
                         output = {
                             status: 1,
                             message: feedback,
@@ -413,7 +468,7 @@ function Employee() {
             };
             res.json(output);
         }
-    }
+    };
 }
 
 module.exports = new Employee();
