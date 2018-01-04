@@ -68,16 +68,9 @@ var ShiftBookingAPIs = function (express) {
 	//book a shift.
 	express.post('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
+		bookingObj.employee_id = employeeID;
+		ShiftBooking.create(bookingObj, res);
 		
-		if(bookingObj.employee_id == employeeID){//employee books a shift for him/herself ONLY!!
-			ShiftBooking.create(bookingObj, res);
-		}
-		else{
-			res.json({
-				status:0, message: 'You cannot book a shift on behalf of someone else.'
-			});
-			return;
-		}
 	});
 
 	//update a shift booking.

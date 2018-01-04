@@ -107,8 +107,9 @@ function LoadAllShifts(){
 
             $("#bookingFilterShift").html(html);
 
-            //Also Populate dialogViewBooking
+            //Also Populate dialogViewBooking and dialogAddBooking.
             $("#txtViewBookingShift").html(html);
+            $("#txtAddBookingShift").html(html);
         },
         error: function (e) {
             console.log(e);

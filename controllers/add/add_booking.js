@@ -1,4 +1,4 @@
-var message, bookingId, bookingObj = {};
+var message, bookingObj = {};
 
 $(document).ready(function () {
     //Pick up changes in all select elements.
@@ -7,20 +7,17 @@ $(document).ready(function () {
     });
 });
 
-function UpdateBooking(){
-    bookingId = $("#lbSelectedShiftBooking").html().toString();
+function AddBooking(){
     bookingObj = {
-        shift_booking_id: bookingId,
-        employee_id: parseInt($("#txtViewBookingEmployee").val()),
-        shift_id: parseInt($("#txtViewBookingShift").val()),
-        booking_date: $("#txtViewBookingDate").val()
+        shift_id: parseInt($("#txtAddBookingShift").val()),
+        booking_date: $("#txtAddBookingDate").val()
     };
 
     //Validations
-    if (validateEditBookingForm(bookingObj) == true) {
-        //toastr.success('Oui');
+    if (validateAddBookingForm(bookingObj) == true) {
+        //toastr.info("Hey");
         $.ajax({
-            type: 'PUT',
+            type: 'POST',
             crossDomain: true,
             data: JSON.stringify(bookingObj),
             contentType: 'application/json; charset=utf-8',
@@ -33,13 +30,8 @@ function UpdateBooking(){
                 } else {
                     toastr.success(data.message);
                     //clear form.
-                    $("#txtViewBookingEmployee").val(0);
-                    $("#txtViewBookingShift").val(0);
-                    $("#txtViewBookingTimestamp").val("");
-                    $("#txtViewBookingDate").val("");
-
-                    //Reset label for selected event.
-                    $("#lbSelectedShiftBooking").text('Selected Shift Booking');
+                    $("#txtAddBookingShift").val(0);
+                    $("#txtAddBookingDate").val("");
                 }
             },
             error: function (e) {
@@ -55,7 +47,7 @@ function UpdateBooking(){
     }
 }
 
-function validateEditBookingForm(bookingObj){
+function validateAddBookingForm(bookingObj){
     var flag = true;
     var bookingdate = bookingObj.booking_date;
     var isValidDate = moment(bookingdate.toString(), "YYYY-MM-DD", true).isValid();
