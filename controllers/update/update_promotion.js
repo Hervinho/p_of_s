@@ -85,6 +85,10 @@ function validateEditPromotionForm(promotionObj) {
         flag = false;
         message = 'Promotion price cannot be negative.';
     }
+    if($.isNumeric(promotionObj.promotion_price) && promotionObj.promotion_price == 0){
+        flag = false;
+        message = 'Promotion price cannot be zero.';
+    }
     if(!isValid_from_date || !isValid_to_date){
         flag = false;
         message = 'Invalid dates provided.';

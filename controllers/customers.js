@@ -66,6 +66,7 @@ function LoadAllGenders() {
             }
 
             $("#customerFilterGender").html(html);
+            $("#txtAddCustomerGender").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -109,6 +110,7 @@ function handleCustomersData(data) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             customers[key].customer_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
+            customers[key].customer_email + '</td><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_date_added + '</td>' +
             '</tr>';
         }
@@ -117,5 +119,4 @@ function handleCustomersData(data) {
     }
     //console.log(html);
     $("#tblCustomers tbody").html(html);
-    //$('#tblCustomers').dataTable({processing:true});
 }

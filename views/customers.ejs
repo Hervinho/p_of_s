@@ -7,7 +7,7 @@
                 <div class="mdl-grid back-end-content">
 
                   <div class="extra-button mdl-cell mdl-cell--12-col">
-                      <a href="#" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored no-shadow modal-trigger">
+                      <a data-target="#dialogAddCustomer" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored no-shadow modal-trigger">
                           <i class="material-icons">add</i>
                       </a>
                   </div>
@@ -35,8 +35,9 @@
                               <!-- class="mdl-data-table mdl-js-data-table" -->
                               <thead>
                                   <tr>
-                                      <th class="mdl-data-table__cell--non-numeric">Name</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Customer Name</th>
                                       <th class="mdl-data-table__cell--non-numeric">Phone Number</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Customer Email</th>
                                       <th class="mdl-data-table__cell--non-numeric">Date Added</th>
                                 </tr>
                               </thead>
@@ -51,6 +52,8 @@
                       </div>
                   </div>
 
+                    <!-- Dialog -->
+                    <% include partials/add/dialogAddCustomer.ejs %>
 
                 </div>
             </div>

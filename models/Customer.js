@@ -154,14 +154,16 @@ function Customer() {
     //create customer.
     this.create = function (customerObj, res) {
         var output = {},
-            feedback, query = "INSERT INTO customer VALUES(?,?,?,?,?)",
+            feedback, query = "INSERT INTO customer VALUES(?,?,?,?,?,?)",
             date_added = moment().format("YYYY-MM-DD HH:mm:ss");
         var customer_name = customerObj.customer_name,
             customer_gender_id = customerObj.customer_gender_id,
+            customer_email = customerObj.customer_email,
             customer_phone = customerObj.customer_phone;
 
         if ((undefined !== customer_name && customer_name != '') && (undefined !== customer_gender_id && customer_gender_id != '') &&
-            (undefined !== customer_phone && customer_phone != '')) {
+            (undefined !== customer_phone && customer_phone != '') && (undefined !== customer_email && customer_email != '')
+        ) {
 
             connection.acquire(function (err, con) {
                 if (err) {
@@ -172,7 +174,7 @@ function Customer() {
                     return;
                 }
 
-                con.query(query, [null, customer_name, customer_gender_id, date_added, customer_phone], function (err, result) {
+                con.query(query, [null, customer_name, customer_gender_id, date_added, customer_phone, customer_email], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error adding new customer';
