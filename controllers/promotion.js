@@ -1,14 +1,19 @@
-var message, promotionID, promotionFilterStatusVal;
+var message, promotionID, promotionFilterStatusVal, promotionFilterTypeVal;
 
 $(document).ready(function () {
    LoadAllPromotions();
 
     $(document).on('change', '.form-control', function () {
         promotionFilterStatusVal = $("#promotionFilterStatus").val();
+        promotionFilterTypeVal = $("#promotionFilterType").val();
 
-        if (promotionFilterStatusVal != 0) {
+        if (promotionFilterStatusVal != 0 && promotionFilterTypeVal == 0) {
             FilterPromotionsByStatus(promotionFilterStatusVal);
-        } else {
+        } 
+        else if(promotionFilterStatusVal == 0 && promotionFilterTypeVal != 0){
+            FilterPromotionsByType(promotionFilterTypeVal);
+        }
+        else {
             LoadAllPromotions();
         }
     });
@@ -16,9 +21,11 @@ $(document).ready(function () {
 
 function LoadAllPromotions(){
     LoadAllPromotionStatuses();
+    LoadAllProductTypes();
 
     //Reset all filters.
     $("#promotionFilterStatus").val(0);
+    $("#promotionFilterType").val(0);
 
     $.ajax({
         type: 'GET',
@@ -46,6 +53,27 @@ function FilterPromotionsByStatus(statusId){
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         url: '/api/v1/promotions/statuses/' + statusId,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblPromotions tbody").html(wait);
+        },
+        success: handlePromotionsData,
+        error: function (e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterPromotionsByType(typeId){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/promotions/types/' + typeId,
         dataType: "json",
         cache: false,
         beforeSend: function () {
@@ -96,6 +124,42 @@ function LoadAllPromotionStatuses(){
     });
 }
 
+function LoadAllProductTypes() {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/producttypes',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.product_types.length > 0) {
+                var product_types = data.product_types;
+                for (var key = 0, size = product_types.length; key < size; key++) {
+                    html += '<option value =' + product_types[key].product_type_id + ' >' +
+                        product_types[key].product_type_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No product types found</option>';
+            }
+
+            $("#promotionFilterType").html(html);
+
+            //Also Populate product types in the dialogViewPromotion and dialogAddPromotion
+            $("#txtViewPromotionType").html(html);
+            $("#txtAddPromotionType").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 function ViewPromotionInfo(id){
     //promotionID = id;
     $("#lbSelectedPromotion").text(id);
@@ -116,9 +180,11 @@ function ViewPromotionInfo(id){
             var promotionValidFrom = promotion.valid_from_date;
             var promotionValidUntil = promotion.valid_to_date;
             var promotionStatusId = promotion.promotion_status_id;
+            var promotionTypeId = promotion.product_type_id;
 
             $("#txtViewPromotionName").val(promotionName);
             $("#txtViewPromotionStatus").val(promotionStatusId);
+            $("#txtViewPromotionType").val(promotionTypeId);
             $("#txtViewPromotionValidFrom").val(promotionValidFrom);
             $("#txtViewPromotionValidUntil").val(promotionValidUntil);
             $("#txtViewPromotionDescription").val(promotionDesc);

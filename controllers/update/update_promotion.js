@@ -1,7 +1,10 @@
 var message, promotionId, promotionObj = {};
 
 $(document).ready(function () {
-    
+    //Pick up changes in all select elements.
+    $(document).on('change', '.product-type-change', function () {
+
+    });
 });
 
 function UpdatePromotion() {
@@ -12,12 +15,13 @@ function UpdatePromotion() {
         valid_from_date: $("#txtViewPromotionValidFrom").val(),
         valid_to_date: $("#txtViewPromotionValidUntil").val(),
         promotion_desc: $("#txtViewPromotionDescription").val(),
-        promotion_price: parseInt($("#txtViewPromotionPrice").val())
+        promotion_price: parseInt($("#txtViewPromotionPrice").val()),
+        product_type_id: parseInt($("#txtViewPromotionType").val())
     };
 
     //Validations
     if (validateEditPromotionForm(promotionObj) == true) {
-        //toastr.success('Oui');
+        //toastr.info("Yay");
         $.ajax({
             type: 'PUT',
             crossDomain: true,
@@ -33,6 +37,7 @@ function UpdatePromotion() {
                     toastr.success(data.message);
                     //clear form.
                     $("#txtViewPromotionName").val("");
+                    $("#txtViewPromotionType").val(0);
                     $("#txtViewPromotionDescription").val("");
                     $("#txtViewPromotionPrice").val("");
                     $("#txtViewPromotionValidUntil").val("");
@@ -92,6 +97,11 @@ function validateEditPromotionForm(promotionObj) {
     if(!isValid_from_date || !isValid_to_date){
         flag = false;
         message = 'Invalid dates provided.';
+    }
+
+    if (promotionObj.product_type_id === 0 || promotionObj.product_type_id === null || promotionObj.product_type_id === undefined) {
+        flag = false;
+        message = 'No Product Type selected. Please select Product Type';
     }
 
     return flag;

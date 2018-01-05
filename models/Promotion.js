@@ -83,6 +83,41 @@ function Promotion() {
         });
     };
 
+    //get all promotions of a certain type.
+    this.getPerType = function(typeId, res){
+        var output = {}, query = "SELECT * FROM promotion WHERE product_type_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(query, [typeId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            promotions: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such promotions of such type found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get a specific promotion.
     this.getOne = function (id, res) {
         var output = {},
@@ -122,18 +157,19 @@ function Promotion() {
     //create promotion.
     this.create = function (promotionObj, res) {
         var output = {},
-            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?)",
+            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?)",
             today = moment().format('YYYY-MM-DD');
         var promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
             promotion_status_id = 2,
+            product_type_id = promotionObj.product_type_id,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
             promotion_price = promotionObj.promotion_price;
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
-            (undefined !== promotion_price && promotion_price != '')
+            (undefined !== promotion_price && promotion_price != '') && (undefined !== product_type_id && product_type_id != '')
         ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
@@ -164,7 +200,7 @@ function Promotion() {
                     return;
                 }
 
-                con.query(query, [null, promotion_name, promotion_desc, promotion_status_id, valid_from_date,
+                con.query(query, [null, promotion_name, promotion_desc, product_type_id, promotion_status_id, valid_from_date,
                     valid_to_date, promotion_price
                 ], function (err, result) {
                     con.release();
@@ -205,10 +241,11 @@ function Promotion() {
     this.update = function (promotionObj, res) {
         var output = {},
             today = moment().format('YYYY-MM-DD'),
-            query = "UPDATE promotion SET promotion_name=?, " +
+            query = "UPDATE promotion SET promotion_name=?, product_type_id=?, " +
             "promotion_desc=?, valid_from_date=?, valid_to_date=?, promotion_price=? WHERE promotion_id=?";
         var promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
+            product_type_id = promotionObj.product_type_id,
             promotion_id = promotionObj.promotion_id,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
@@ -216,7 +253,8 @@ function Promotion() {
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
-            (undefined !== promotion_price && promotion_price != '') && (undefined !== promotion_id && promotion_id != '')
+            (undefined !== promotion_price && promotion_price != '') && (undefined !== promotion_id && promotion_id != '') &&
+            (undefined !== product_type_id && product_type_id != '')
         ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
@@ -247,7 +285,7 @@ function Promotion() {
                     return;
                 }
 
-                con.query(query, [promotion_name, promotion_desc, valid_from_date, valid_to_date, promotion_price,
+                con.query(query, [promotion_name, product_type_id, promotion_desc, valid_from_date, valid_to_date, promotion_price,
                     promotion_id
                 ], function (err, result) {
                     con.release();
@@ -265,7 +303,7 @@ function Promotion() {
                         output = {
                             status: 1,
                             message: feedback,
-                            updatedPromotionId: result.insertId
+                            updatedPromotionId: promotion_id
                         };
 
                         res.json(output);

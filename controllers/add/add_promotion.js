@@ -10,7 +10,8 @@ function AddPromotion(){
         promotion_desc: $("#txtAddPromoDescription").val(),
         valid_from_date: $("#txtAddPromoValidFrom").val(),
         valid_to_date: $("#txtAddPromoValidUntil").val(),
-        promotion_price: parseInt($("#txtAddPromoPrice").val())
+        promotion_price: parseInt($("#txtAddPromoPrice").val()),
+        product_type_id: parseInt($("#txtAddPromotionType").val())
     };
 
     if(validateAddPromotionForm(promotionObj) == true){
@@ -31,6 +32,7 @@ function AddPromotion(){
                     toastr.success(data.message);
                     //clear form.
                     $("#txtAddPromoName").val();
+                    $("#txtAddPromotionType").val(0);
                     $("#txtAddPromoDescription").val("");
                     $("#txtAddPromoValidFrom").val("");
                     $("#txtAddPromoValidUntil").val("");
@@ -86,6 +88,11 @@ function validateAddPromotionForm(promotionObj){
         if(!isValid_from_date || !isValid_to_date){
             flag = false;
             message = 'Invalid dates provided.';
+        }
+
+        if (promotionObj.product_type_id === 0 || promotionObj.product_type_id === null || promotionObj.product_type_id === undefined) {
+            flag = false;
+            message = 'No Product Type selected. Please select Product Type';
         }
     
         return flag;

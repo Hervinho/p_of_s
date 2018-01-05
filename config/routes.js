@@ -187,6 +187,12 @@ var PromotionAPIs = function(express){
 		Promotion.getPerStatus(id, res);
 	});
 
+	//get all promotions of a certain type.
+	express.get('/promotions/types/:id', function (req, res) {
+		var id = req.params.id;
+		Promotion.getPerType(id, res);
+	});
+
 	//get a specific promotion.
 	express.get('/promotions/:id', function (req, res) {
 		var id = req.params.id;
@@ -219,7 +225,7 @@ var PromotionAPIs = function(express){
 				message: roleMessage
 			});
 		}
-		
+		//Promotion.update(promotionObj, res);
 	});
 
 	//Activate/deactivate promotion. Only by Admin
