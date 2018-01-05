@@ -7,7 +7,7 @@ $(document).ready(function () {
 function UpdateProfile() {
     profileObj = {
         employee_phone: $("#txtViewEmployeePhone").val(),
-        employee_email: $("#txtViewEmployeeEmail").val(),
+        employee_email: $("#txtViewEmployeeEmail").val()
     };
 
     //Validations

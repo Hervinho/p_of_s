@@ -462,6 +462,13 @@ var EmployeeAPIs = function (express) {
 		employeeObj.employee_id = employeeID;
 		Employee.updateProfile(employeeObj, res);
 	});
+
+	//Reset password. Done by employee him/herself.
+	express.put('/employees/password/reset', function (req, res) {
+		var passwordObj = req.body;
+		//passwordObj.employee_id = employeeID;
+		Employee.resetPassword(passwordObj, res);
+	});
 };
 
 var CustomerAPIs = function (express) {

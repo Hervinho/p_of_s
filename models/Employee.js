@@ -460,6 +460,111 @@ function Employee() {
             res.json(output);
         }
     };
+
+    //Reset Password.
+    this.resetPassword = function (passwordObj, res) {
+        var output = {},
+            feedback, queryFind = "SELECT employee_password FROM employee WHERE employee_id=?",
+            queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id=?";
+        var employee_id = passwordObj.employee_id,
+            new_password = String(passwordObj.new_password),
+            current_password = String(passwordObj.current_password);
+
+        if ((undefined !== employee_id && employee_id != '') && (undefined !== new_password && new_password != '') &&
+            (undefined !== current_password && current_password != '')
+        ) {
+            //Encrypt passwords.
+            new_password = SHA256(new_password).toString();
+            current_password = SHA256(current_password).toString();
+
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+
+                //First check that current password provided is legit.
+                con.query(queryFind, [employee_id], function (err, result) {
+                    con.release();
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        if (result.length > 0) {
+                            var fromDB = result[0].employee_password;
+                            
+                            if(current_password == fromDB){
+                                console.log('Current password match');
+                                
+                                //update new password here.
+                                connection.acquire(function (err, con) {
+                                    if (err) {
+                                        res.json({
+                                            status: 100,
+                                            message: "Error in connection database"
+                                        });
+                                        return;
+                                    }
+
+                                    con.query(queryUpdate, [new_password, employee_id], function (err, result) {
+                                        con.release();
+                                        if (err) {
+                                            output = {
+                                                status: 0,
+                                                message: 'Error resetting password',
+                                                error: err
+                                            };
+    
+                                            res.json(output);
+                                            return;
+                                        } else {
+                                            output = {
+                                                status: 1,
+                                                message: 'Password successfully reset'
+                                            };
+                                            
+                                            res.json(output);
+                                            return;
+                                        }
+                                    });
+                                });
+                                
+                            }
+                            else{
+                                output = {
+                                    status: 0,
+                                    message: 'Current password does not match'
+                                };
+                                
+                                res.json(output);
+                                return;
+                            }
+                            
+                        } else {
+                            output = {
+                                status: 0,
+                                message: 'No password was found for such employee.'
+                            };
+
+                            res.json(output);
+                            return;
+                        }
+
+                    }
+                });
+            });
+        } else {
+            feedback = 'Invalid Employee data submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+            return;
+        }
+    };
 }
 
 module.exports = new Employee();
