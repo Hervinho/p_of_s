@@ -189,7 +189,8 @@ function Employee() {
         var employeeObj = req.body;
         //console.log(employeeObj);
         var output = {},
-            feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
+            feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ? "+ 
+            "AND employee_status_id = 1";
         var employee_code = employeeObj.employee_code,
             employee_password = String(employeeObj.employee_password);
 
@@ -569,7 +570,7 @@ function Employee() {
     //Forgot Password.
     this.ForgotPassword = function (employeeObj, res) {
         var output = {},
-            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=?",
+            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id=?",
             queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=?";
         var employee_id_number = employeeObj.employee_id_number,
             new_password = String(employeeObj.new_password),
@@ -634,7 +635,7 @@ function Employee() {
                         } else {
                             output = {
                                 status: 0,
-                                message: 'No employee with such ID Number and Employee Code was found.'
+                                message: 'No active employee with such ID Number and Employee Code was found.'
                             };
 
                             res.json(output);
