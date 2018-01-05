@@ -404,14 +404,13 @@ function Employee() {
     //update employee info/profile. Done by employee him/herself.
     this.updateProfile = function (employeeObj, res) {
         var output = {}, feedback, 
-            query = "UPDATE employee SET employee_name=?, employee_phone=?, employee_email=? WHERE employee_id=?";
-        var employee_name = employeeObj.employee_name,
-            employee_id = employeeObj.employee_id,
+            query = "UPDATE employee SET employee_phone=?, employee_email=? WHERE employee_id=?";
+        var employee_id = employeeObj.employee_id,
             employee_phone = employeeObj.employee_phone,
             employee_email = employeeObj.employee_email;
 
-        if ((undefined !== employee_name && employee_name != '') && (undefined !== employee_phone && employee_phone != '') &&
-            (undefined !== employee_email && employee_email != '') && (undefined !== employee_id && employee_id != '')
+        if ((undefined !== employee_phone && employee_phone != '') && (undefined !== employee_email && employee_email != '') && 
+            (undefined !== employee_id && employee_id != '')
         ) {
             
             connection.acquire(function (err, con) {
@@ -423,14 +422,14 @@ function Employee() {
                     return;
                 }
 
-                con.query(query, [employee_name, employee_phone, employee_email, employee_id], function (err, result) {
+                con.query(query, [employee_phone, employee_email, employee_id], function (err, result) {
                     con.release();
                     if (err) {
                         
                         if (err.code == 'ER_DUP_ENTRY') {
                             output = {
                                 status: 0,
-                                message: 'Same IDnumber/Code/email/phone number already exists',
+                                message: 'Same email or phone number already exists',
                                 error: err
                             };
                         } else {
@@ -444,7 +443,9 @@ function Employee() {
                         output = {
                             status: 1,
                             message: feedback,
-                            updatedEmployeeId: employee_id
+                            updatedEmployeeId: employee_id,
+                            employee_phone: employee_phone,
+                            employee_email: employee_email
                         };
                         res.json(output);
                     }

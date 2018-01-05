@@ -459,6 +459,7 @@ var EmployeeAPIs = function (express) {
 	//update employee info/profile. Done by employee him/herself.
 	express.put('/employees/profile', function (req, res) {
 		var employeeObj = req.body;
+		employeeObj.employee_id = employeeID;
 		Employee.updateProfile(employeeObj, res);
 	});
 };
