@@ -1,0 +1,90 @@
+<%- include layout/head.ejs %>
+    <%- include layout/main_sidebar.ejs %>
+
+        <!-- MAIN PAGE CONTENT START -->
+        <main class="mdl-layout__content mdl-color--white">
+            <div class="entertainer-content">
+                <div class="mdl-grid back-end-content">
+
+                  <div class="entertainer-layout">
+                      <div class="entertainer-content">
+                        
+                        
+                        <form action="#" class="mdl-grid">
+                            
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input readonly = "readonly" size="4" class="mdl-textfield__input" type="text" id="txtViewEmployeeCode" value = <%= profileObject.employee_code %> >
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeCode">Employee Code</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input readonly = "readonly" size="4" class="mdl-textfield__input" type="text" id="txtViewEmployeeIdNumber" value = <%= profileObject.employee_id_number %>>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeIdNumber">Employee ID Number</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input readonly = "readonly" size="4" class="mdl-textfield__input" type="text" id="txtViewEmployeeName" value = <%= profileObject.employee_name %>>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeName">Employee Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input readonly = "readonly" size="4" class="mdl-textfield__input" type="text" id="txtViewEmployeeDOB" value = <%= profileObject.employee_dob %>>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeDOB">Employee DOB</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtViewEmployeePhone" value = <%= profileObject.employee_phone %>>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeePhone">Phone Number</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtViewEmployeeEmail" value = <%= profileObject.employee_email %>>
+                                    <label class="mdl-textfield__label" for="txtViewEmployeeEmail">Email</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return UpdateProfile();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a data-target="#dialogResetPassword" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--accent modal-trigger"> Change Password </a>
+                                
+                            </div>
+
+                        </form>
+                          
+                          <!-- /block -->
+   
+
+                      </div>
+                  </div>
+
+                    <!-- Dialog -->
+                    <% include partials/view/dialogResetPassword.ejs %>
+
+                </div>
+            </div>
+
+        </main>
+        <!-- MAIN PAGE CONTENT END -->
+        <!--<script type="text/javascript" src="/controllers/update_profile.js"></script>-->
+
+        <%- include layout/footer.ejs %>

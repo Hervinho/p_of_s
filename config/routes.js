@@ -18,7 +18,7 @@ var Promotion = require('../models/Promotion');
 var ShiftBooking = require('../models/ShiftBooking');
 
 //global variables.
-var employeeID, employeeCode, roleID, roleMessage = "You do not have privileges to perform this operation";
+var employeeID, employeeCode, roleID, profileObject, roleMessage = "You do not have privileges to perform this operation";
 
 //check if user is logged in before displaying the pages.
 //It will do so by checking if the session cookie exists
@@ -26,6 +26,9 @@ function isUserLoggedIn(req, res, next) {
 	if (!req.PhemePointOfSaleProjectSession.employee) {
 		res.redirect('/');
 	} else {
+		//Get employee object.
+		profileObject = req.PhemePointOfSaleProjectSession.employee;
+
 		//Get employee ID from session cookie
 		employeeID = req.PhemePointOfSaleProjectSession.employee.employee_id;
 
@@ -564,6 +567,14 @@ var configViews = function (express) {
 	express.get('/home', isUserLoggedIn, function (req, res) {
 		res.render('home', {
 			employeeCode: employeeCode
+		});
+	});
+
+	//Profile page
+	express.get('/profile', isUserLoggedIn, function (req, res) {
+		res.render('profile', {
+			employeeCode: employeeCode,
+			profileObject: profileObject
 		});
 	});
 

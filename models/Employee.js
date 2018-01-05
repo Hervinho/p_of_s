@@ -403,27 +403,17 @@ function Employee() {
 
     //update employee info/profile. Done by employee him/herself.
     this.updateProfile = function (employeeObj, res) {
-        var output = {},
-            feedback, query = "UPDATE employee SET employee_name=?, employee_gender_id=?, employee_role_id=?, employee_code=?, " +
-            "employee_phone=?, employee_email=?, employee_status_id=? WHERE employee_id=?";
+        var output = {}, feedback, 
+            query = "UPDATE employee SET employee_name=?, employee_phone=?, employee_email=? WHERE employee_id=?";
         var employee_name = employeeObj.employee_name,
-            employee_gender_id = employeeObj.employee_gender_id,
-            employee_role_id = employeeObj.employee_role_id,
-            employee_code = employeeObj.employee_code,
             employee_id = employeeObj.employee_id,
-            //employee_shift_id = employeeObj.employee_shift_id,
             employee_phone = employeeObj.employee_phone,
-            employee_email = employeeObj.employee_email,
-            employee_status_id = employeeObj.employee_status_id;
+            employee_email = employeeObj.employee_email;
 
-        if ((undefined !== employee_name && employee_name != '') && (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
-            (undefined !== employee_code && employee_code != '') && (undefined !== employee_id && employee_id != '') &&
-            (undefined !== employee_phone && employee_phone != '') && (undefined !== employee_email && employee_email != '') &&
-            (undefined !== employee_status_id && employee_status_id != '')
+        if ((undefined !== employee_name && employee_name != '') && (undefined !== employee_phone && employee_phone != '') &&
+            (undefined !== employee_email && employee_email != '') && (undefined !== employee_id && employee_id != '')
         ) {
-            /*if (undefined === employee_shift_id || employee_shift_id == '') {
-                employee_shift_id = 0;
-            }*/
+            
             connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
@@ -433,10 +423,10 @@ function Employee() {
                     return;
                 }
 
-                con.query(query, [employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_status_id, employee_id], function (err, result) {
+                con.query(query, [employee_name, employee_phone, employee_email, employee_id], function (err, result) {
                     con.release();
                     if (err) {
-                        //console.log(err);
+                        
                         if (err.code == 'ER_DUP_ENTRY') {
                             output = {
                                 status: 0,
