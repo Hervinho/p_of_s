@@ -13,13 +13,13 @@ function ResetPassword() {
 
     //Validations
     if (validateEditPasswordForm(passwordObj) == true) {
-        toastr.success('Oui');
-        /*$.ajax({
+        //toastr.success('Oui');
+        $.ajax({
             type: 'PUT',
             crossDomain: true,
             data: JSON.stringify(passwordObj),
             contentType: 'application/json; charset=utf-8',
-            url: '/api/v1/employees/profile',
+            url: '/api/v1/employees/password/reset',
             dataType: "json",
             cache: false,
             success: function (data) {
@@ -35,7 +35,7 @@ function ResetPassword() {
                 toastr.error(message);
             }
 
-        });*/
+        });
     } else {
         toastr.error(message);
     }
@@ -45,9 +45,9 @@ function validateEditPasswordForm(passwordObj) {
     var flag = true;
     var special_char = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var numbers = /\d/;
-    console.log('current: ', passwordObj.current_password);
+    /*console.log('current: ', passwordObj.current_password);
     console.log('new: ', passwordObj.new_password);
-    console.log('confirm: ', passwordObj.confirm_password);
+    console.log('confirm: ', passwordObj.confirm_password);*/
 
     if (passwordObj.new_password != passwordObj.confirm_password) {
         flag = false;

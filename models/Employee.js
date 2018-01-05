@@ -246,7 +246,7 @@ function Employee() {
                         } else {
                             output = {
                                 status: 0,
-                                message: 'No employee with such credentials found'
+                                message: 'Wrong code and/or password'
                             };
                             res.json(output);
                         }
@@ -546,6 +546,95 @@ function Employee() {
                             output = {
                                 status: 0,
                                 message: 'No password was found for such employee.'
+                            };
+
+                            res.json(output);
+                            return;
+                        }
+
+                    }
+                });
+            });
+        } else {
+            feedback = 'Invalid Employee data submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+            return;
+        }
+    };
+
+    //Forgot Password.
+    this.ForgotPassword = function (employeeObj, res) {
+        var output = {},
+            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=?",
+            queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=?";
+        var employee_id_number = employeeObj.employee_id_number,
+            new_password = String(employeeObj.new_password),
+            employee_code = employeeObj.employee_code;
+
+        if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== new_password && new_password != '') &&
+            (undefined !== employee_code && employee_code != '')
+        ) {
+            //Encrypt password.
+            new_password = SHA256(new_password).toString();
+
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+
+                //First check employee with such ID number and Code exists in the DB.
+                con.query(queryFind, [employee_id_number, employee_code], function (err, result) {
+                    con.release();
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        if (result.length > 0) {
+                            console.log('Such employee exists.');
+                                //update new password here.
+                                connection.acquire(function (err, con) {
+                                    if (err) {
+                                        res.json({
+                                            status: 100,
+                                            message: "Error in connection database"
+                                        });
+                                        return;
+                                    }
+
+                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], function (err, result) {
+                                        con.release();
+                                        if (err) {
+                                            output = {
+                                                status: 0,
+                                                message: 'Error updating password',
+                                                error: err
+                                            };
+    
+                                            res.json(output);
+                                            return;
+                                        } else {
+                                            output = {
+                                                status: 1,
+                                                message: 'Password successfully updated'
+                                            };
+                                            
+                                            res.json(output);
+                                            return;
+                                        }
+                                    });
+                                });
+                            
+                        } else {
+                            output = {
+                                status: 0,
+                                message: 'No employee with such ID Number and Employee Code was found.'
                             };
 
                             res.json(output);

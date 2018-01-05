@@ -463,11 +463,17 @@ var EmployeeAPIs = function (express) {
 		Employee.updateProfile(employeeObj, res);
 	});
 
-	//Reset password. Done by employee him/herself.
+	//Reset password. Done by employee him/herself when logged-in
 	express.put('/employees/password/reset', function (req, res) {
 		var passwordObj = req.body;
-		//passwordObj.employee_id = employeeID;
+		passwordObj.employee_id = employeeID;
 		Employee.resetPassword(passwordObj, res);
+	});
+
+	//Forgot password.
+	express.put('/employees/password/forgot', function (req, res) {
+		var employeeObj = req.body;
+		Employee.ForgotPassword(employeeObj, res);
 	});
 };
 
@@ -634,6 +640,11 @@ var configIndex = function (express) {
 	//Login Page (index)
 	express.get('/', function (req, res) {
 		res.render('index');
+	});
+
+	//Forgot Password Page
+	express.get('/forgotpassword', function (req, res) {
+		res.render('forgot_password');
 	});
 }
 
