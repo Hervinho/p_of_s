@@ -151,9 +151,9 @@ function ShiftBooking(){
 
     //book a shift.
     this.create = function(bookingObj, res){
-        var output = {}, feedback, query = "INSERT INTO shift_booking VALUES(?,?,?,?,?)";
+        var output = {}, feedback, query = "INSERT INTO shift_booking VALUES(?,?,?,?,?,?)";
         var employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
-            timestamp = moment().format("YYYY-MM-DD HH:mm:ss"), today = moment().format('YYYY-MM-DD');
+        booking_status_id = 1, timestamp = moment().format("YYYY-MM-DD HH:mm:ss"), today = moment().format('YYYY-MM-DD');
         var shiftObj, shift_start_time, shift_end_time;
 
         if((undefined !== employee_id && employee_id != '') && (undefined !== shift_id && shift_id != '') && 
@@ -190,7 +190,7 @@ function ShiftBooking(){
                     return;
                 }
     
-                con.query(query, [null, employee_id, shift_id, booking_date, timestamp], function (err, result) {
+                con.query(query, [null, employee_id, shift_id, booking_date, timestamp, booking_status_id], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error booking shift';
@@ -227,13 +227,14 @@ function ShiftBooking(){
 
     //update a booking.
     this.update = function(bookingObj, res){
-        var output = {}, feedback, query = "UPDATE shift_booking SET shift_id=?, booking_date=? WHERE employee_id=? " +
-            "AND shift_booking_id=?";
+        var output = {}, feedback, query = "UPDATE shift_booking SET shift_id=?, booking_date=?, booking_status_id=? " +
+            "WHERE employee_id=? AND shift_booking_id=?";
         var employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
-            shift_booking_id = bookingObj.shift_booking_id, today = moment().format('YYYY-MM-DD');
+            booking_status_id = bookingObj.booking_status_id, shift_booking_id = bookingObj.shift_booking_id, today = moment().format('YYYY-MM-DD');
 
         if((undefined !== employee_id && employee_id != '') && (undefined !== shift_id && shift_id != '') && 
-            (undefined !== booking_date && booking_date != '') && (undefined !== shift_booking_id && shift_booking_id != '')
+            (undefined !== booking_date && booking_date != '') && (undefined !== shift_booking_id && shift_booking_id != '') &&
+            (undefined !== booking_status_id && booking_status_id != '')
         ){
             //Convert dates to moment formats.
             booking_date = moment(booking_date).format('YYYY-MM-DD');
@@ -266,7 +267,7 @@ function ShiftBooking(){
                     return;
                 }
     
-                con.query(query, [shift_id, booking_date, employee_id, shift_booking_id], function (err, result) {
+                con.query(query, [shift_id, booking_date, booking_status_id, employee_id, shift_booking_id], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error updating shift booking';

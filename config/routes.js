@@ -16,6 +16,7 @@ var Supplier = require('../models/Supplier');
 var EmployeeStatus = require('../models/EmployeeStatus');
 var Promotion = require('../models/Promotion');
 var ShiftBooking = require('../models/ShiftBooking');
+var ShiftBookingStatus = require('../models/ShiftBookingStatus');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, roleMessage = "You do not have privileges to perform this operation";
@@ -43,6 +44,13 @@ function isUserLoggedIn(req, res, next) {
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
+
+var ShiftBookingStatusAPIs = function(express){
+	//get all booking statuses.
+	express.get('/bookingstatuses', function (req, res) {
+		ShiftBookingStatus.getAll(res);
+	});
+};
 
 var ShiftBookingAPIs = function (express) {
 	//get all shift bookings.
@@ -89,7 +97,7 @@ var ShiftBookingAPIs = function (express) {
 			});
 			return;
 		}
-		
+		//ShiftBooking.update(bookingObj, res);
 	});
 };
 
@@ -676,6 +684,7 @@ module.exports = {
 		CustomerOrderDetailsAPIs(apiRoutes);
 		PromotionAPIs(apiRoutes);
 		ShiftBookingAPIs(apiRoutes);
+		ShiftBookingStatusAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

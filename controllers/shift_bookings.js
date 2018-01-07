@@ -22,6 +22,7 @@ $(document).ready(function () {
 function LoadAllBookings(){
     LoadAllEmployees();
     LoadAllShifts();
+    LoadAllBookingStatuses();
 
     //Reset all filters.
     $("#bookingFilterEmployee").val(0);
@@ -120,6 +121,43 @@ function LoadAllShifts(){
     });
 }
 
+function LoadAllBookingStatuses(){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/bookingstatuses',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            //console.log(data);
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.booking_statuses.length > 0) {
+                var booking_statuses = data.booking_statuses;
+                for (var key = 0, size = booking_statuses.length; key < size; key++) {
+                    html += '<option value =' + booking_statuses[key].booking_status_id + ' >' +
+                    booking_statuses[key].booking_status_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No booking status found</option>';
+            }
+
+            //$("#bookingFilterShift").html(html);
+
+            //Also Populate dialogViewBooking and dialogAddBooking.
+            //$("#txtViewBookingShift").html(html);
+            $("#txtViewBookingStatus").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 function FilterBookingsByEmployee(id){
     $.ajax({
         type: 'GET',
@@ -177,10 +215,12 @@ function ViewBookingInfo(id) {
             //console.log(data);
             var booking = data.booking;
             var employeeId = booking.employee_id, shiftId = booking.shift_id,
-                timestamp = booking.booking_timestamp, bookingDate = booking.booking_date;
+                timestamp = booking.booking_timestamp, bookingDate = booking.booking_date,
+                statusId = booking.booking_status_id;
 
             $("#txtViewBookingEmployee").val(employeeId);
             $("#txtViewBookingShift").val(shiftId);
+            $("#txtViewBookingStatus").val(statusId);
             $("#txtViewBookingTimestamp").val(timestamp);
             $("#txtViewBookingDate").val(bookingDate);
         },

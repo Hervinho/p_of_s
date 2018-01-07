@@ -570,7 +570,7 @@ function Employee() {
     //Forgot Password.
     this.ForgotPassword = function (employeeObj, res) {
         var output = {},
-            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id=?",
+            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id = 1",
             queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=?";
         var employee_id_number = employeeObj.employee_id_number,
             new_password = String(employeeObj.new_password),
@@ -617,7 +617,7 @@ function Employee() {
                                                 message: 'Error updating password',
                                                 error: err
                                             };
-    
+                                            console.log(output);
                                             res.json(output);
                                             return;
                                         } else {
@@ -625,7 +625,7 @@ function Employee() {
                                                 status: 1,
                                                 message: 'Password successfully updated'
                                             };
-                                            
+                                            console.log(output);
                                             res.json(output);
                                             return;
                                         }

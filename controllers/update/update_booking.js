@@ -2,7 +2,7 @@ var message, bookingId, bookingObj = {};
 
 $(document).ready(function () {
     //Pick up changes in all select elements.
-    $(document).on('change', '.shift-change', function () {
+    $(document).on('change', '.shift-change, .booking-status-change', function () {
 
     });
 });
@@ -13,12 +13,13 @@ function UpdateBooking(){
         shift_booking_id: bookingId,
         employee_id: parseInt($("#txtViewBookingEmployee").val()),
         shift_id: parseInt($("#txtViewBookingShift").val()),
+        booking_status_id: parseInt($("#txtViewBookingStatus").val()),
         booking_date: $("#txtViewBookingDate").val()
     };
 
     //Validations
     if (validateEditBookingForm(bookingObj) == true) {
-        //toastr.success('Oui');
+        //console.log(bookingObj);
         $.ajax({
             type: 'PUT',
             crossDomain: true,
@@ -35,6 +36,7 @@ function UpdateBooking(){
                     //clear form.
                     $("#txtViewBookingEmployee").val(0);
                     $("#txtViewBookingShift").val(0);
+                    $("#txtViewBookingStatus").val(0);
                     $("#txtViewBookingTimestamp").val("");
                     $("#txtViewBookingDate").val("");
 
@@ -68,6 +70,11 @@ function validateEditBookingForm(bookingObj){
     if(bookingObj.shift_id == 0){
         flag = false;
         message = 'No shift selected. Please select a shift';
+    }
+
+    if(bookingObj.booking_status_id == 0){
+        flag = false;
+        message = 'No status selected. Please select a status for your booking.';
     }
 
     return flag;
