@@ -157,7 +157,7 @@ function Promotion() {
     //create promotion.
     this.create = function (promotionObj, res) {
         var output = {},
-            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?)",
+            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?,?)",
             today = moment().format('YYYY-MM-DD');
         var promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
@@ -165,11 +165,13 @@ function Promotion() {
             product_type_id = promotionObj.product_type_id,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
-            promotion_price = promotionObj.promotion_price;
+            promotion_price = promotionObj.promotion_price,
+            added_by = promotionObj.employee_id;
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
-            (undefined !== promotion_price && promotion_price != '') && (undefined !== product_type_id && product_type_id != '')
+            (undefined !== promotion_price && promotion_price != '') && (undefined !== product_type_id && product_type_id != '') &&
+            (undefined !== added_by && added_by != '')
         ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
@@ -201,7 +203,7 @@ function Promotion() {
                 }
 
                 con.query(query, [null, promotion_name, promotion_desc, product_type_id, promotion_status_id, valid_from_date,
-                    valid_to_date, promotion_price
+                    valid_to_date, promotion_price, added_by
                 ], function (err, result) {
                     con.release();
                     if (err) {

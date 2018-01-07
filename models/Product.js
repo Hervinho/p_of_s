@@ -112,14 +112,16 @@ function Product() {
     //add new product.
     this.create = function (productObj, res) {
         var output = {},
-            feedback, query = "INSERT INTO product VALUES(?,?,?,?,?)";
+            feedback, query = "INSERT INTO product VALUES(?,?,?,?,?,?)";
         var product_type_id = productObj.product_type_id,
             product_name = productObj.product_name,
             product_price = productObj.product_price,
-            product_desc = productObj.product_desc;
+            product_desc = productObj.product_desc,
+            added_by = productObj.employee_id;
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
-            (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '')
+            (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
+            (undefined !== added_by && added_by != '')
         ) {
             connection.acquire(function (err, con) {
                 if (err) {
@@ -130,7 +132,7 @@ function Product() {
                     return;
                 }
 
-                con.query(query, [null, product_type_id, product_name, product_desc, product_price], function (err, result) {
+                con.query(query, [null, product_type_id, product_name, product_desc, product_price, added_by], function (err, result) {
                     con.release();
                     if (err) {
                         output = {

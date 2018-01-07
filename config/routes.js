@@ -217,6 +217,7 @@ var PromotionAPIs = function(express){
 	express.post('/promotions', function (req, res) {
 		var promotionObj = req.body;
 		if(roleID == 1){
+			promotionObj.employee_id = employeeID;
 			Promotion.create(promotionObj, res);
 		}
 		else{
@@ -527,6 +528,7 @@ var CustomerAPIs = function (express) {
 	//create new customer.
 	express.post('/customers', function (req, res) {
 		var customerObj = req.body;
+		customerObj.employee_id = employeeID;
 		Customer.create(customerObj, res);
 	});
 
@@ -559,6 +561,7 @@ var ProductAPIs = function (express) {
 	express.post('/products', function (req, res) {
 		var productObj = req.body;
 		if(roleID == 1){
+			productObj.employee_id = employeeID;
 			Product.create(productObj, res);
 		}
 		else{
