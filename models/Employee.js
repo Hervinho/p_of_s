@@ -189,8 +189,8 @@ function Employee() {
         var employeeObj = req.body;
         //console.log(employeeObj);
         var output = {},
-            feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ? "+ 
-            "AND employee_status_id = 1";
+            feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
+            //"AND employee_status_id = 1";
         var employee_code = employeeObj.employee_code,
             employee_password = String(employeeObj.employee_password);
 
@@ -206,7 +206,8 @@ function Employee() {
                 }
 
                 employee_password = SHA256(employee_password).toString();
-                console.log('Password: ', employee_password);
+                //console.log('Password: ', employee_password);
+                
                 con.query(query, [employee_code, employee_password], function (err, result) {
                     con.release();
                     if (err) {
@@ -214,6 +215,17 @@ function Employee() {
                     } else {
                         if (result.length > 0) {
                             var employee = result[0];
+                            
+                            if(employee.employee_status_id != 1){
+                                output = {
+                                    status: 0,
+                                    message: 'You no longer have access to the system.'
+                                };
+                                
+                                res.json(output);
+                                return;
+                            }
+
                             feedback = "Login success";
 
                             //Record login attempt into login_record table.
@@ -245,9 +257,10 @@ function Employee() {
 
 
                         } else {
+                            feedback = "Wrong code and/or password";
                             output = {
                                 status: 0,
-                                message: 'Wrong code and/or password'
+                                message: feedback
                             };
                             res.json(output);
                         }
@@ -494,10 +507,19 @@ function Employee() {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
-                            var fromDB = result[0].employee_password;
+                            var currentPasswordInDB = result[0].employee_password;
                             
-                            if(current_password == fromDB){
-                                console.log('Current password match');
+                            if(current_password == currentPasswordInDB){
+                                console.log('Current password provided matches the one in DB');
+
+                                //Ensure that new_password is different than current password in DB.
+                                if(new_password == currentPasswordInDB){
+                                    res.json({
+                                        status: 0,
+                                        message: "New password cannot be the same as current/previous one."
+                                    });
+                                    return;
+                                }
                                 
                                 //update new password here.
                                 connection.acquire(function (err, con) {
@@ -536,7 +558,7 @@ function Employee() {
                             else{
                                 output = {
                                     status: 0,
-                                    message: 'Current password does not match'
+                                    message: 'Current password does not match with the one in database'
                                 };
                                 
                                 res.json(output);
@@ -571,7 +593,8 @@ function Employee() {
     this.ForgotPassword = function (employeeObj, res) {
         var output = {},
             feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id = 1",
-            queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=?";
+            queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=? " +
+            "AND employee_status_id = 1";
         var employee_id_number = employeeObj.employee_id_number,
             new_password = String(employeeObj.new_password),
             employee_code = employeeObj.employee_code;
@@ -599,8 +622,20 @@ function Employee() {
                     } else {
                         if (result.length > 0) {
                             console.log('Such employee exists.');
-                                //update new password here.
-                                connection.acquire(function (err, con) {
+
+                            var currentPasswordInDB = result[0].employee_password;
+                            
+                            //Ensure that new_password is different than current password in DB.
+                            if(new_password == currentPasswordInDB){
+                                res.json({
+                                    status: 0,
+                                    message: "New password cannot be the same as current/previous one."
+                                });
+                                return;
+                            }
+
+                            //update new password here.
+                            connection.acquire(function (err, con) {
                                     if (err) {
                                         res.json({
                                             status: 100,
@@ -630,7 +665,7 @@ function Employee() {
                                             return;
                                         }
                                     });
-                                });
+                            });
                             
                         } else {
                             output = {
