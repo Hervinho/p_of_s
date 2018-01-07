@@ -4,7 +4,7 @@ function Product() {
     //get all products.
     this.getAll = function (res) {
         var output = {},
-            query = 'SELECT * FROM product';
+            query = 'SELECT * FROM product LEFT JOIN employee ON product.added_by = employee.employee_id';
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -40,7 +40,7 @@ function Product() {
     //get all products of a specific type.
     this.getByType = function (productTypeId, res) {
         var output = {},
-            query = 'SELECT * FROM product WHERE product_type_id = ?';
+            query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_type_id = ?';
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -76,7 +76,7 @@ function Product() {
     //get a specific product.
     this.getOne = function (productId, res) {
         var output = {},
-            query = 'SELECT * FROM product WHERE product_id = ?';
+            query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_id = ?';
 
         connection.acquire(function (err, con) {
             if (err) {

@@ -8,7 +8,7 @@ function Promotion() {
     //get all promotions.
     this.getAll = function (res) {
         var output = {},
-            query = "SELECT * FROM promotion";
+            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -47,9 +47,9 @@ function Promotion() {
             query;
 
         if (statusId == 1) {
-            query = "SELECT * FROM promotion WHERE promotion_status_id = 1 AND valid_to_date > CURDATE()";
+            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_status_id = 1 AND valid_to_date > CURDATE()";
         } else if (statusId == 2) {
-            query = "SELECT * FROM promotion WHERE promotion_status_id = 2";
+            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_status_id = 2";
         }
 
         connection.acquire(function (err, con) {
@@ -85,7 +85,7 @@ function Promotion() {
 
     //get all promotions of a certain type.
     this.getPerType = function(typeId, res){
-        var output = {}, query = "SELECT * FROM promotion WHERE product_type_id = ?";
+        var output = {}, query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE product_type_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -121,7 +121,7 @@ function Promotion() {
     //get a specific promotion.
     this.getOne = function (id, res) {
         var output = {},
-            query = "SELECT * FROM promotion WHERE promotion_id = ?";
+            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {

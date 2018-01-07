@@ -558,13 +558,31 @@ var ProductAPIs = function (express) {
 	//create new product.
 	express.post('/products', function (req, res) {
 		var productObj = req.body;
-		Product.create(productObj, res);
+		if(roleID == 1){
+			Product.create(productObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 
 	//update product.
 	express.put('/products', function (req, res) {
 		var productObj = req.body;
-		Product.update(productObj, res);
+		if(roleID == 1){
+			Product.update(productObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 };
 

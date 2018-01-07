@@ -111,7 +111,8 @@ function handleCustomersData(data) {
             customers[key].customer_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             customers[key].customer_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_email + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customers[key].customer_date_added + '</td>' +
+            customers[key].customer_date_added + '</td><td class="mdl-data-table__cell--non-numeric">' +
+            customers[key].employee_name + '</td>' +
             '</tr>';
         }
     } else {

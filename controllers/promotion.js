@@ -181,6 +181,7 @@ function ViewPromotionInfo(id){
             var promotionValidUntil = promotion.valid_to_date;
             var promotionStatusId = promotion.promotion_status_id;
             var promotionTypeId = promotion.product_type_id;
+            var promotionAddedBy = promotion.employee_name;
 
             $("#txtViewPromotionName").val(promotionName);
             $("#txtViewPromotionStatus").val(promotionStatusId);
@@ -189,6 +190,7 @@ function ViewPromotionInfo(id){
             $("#txtViewPromotionValidUntil").val(promotionValidUntil);
             $("#txtViewPromotionDescription").val(promotionDesc);
             $("#txtViewPromotionPrice").val(promotionPrice);
+            $("#txtViewPromotionAddedBy").val(promotionAddedBy);
         },
         error: function (e) {
             console.log(e);
@@ -244,6 +246,7 @@ function handlePromotionsData(data) {
                 promotions[key].valid_from_date + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 promotions[key].valid_to_date + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + promotions[key].promotion_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                promotions[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #2ECF33;" type="button" onclick="return UpdatePromotionStatus(1,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Activate</button>  ' + 
                 '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #EE4A4A;" type="button" onclick="return UpdatePromotionStatus(2,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Expire</button></td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewPromotion" onclick="return ViewPromotionInfo(\'' + promotions[key].promotion_id + '\' )">' +

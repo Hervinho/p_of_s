@@ -43,7 +43,7 @@ function Customer() {
     //get all customers.
     this.getAll = function (res) {
         var output = {},
-            query = "SELECT * FROM customer";
+            query = "SELECT * FROM customer LEFT JOIN employee ON customer.added_by = employee.employee_id";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -79,7 +79,7 @@ function Customer() {
     //get all customers of a specific gender.
     this.getPerGender = function (genderId, res) {
         var output = {},
-            query = "SELECT * FROM customer WHERE customer_gender_id = ?";
+            query = "SELECT * FROM customer LEFT JOIN employee ON customer.added_by = employee.employee_id WHERE customer_gender_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -115,7 +115,7 @@ function Customer() {
     //get a specific customer.
     this.getOne = function (customerId, res, callback) {
         var output = {},
-            query = "SELECT * FROM customer WHERE customer_id = ?";
+            query = "SELECT * FROM customer LEFT JOIN employee ON customer.added_by = employee.employee_id WHERE customer_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {

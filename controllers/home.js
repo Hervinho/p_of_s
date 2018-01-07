@@ -59,11 +59,13 @@ function ViewProductInfo(id) {
             var productDesc = product.product_desc;
             var productPrice = product.product_price;
             var productTypeId = product.product_type_id;
+            var productAddedBy = product.employee_name;
 
             $("#txtViewProductName").val(productName);
             $("#txtViewProductType").val(productTypeId);
             $("#txtViewProductDescription").val(productDesc);
             $("#txtViewProductPrice").val(productPrice);
+            $("#txtViewProductAddedBy").val(productAddedBy);
         },
         error: function (e) {
             console.log(e);
@@ -144,6 +146,7 @@ function handleProductsData(data) {
                 products[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
                 products[key].product_desc + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + products[key].product_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                products[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewProduct" onclick="return ViewProductInfo(\'' + products[key].product_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';
