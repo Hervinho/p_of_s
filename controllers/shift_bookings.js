@@ -1,4 +1,4 @@
-var message, shiftBookingID, bookingFilterEmployeeVal, bookingFilterShiftVal;
+var message, shiftBookingID, bookingFilterEmployeeVal, bookingFilterShiftVal, bookingFilterStatusVal;
 
 $(document).ready(function () {
     LoadAllBookings();
@@ -6,12 +6,16 @@ $(document).ready(function () {
     $(document).on('change', '.form-control', function () {
         bookingFilterEmployeeVal = $("#bookingFilterEmployee").val();
         bookingFilterShiftVal = $("#bookingFilterShift").val();
+        bookingFilterStatusVal = $("#bookingFilterStatus").val();
 
-        if (bookingFilterEmployeeVal != 0 && bookingFilterShiftVal == 0) {
+        if (bookingFilterEmployeeVal != 0 && bookingFilterShiftVal == 0 && bookingFilterStatusVal == 0) {
             FilterBookingsByEmployee(bookingFilterEmployeeVal);
         } 
-        else if(bookingFilterEmployeeVal == 0 && bookingFilterShiftVal != 0){
+        else if(bookingFilterEmployeeVal == 0 && bookingFilterShiftVal != 0 && bookingFilterStatusVal == 0){
             FilterBookingsByShift(bookingFilterShiftVal);
+        }
+        else if(bookingFilterEmployeeVal == 0 && bookingFilterShiftVal == 0 && bookingFilterStatusVal != 0){
+            FilterBookingsByStatus(bookingFilterStatusVal);
         }
         else {
             LoadAllBookings();
@@ -143,10 +147,9 @@ function LoadAllBookingStatuses(){
                 html += '<option value = "0">No booking status found</option>';
             }
 
-            //$("#bookingFilterShift").html(html);
+            $("#bookingFilterStatus").html(html);
 
-            //Also Populate dialogViewBooking and dialogAddBooking.
-            //$("#txtViewBookingShift").html(html);
+            //Also Populate dialogViewBooking.
             $("#txtViewBookingStatus").html(html);
         },
         error: function (e) {
@@ -185,6 +188,27 @@ function FilterBookingsByShift(id){
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
         url: '/api/v1/shiftbookings/shifts/' + id,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblShiftBookings tbody").html(wait);
+        },
+        success: handleBookingsData,
+        error: function (e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterBookingsByStatus(id){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/shiftbookings/statuses/' + id,
         dataType: "json",
         cache: false,
         beforeSend: function () {

@@ -64,6 +64,12 @@ var ShiftBookingAPIs = function (express) {
 		ShiftBooking.getPerShift(shiftId, res);
 	});
 
+	//get all shifts of a certain status. (booked/cancelled)
+	express.get('/shiftbookings/statuses/:id', function (req, res) {
+		var statusId = req.params.id;
+		ShiftBooking.getPerStatus(statusId, res);
+	});
+
 	//get all bookings of a specific employee.
 	express.get('/shiftbookings/employees/:id', function (req, res) {
 		var employeeId = req.params.id;

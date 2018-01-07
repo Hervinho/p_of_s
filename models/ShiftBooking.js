@@ -75,6 +75,43 @@ function ShiftBooking(){
         });
     };
 
+    //get all shifts of a certain status. (booked/cancelled)
+    this.getPerStatus = function(statusId, res){
+        var output = {}, query = "SELECT * FROM shift_booking " +
+            "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
+            "WHERE shift_booking.booking_status_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(query, [statusId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            bookings: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No bookings for such shift found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get all bookings of a specific employee.
     this.getPerEmployee = function(employeeId, res){
         var output = {}, query = "SELECT * FROM shift_booking " +
