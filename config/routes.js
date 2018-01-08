@@ -333,7 +333,7 @@ var CustomerOrderStatusAPIs = function (express) {
 
 var CustomerOrderDetailsAPIs = function (express) {
 	//get details of single customer order.
-	express.get('/cust_orderdetails/:id', function (req, res) {
+	express.get('/customerorderdetails/:id', function (req, res) {
 		var id = req.params.id;
 		CustomerOrderDetails.getOne(id, res);
 	});
@@ -644,6 +644,13 @@ var configViews = function (express) {
 	//Home page
 	express.get('/home', isUserLoggedIn, function (req, res) {
 		res.render('home', {
+			employeeCode: employeeCode
+		});
+	});
+
+	//Customer Orders page
+	express.get('/customers/orders', isUserLoggedIn, function (req, res) {
+		res.render('customer_orders', {
 			employeeCode: employeeCode
 		});
 	});

@@ -78,7 +78,8 @@ function CustomerOrder() {
     //get all customer orders.
     this.getAll = function (res) {
         var output = {},
-            query = 'SELECT * FROM customer_order';
+            query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+            'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id';
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -114,7 +115,9 @@ function CustomerOrder() {
     //get all orders of a specific customer.
     this.getAllPerCustomer = function (customerId, res) {
         var output = {},
-            query = 'SELECT * FROM customer_order WHERE customer_id = ?';
+            query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+                'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +    
+                'WHERE customer_id = ?';
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -150,7 +153,9 @@ function CustomerOrder() {
     //get a specific order.
     this.getOne = function (orderId, res) {
         var output = {},
-            query = 'SELECT * FROM customer_order WHERE customer_order_id = ?';
+            query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+                'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +
+                'WHERE customer_order_id = ?';
 
         connection.acquire(function (err, con) {
             if (err) {
