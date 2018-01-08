@@ -1,28 +1,31 @@
-var message, customerOrderID, orderFilterCustomerVal, orderFilterTypeVal;
+var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderFilterShiftVal;
 
 $(document).ready(function () {
    LoadAllOrders();
 
-    $(document).on('change', '.form-control', function () {
+    $(document).on('change', '.form-control, .any-date', function () {
         orderFilterCustomerVal = $("#orderFilterCustomer").val();
-        //orderFilterTypeVal = $("#promotionFilterType").val();
+        orderFilterDateVal = $("#orderFilterDate").val();
+        orderFilterShiftVal = $("#orderFilterShift").val();
+        isValidDate = moment(orderFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
 
-        if (orderFilterCustomerVal != 0) {
+        if (orderFilterCustomerVal != 0 && orderFilterShiftVal == 0 && orderFilterDateVal.length <= 0) {
             FilterOrdersByCustomers(orderFilterCustomerVal);
         } 
-        /*else if(promotionFilterStatusVal == 0 && promotionFilterTypeVal != 0){
-            FilterPromotionsByType(promotionFilterTypeVal);
-        }*/
+        else if(orderFilterCustomerVal == 0 && orderFilterShiftVal != 0 && isValidDate){
+            FilterOrdersByDayAndShift(orderFilterShiftVal, orderFilterDateVal);
+            //toastr.info("Hey");
+        }
     });
 });
 
 function LoadAllOrders(){
     LoadAllCustomers();
-    //LoadAllProductTypes();
+    LoadAllShifts();
 
     //Reset all filters.
     $("#orderFilterCustomer").val(0);
-    //$("#promotionFilterType").val(0);
+    $("#orderFilterShift").val(0);
 
     $.ajax({
         type: 'GET',
@@ -76,6 +79,39 @@ function LoadAllCustomers() {
     });
 }
 
+function LoadAllShifts() {
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/shifts',
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            //console.log(data);
+            var html = '<option value = "0"></option>';
+            if (data.status == 1 && data.shifts.length > 0) {
+                var shifts = data.shifts;
+                for (var key = 0, size = shifts.length; key < size; key++) {
+                    html += '<option value =' + shifts[key].shift_id + ' >' +
+                    shifts[key].shift_name +
+                        '</option>';
+                }
+            } else {
+                html += '<option value = "0">No shifts found</option>';
+            }
+
+            $("#orderFilterShift").html(html);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 function FilterOrdersByCustomers(customerId){
     $.ajax({
         type: 'GET',
@@ -90,6 +126,28 @@ function FilterOrdersByCustomers(customerId){
         },
         success: handleOrdersData,
         error: function (e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function FilterOrdersByDayAndShift(shiftId, date){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/customerorders/shifts/' + shiftId + '/date/' + date,
+        dataType: "json",
+        cache: false,
+        beforeSend: function () {
+            var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+            $("#tblCustomerOrders tbody").html(wait);
+        },
+        success: handleOrdersData,
+        error: function (e) {
+            console.log(e);
             message = "Something went wrong";
             toastr.error(message);
         }

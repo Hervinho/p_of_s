@@ -401,6 +401,15 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getAllPerCustomer(customerId, res);
 	});
 
+	//get all orders for shift on a specific day.
+	express.get('/customerorders/shifts/:id/date/:date', function (req, res) {
+		var orderdObj = {
+			shift_id: req.params.id,
+			date: req.params.date
+		};
+		CustomerOrder.getPerDayAndShift(orderdObj, res);
+	});
+
 	//get a specific order.
 	express.get('/customerorders/:id', function (req, res) {
 		var orderId = req.params.id;
