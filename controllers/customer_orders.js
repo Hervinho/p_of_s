@@ -157,5 +157,4 @@ function handleOrderDetailsData(data) {
     }
     //console.log(html);
     $("#tblCustomerOrderDetails tbody").html(html);
-    //$("#tblCustomerOrderDetails").DataTable({"processing": true});
 }
