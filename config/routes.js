@@ -17,6 +17,7 @@ var EmployeeStatus = require('../models/EmployeeStatus');
 var Promotion = require('../models/Promotion');
 var ShiftBooking = require('../models/ShiftBooking');
 var ShiftBookingStatus = require('../models/ShiftBookingStatus');
+var LoginRecord = require('../models/LoginRecord');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, roleMessage = "You do not have privileges to perform this operation";
@@ -255,6 +256,28 @@ var PromotionAPIs = function(express){
 				message: roleMessage
 			});
 		}
+	});
+};
+
+var LoginRecordAPIs = function(express){
+	//get all login records..
+	express.get('/loginrecords', function (req, res) {
+		LoginRecord.getAll(res);
+	});
+
+	//get all login records of a specific employee.
+	express.get('/loginrecords/employees/:id', function (req, res) {
+		var employeeId = req.params.id;
+		LoginRecord.getPerEmployee(employeeId, res);
+	});
+
+	//get all login records for shift on a specific day.
+	express.get('/loginrecords/shifts/:id/date/:date', function (req, res) {
+		var recordObj = {
+			shift_id: req.params.id,
+			date: req.params.date
+		};
+		LoginRecord.getPerDayAndShift(recordObj, res);
 	});
 };
 
@@ -647,6 +670,20 @@ var configViews = function (express) {
 
 	});
 
+	//Login Records Page.
+	express.get('/loginrecords', isUserLoggedIn, function (req, res) {
+		if (roleID == 1) {
+			res.render('login_records', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode, roleMessage: roleMessage
+			});
+		}
+
+	});
+
 	//Customers page.
 	express.get('/customers', isUserLoggedIn, function (req, res) {
 		res.render('customers', {
@@ -712,6 +749,7 @@ module.exports = {
 		PromotionAPIs(apiRoutes);
 		ShiftBookingAPIs(apiRoutes);
 		ShiftBookingStatusAPIs(apiRoutes);
+		LoginRecordAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
