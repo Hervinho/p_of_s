@@ -2,6 +2,8 @@ var connection = require('../config/connection');
 var crypto = require("crypto-js");
 var SHA256 = require("crypto-js/sha256");
 var moment = require('moment');
+var request = require('request');
+var emailAPI = "http://54.210.132.91:6060/notifications/email";
 
 var recordLogin = function (employeeId, callback) {
     var output = {},
@@ -295,23 +297,18 @@ function Employee() {
             employee_name = employeeObj.employee_name,
             employee_gender_id = employeeObj.employee_gender_id,
             employee_role_id = employeeObj.employee_role_id,
-            employee_code = employeeObj.employee_code,
-            //employee_shift_id = employeeObj.employee_shift_id,
+            employee_code = "POS" + employee_id_number.substr(employee_id_number.length - 2, employee_id_number.length) + 
+                employee_name.substr(0,3).toUpperCase(),
             employee_phone = employeeObj.employee_phone,
             employee_email = employeeObj.employee_email,
-            employee_password = String(employeeObj.employee_password),
+            employee_password = "",
             employee_status_id = 1;
-
+        
         if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== employee_name && employee_name != '') &&
             (undefined !== employee_gender_id && employee_gender_id != '') && (undefined !== employee_role_id && employee_role_id != '') &&
             (undefined !== employee_code && employee_code != '') && (undefined !== employee_phone && employee_phone != '') &&
-            (undefined !== employee_email && employee_email != '') && (undefined !== employee_password && employee_password != '') &&
-            (undefined !== employee_dob && employee_dob != '')
+            (undefined !== employee_email && employee_email != '') && (undefined !== employee_dob && employee_dob != '')
         ) {
-            /*if (undefined === employee_shift_id || employee_shift_id == '') {
-                employee_shift_id = 0;
-            }*/
-
             //employee_dob = moment(employee_dob).format('YYYY-MM-DD');
 
             connection.acquire(function (err, con) {
@@ -336,8 +333,13 @@ function Employee() {
                                 error: err
                             };
                         } else {
-                            output = err;
+                            output = {
+                                status: 0,
+                                message: 'Error adding employee',
+                                error: err
+                            };
                         }
+
                         res.json(output);
                     } else {
                         feedback = 'Employee successfully added';
@@ -346,6 +348,32 @@ function Employee() {
                             message: feedback,
                             createdEmployeeId: result.insertId
                         };
+
+                        //send email to new employee with his/her employee code.
+                        var messageObj = {
+                            subject: 'Welcome To the Point Of Sale staff',
+                            destination: employee_email,
+                            content: [
+                                'Your Employee Code is : ' + employee_code, 
+                                'Go to the system to set up your password'
+                            ]
+                        };
+                        
+                        request.post(emailAPI, {
+                            body: JSON.stringify(messageObj),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        }, function (error, response, body) {
+                            if (error) {
+                                console.log(err);
+
+                            } else if (response && response.statusCode == 200) {
+                                console.log('Email successfully sent to: ', employee_name);
+                            }
+
+                        });
+
                         res.json(output);
                     }
                 });
