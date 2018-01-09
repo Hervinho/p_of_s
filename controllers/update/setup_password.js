@@ -4,12 +4,11 @@ $(document).ready(function () {
 
 });
 
-function ForgotPassword() {
+function SetupPassword() {
     employeeObj = {
         employee_id_number: $("#txtEmployeeIdNumber").val(),
         employee_code: $("#txtEmployeeCode").val(),
-        new_password: $("#txtEmployeeNewPassword").val(),
-        confirm_password: $("#txtEmployeeConfirmPassword").val()
+        new_password: $("#txtEmployeeNewPassword").val()
     };
 
     //Validations
@@ -20,7 +19,7 @@ function ForgotPassword() {
             crossDomain: true,
             data: JSON.stringify(employeeObj),
             contentType: 'application/json; charset=utf-8',
-            url: '/api/v1/employees/password/forgot',
+            url: '/api/v1/employees/password/setup',
             dataType: "json",
             cache: false,
             success: function (data) {
@@ -33,7 +32,6 @@ function ForgotPassword() {
                     $("#txtEmployeeIdNumber").val("");
                     $("#txtEmployeeCode").val("");
                     $("#txtEmployeeNewPassword").val("");
-                    $("#txtEmployeeConfirmPassword").val("");
                 }
             },
             error: function (e) {
@@ -57,12 +55,7 @@ function validateForm(employeeObj) {
     //console.log('new: ', employeeObj.new_password);
     //console.log('confirm: ', employeeObj.confirm_password);
 
-    if (employeeObj.new_password != employeeObj.confirm_password) {
-        flag = false;
-        message = 'Passwords do not match.';
-    }
-
-    if((employeeObj.new_password.length <= 7) || (employeeObj.confirm_password.length <= 7)){
+    if((employeeObj.new_password.length <= 7)){
         flag = false;
         message = 'Password must be at least 8 character-long.';
     }
@@ -72,12 +65,12 @@ function validateForm(employeeObj) {
         message = 'Employee Code is too short.';
     }
 
-    if(!special_char.test(employeeObj.new_password) || !special_char.test(employeeObj.confirm_password)){
+    if(!special_char.test(employeeObj.new_password)){
         flag = false;
         message = 'Password must have at least 1 special character ';
     }
 
-    if(!numbers.test(employeeObj.new_password) || !numbers.test(employeeObj.confirm_password)){
+    if(!numbers.test(employeeObj.new_password)){
         flag = false;
         message = 'Password must have at least 1 number.';
     }

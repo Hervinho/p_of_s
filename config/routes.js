@@ -746,6 +746,11 @@ var configIndex = function (express) {
 	express.get('/forgotpassword', function (req, res) {
 		res.render('forgot_password');
 	});
+
+	//Setup new password by newly added employee
+	express.get('/setpassword', function (req, res) {
+		res.render('setup_password');
+	});
 }
 
 /*********** Export all models and functions ************/
