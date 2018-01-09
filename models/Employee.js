@@ -320,8 +320,6 @@ function Employee() {
                     return;
                 }
 
-                employee_password = SHA256(employee_password).toString();
-
                 con.query(query, [null, employee_id_number, employee_dob, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_status_id], function (err, result) {
                     con.release();
                     if (err) {
@@ -358,7 +356,7 @@ function Employee() {
                                 'Go to the system to set up your password'
                             ]
                         };
-                        
+
                         request.post(emailAPI, {
                             body: JSON.stringify(messageObj),
                             headers: {
@@ -689,6 +687,97 @@ function Employee() {
                                                 message: 'Password successfully updated'
                                             };
                                             console.log(output);
+                                            res.json(output);
+                                            return;
+                                        }
+                                    });
+                            });
+                            
+                        } else {
+                            output = {
+                                status: 0,
+                                message: 'No active employee with such ID Number and Employee Code was found.'
+                            };
+
+                            res.json(output);
+                            return;
+                        }
+
+                    }
+                });
+            });
+        } else {
+            feedback = 'Invalid Employee data submitted';
+            output = {
+                status: 0,
+                message: feedback
+            };
+            res.json(output);
+            return;
+        }
+    };
+
+    //Set up new password by new employee.
+    this.SetUpNewPassword = function (employeeObj, res) {
+        var output = {},
+            feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id = 1",
+            queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=? " +
+            "AND employee_status_id = 1";
+        var employee_id_number = employeeObj.employee_id_number,
+            new_password = String(employeeObj.new_password),
+            employee_code = employeeObj.employee_code;
+
+        if ((undefined !== employee_id_number && employee_id_number != '') && (undefined !== new_password && new_password != '') &&
+            (undefined !== employee_code && employee_code != '')
+        ) {
+            //Encrypt password.
+            new_password = SHA256(new_password).toString();
+
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+
+                //First check employee with such ID number and Code exists in the DB.
+                con.query(queryFind, [employee_id_number, employee_code], function (err, result) {
+                    con.release();
+                    if (err) {
+                        res.json(err);
+                    } else {
+                        if (result.length > 0) {
+                            console.log('Such employee indeed exists.');
+
+                            //update new password here.
+                            connection.acquire(function (err, con) {
+                                    if (err) {
+                                        res.json({
+                                            status: 100,
+                                            message: "Error in connection database"
+                                        });
+                                        return;
+                                    }
+
+                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], function (err, result) {
+                                        con.release();
+                                        if (err) {
+                                            output = {
+                                                status: 0,
+                                                message: 'Error setting up new password',
+                                                error: err
+                                            };
+                                            console.log(output);
+                                            res.json(output);
+                                            return;
+                                        } else {
+                                            output = {
+                                                status: 1,
+                                                message: 'New password successfully set up'
+                                            };
+                                            
                                             res.json(output);
                                             return;
                                         }

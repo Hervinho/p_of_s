@@ -528,6 +528,12 @@ var EmployeeAPIs = function (express) {
 		var employeeObj = req.body;
 		Employee.ForgotPassword(employeeObj, res);
 	});
+
+	//Set up new password by newly created employee.
+	express.put('/employees/password/setup', function (req, res) {
+		var employeeObj = req.body;
+		Employee.SetUpNewPassword(employeeObj, res);
+	});
 };
 
 var CustomerAPIs = function (express) {

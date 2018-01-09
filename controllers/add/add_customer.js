@@ -76,7 +76,7 @@ function validateAddCustomerForm(customerObj) {
     if(!isMobilePhone){
         flag = false;
         message = 'Invalid Phone format for customer.';
-      }
+    }
     if (customerObj.customer_gender_id === 0 || customerObj.customer_gender_id === null || customerObj.customer_gender_id === undefined) {
         flag = false;
         message = 'No gender selected. Please select a gender';

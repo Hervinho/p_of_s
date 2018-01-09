@@ -75,8 +75,9 @@ function LoadAllGenders() {
 
             //$("#employeeFilterGender").html(html);
 
-            //Also Populate dialogViewEmployee
+            //Also Populate dialogViewEmployee and dialogAddEmployee
             $("#txtViewEmployeeGender").html(html);
+            $("#txtAddEmployeeGender").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -150,8 +151,9 @@ function LoadAllRoles() {
 
             $("#employeeFilterRole").html(html);
 
-            //Also Populate dialogViewEmployee
+            //Also Populate dialogViewEmployee and dialogAddEmployee
             $("#txtViewEmployeeRole").html(html);
+            $("#txtAddEmployeeRole").html(html);
         },
         error: function (e) {
             console.log(e);

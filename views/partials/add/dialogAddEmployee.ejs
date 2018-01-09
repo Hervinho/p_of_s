@@ -1,0 +1,88 @@
+<!-- The Modal  dialogAddEmployee -->
+<div id="dialogAddEmployee" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">Add New Employee</div>
+                    </div>
+                    <div class="form-content">
+                        
+                        <form action="#" class="mdl-grid">
+                            
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtAddEmployeeIdNumber">
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeIdNumber">Employee ID Number</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="date" id="txtAddEmployeeDOB">
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeDOB">Employee DOB</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtAddEmployeeName">
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeName">Employee Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtAddEmployeeGender" class="gender-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeGender">Gender</label>
+                                </div>
+                            </div>
+
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtAddEmployeePhone">
+                                    <label class="mdl-textfield__label" for="txtAddEmployeePhone">Phone Number</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell--6-col">
+                                    <input class="mdl-textfield__input" type="text" id="txtAddEmployeeEmail">
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeEmail">Email</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtAddEmployeeRole" class="role-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtAddEmployeeRole">Role</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return AddEmployee();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> ADD </button>
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/add/add_employee.js"></script>

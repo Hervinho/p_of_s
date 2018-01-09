@@ -7,7 +7,7 @@
                 <div class="mdl-grid back-end-content">
 
                   <div class="extra-button mdl-cell mdl-cell--12-col">
-                      <a href="/create_event" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored no-shadow modal-trigger">
+                      <a data-target="#dialogAddEmployee" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored no-shadow modal-trigger">
                           <i class="material-icons">add</i>
                       </a>
                   </div>
@@ -72,6 +72,7 @@
 
                     <!-- Dialog -->
                     <% include partials/view/dialogViewEmployee.ejs %>
+                    <% include partials/add/dialogAddEmployee.ejs %>
 
                 </div>
             </div>
