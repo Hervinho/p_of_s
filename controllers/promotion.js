@@ -201,11 +201,12 @@ function ViewPromotionInfo(id){
     });
 }
 
-function UpdatePromotionStatus(opval, promId, promName){
+function UpdatePromotionStatus(opval, promId, promName, promPrice){
     var obj = {
         operation_value: opval,
         promotion_id: promId,
-        promotion_name: promName
+        promotion_name: promName,
+        promotion_price: promPrice
     };
 
     console.log(obj);
@@ -247,8 +248,8 @@ function handlePromotionsData(data) {
                 promotions[key].valid_to_date + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + promotions[key].promotion_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 promotions[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #2ECF33;" type="button" onclick="return UpdatePromotionStatus(1,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Activate</button>  ' + 
-                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #EE4A4A;" type="button" onclick="return UpdatePromotionStatus(2,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\');">Expire</button></td><td class="mdl-data-table__cell--non-numeric">' +
+                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #2ECF33;" type="button" onclick="return UpdatePromotionStatus(1,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\', \'' + promotions[key].promotion_price + '\');">Activate</button>  ' + 
+                '<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #EE4A4A;" type="button" onclick="return UpdatePromotionStatus(2,\'' + promotions[key].promotion_id + '\', \'' + promotions[key].promotion_name + '\', \'' + promotions[key].promotion_price + '\');">Expire</button></td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewPromotion" onclick="return ViewPromotionInfo(\'' + promotions[key].promotion_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';

@@ -329,9 +329,11 @@ function Promotion() {
         var promotion_id = promotionObj.promotion_id,
             operation_value = promotionObj.operation_value,
             promotion_name = promotionObj.promotion_name,
+            promotion_price = promotionObj.promotion_price,
             keyword, promotion_status_id,
             query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
-        var emailList; //testing email.
+        var emailList;
+        //console.log(promotionObj);
         
         if ((undefined !== promotion_id && promotion_id != '') && (undefined !== operation_value && operation_value != '') &&
             (undefined !== promotion_name && promotion_name != '')
@@ -380,7 +382,7 @@ function Promotion() {
                                 var emailArray = result.emails;
                                 var messageObj = {
                                     subject: 'New promo',
-                                    content: ['New promo', 'Product Name = ' + promotion_name]
+                                    content: ['Product Name : ' + promotion_name, 'Price: R' + promotion_price]
                                 };
 
                                 //Send to each email in the customer emails array.
