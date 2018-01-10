@@ -73,6 +73,45 @@ function Shift() {
         });
     };
 
+    //get details of a specific shift. Same as getOne, but this one returns a callback.
+    this.getFiltered = function (shiftId, callback) {
+        var output = {},
+            query = 'SELECT * FROM shift WHERE shift_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [shiftId], function (err, result) {
+                con.release();
+                if (err) {
+                    callback(null, err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            shift: result[0]
+                        };
+
+                        callback(null, output);
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such shift found'
+                        };
+                        
+                        callback(null, output);
+                    }
+                }
+            });
+        });
+    };
+
     //create new shift.
     this.create = function (shiftObj, res) {
         var feedback, output = {},

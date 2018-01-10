@@ -20,7 +20,8 @@ var ShiftBookingStatus = require('../models/ShiftBookingStatus');
 var LoginRecord = require('../models/LoginRecord');
 
 //global variables.
-var employeeID, employeeCode, roleID, profileObject, roleMessage = "You do not have privileges to perform this operation";
+var employeeID, employeeCode, roleID, profileObject, shiftMessage, 
+	roleMessage = "You do not have privileges to perform this operation";
 
 //check if user is logged in before displaying the pages.
 //It will do so by checking if the session cookie exists
@@ -75,6 +76,13 @@ var ShiftBookingAPIs = function (express) {
 	express.get('/shiftbookings/employees/:id', function (req, res) {
 		var employeeId = req.params.id;
 		ShiftBooking.getPerEmployee(employeeId, res);
+	});
+
+	//check if employee has booked for shift on a specific day.
+	//Used to TEST allowing/denying employee from placing orders.
+	express.get('/shiftbookings/check/employees/:id', function (req, res) {
+		var employeeId = req.params.id;
+		ShiftBooking.checkShiftForEmployee(employeeId, res);
 	});
 
 	//get a specific shift bookings.
@@ -668,6 +676,43 @@ var configViews = function (express) {
 		res.render('customer_orders', {
 			employeeCode: employeeCode
 		});
+	});
+
+	//Place new orders.
+	express.get('/customers/orders/new', isUserLoggedIn, function (req, res) {
+		/*res.render('place_orders', {
+			employeeCode: employeeCode
+		});*/
+
+		//For Bluebird Promise ONLY.
+		if(roleID != 1){//Check if employee booked this shift before placing an order
+			ShiftBooking.checkShiftForEmployee(employeeID)
+			.then(function (output) {
+				if(output.status == 1){
+					res.render('place_orders', {
+						employeeCode: employeeCode
+					});
+				}
+				else{
+					res.render('401_orders', {
+						employeeCode: employeeCode,
+						shiftMessage: output.message
+					});
+				}
+			})
+			.catch(function (err) {
+				res.render('401_orders', {
+					employeeCode: employeeCode,
+					shiftMessage: err
+				});
+			});
+		}
+		else{//Admin can place order without shift booking.
+			res.render('place_orders', {
+				employeeCode: employeeCode
+			});
+		}
+
 	});
 
 	//Profile page

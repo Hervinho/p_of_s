@@ -1,5 +1,7 @@
 var connection = require('../config/connection');
 var moment = require('moment');
+var Shift = require('./Shift');
+var Promise = require('bluebird');
 
 function ShiftBooking(){
     //get all shift bookings.
@@ -182,6 +184,82 @@ function ShiftBooking(){
                     }
                     res.json(output);
                 }
+            });
+        });
+    };
+
+    //check if employee has booked for shift on a specific day.
+    //Used to allow/deny employee from placing orders.
+    this.checkShiftForEmployee = function(employeeId){//with Bluebird promise
+        var output = {}, query = "SELECT * FROM shift_booking WHERE employee_id = ? AND booking_date = ?", shift_id;
+        var shiftDetails, shift_start_time, shift_end_time;
+        var today = moment().format("YYYY-MM-DD"), today_datetime = moment().format("YYYY-MM-DD HH:mm:ss");
+        
+        /*
+        //just for testing...
+        var today = moment("2018-01-08").format("YYYY-MM-DD"), curent_time = moment().format("HH:mm:ss"), 
+            today_datetime = moment("2018-01-08" + " " + curent_time).format("YYYY-MM-DD HH:mm:ss");
+        */
+        
+        return new Promise(function (resolve, reject) {
+            connection.acquire(function (err, con) {
+                if (err) {
+                    output = {
+                        status: 100,
+                        message: "Error connecting to database"
+                    };
+                    reject(output);
+                }
+                
+                //check first if employee has booked for today.
+                con.query(query, [employeeId, today], function (err, result) {
+                    con.release();
+                    if (err) {
+                        reject(err);
+                    } else {
+                        if (result.length > 0) {
+                            //get start and end times of employee's shift booking.
+                            //Then check if current datetime is between the booked shift start and end times.
+                            shift_id = result[0].shift_id;
+                            shiftDetails = Shift.getFiltered(shift_id, function (err, resultShift) {
+                                var start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
+                                shift_start_time = moment(today + ' ' + start).format("YYYY-MM-DD HH:mm:ss");
+                                shift_end_time = moment(today + ' ' + end).format("YYYY-MM-DD HH:mm:ss");
+                                
+                                console.log('Start: ' + shift_start_time, 'End: ', shift_end_time);
+                                console.log('Current: ', today_datetime);
+                                
+                                //Check if current datetime is between today's shift start/end time.
+                                if (today_datetime > shift_start_time && today_datetime < shift_end_time) {
+                                    console.log("Yay");
+                                    output = {
+                                        status: 1,
+                                        message: 'You can place orders because you booked for today current shift: ' + resultShift.shift.shift_name,
+                                        shift_id: resultShift.shift.shift_id
+                                    };
+                                    resolve(output);
+                                } else {
+                                    console.log("Nay");
+                                    output = {
+                                        status: 0,
+                                        message: 'You cannot place orders because you booked a shift for today but ' + resultShift.shift.shift_name + ' instead.',
+                                        shift_id: resultShift.shift.shift_id
+                                    };
+                                    resolve(output);
+                                }
+                            });
+
+                        } else {
+                            output = {
+                                status: 2,
+                                message: 'You cannot place orders because you did not book a shift for today'
+                            };
+
+                            resolve(output);
+                        }
+                        
+                    }
+                });
             });
         });
     };
