@@ -103,7 +103,7 @@ var ShiftBookingAPIs = function (express) {
 	express.put('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
 		
-		if(bookingObj.employee_id == employeeID){//employee books a shift for him/herself ONLY!!
+		if(bookingObj.employee_id == employeeID){//employee updates a shift for him/herself ONLY!!
 			ShiftBooking.update(bookingObj, res);
 		}
 		else{
