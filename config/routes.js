@@ -680,34 +680,30 @@ var configViews = function (express) {
 
 	//Place new orders.
 	express.get('/customers/orders/new', isUserLoggedIn, function (req, res) {
-		/*res.render('place_orders', {
-			employeeCode: employeeCode
-		});*/
-
+		
 		//For Bluebird Promise ONLY.
-		if(roleID != 1){//Check if employee booked this shift before placing an order
+		if (roleID != 1) { //Check if employee booked this shift before placing an order
+
 			ShiftBooking.checkShiftForEmployee(employeeID)
-			.then(function (output) {
-				if(output.status == 1){
-					res.render('place_orders', {
-						employeeCode: employeeCode
-					});
-				}
-				else{
+				.then(function (output) {
+					if (output.status == 1) {
+						res.render('place_orders', {
+							employeeCode: employeeCode
+						});
+					} else {
+						res.render('401_orders', {
+							employeeCode: employeeCode,
+							shiftMessage: output.message
+						});
+					}
+				})
+				.catch(function (err) {
 					res.render('401_orders', {
 						employeeCode: employeeCode,
-						shiftMessage: output.message
+						shiftMessage: err
 					});
-				}
-			})
-			.catch(function (err) {
-				res.render('401_orders', {
-					employeeCode: employeeCode,
-					shiftMessage: err
 				});
-			});
-		}
-		else{//Admin can place order without shift booking.
+		} else { //Admin can place order without shift booking.
 			res.render('place_orders', {
 				employeeCode: employeeCode
 			});
