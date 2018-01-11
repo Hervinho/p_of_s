@@ -444,6 +444,12 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getPerDayAndShift(orderdObj, res);
 	});
 
+	//get total amount from orders in a previous shift (from current datetime)
+	express.get('/customerorders/total/shifts', function (req, res) {
+		CustomerOrder.getTotalAmountFromPreviousShift(res);
+	});
+
+
 	//get a specific order.
 	express.get('/customerorders/:id', function (req, res) {
 		var orderId = req.params.id;
@@ -455,13 +461,15 @@ var CustomerOrderAPIs = function (express) {
 		var orderObj = req.body;
 		orderObj.orderItems = [{
 			product_id: 1,
-			product_quantity: 1,
-			amount: 10
+			product_quantity: 10,
+			amount: 100
 		}, {
-			product_id: 2,
+			product_id: 5,
 			product_quantity: 2,
 			amount: 50
-		}]; //just for testing until UI is ready
+		}]; //just for testing until UI cart is ready
+		//orderObj.added_by = employeeID;
+		orderObj.added_by = 1;//ONLY for testing without UI
 		CustomerOrder.create(orderObj, res);
 	});
 

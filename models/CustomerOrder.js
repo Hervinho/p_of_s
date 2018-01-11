@@ -23,10 +23,10 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
 
 //Function to  insert product order.
 var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId,
-        insertOrder, insertOrderDetails, productsArray, callback) {
+    addedBy, insertOrder, insertOrderDetails, productsArray, callback) {
     var feedback, output = {};
     connection.acquire(function (err, con) {
-        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId], function (err, result) {
+        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy], function (err, result) {
             con.release();
             if (!!err) {
                 console.log(err);
@@ -72,6 +72,46 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
         });
     });
 
+};
+
+//Function to Get grand total cash amount of all orders in previous shift.
+var getPreviousShiftTotal = function(start, end, callback){
+    var feedback, output = {};
+    var query = "SELECT SUM(total_amount) AS grand_total FROM customer_order WHERE customer_order_timestamp BETWEEN '" + 
+        start + "' AND '" + end + "'";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                output = {
+                    status: 100,
+                    message: "Error in connection database"
+                };
+                
+                callback(null, output);
+            }
+
+            con.query(query, function (err, result) {
+                con.release();
+                
+                if (err) {
+                    output = {
+                        status: 0,
+                        message: "total cash amount of all orders in previous shift",
+                        error: err
+                    };
+                    
+                    callback(null, output);
+                } else {
+                    output = {
+                        status: 1,
+                        message: "Total cash from previous shift successfully retrieved",
+                        total: result[0].grand_total
+                    };
+                    //console.log('getPreviousShiftTotal: ', result[0].grand_total);
+                    callback(null, output);
+                }
+            });
+        });
 };
 
 function CustomerOrder() {
@@ -188,6 +228,109 @@ function CustomerOrder() {
         });
     };
 
+    //get total amount from orders in a previous shift (from current datetime)
+    this.getTotalAmountFromPreviousShift = function(res){
+        var current_time = moment().format("HH:mm:ss");
+        var queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time < '" + 
+            current_time + "'";
+        var previous_shift, base_date, base_start_time, base_end_time;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(queryGetShift, function (err, resultShift) {
+                con.release();
+                if (err) {
+                    output = {
+                        status: 0,
+                        message: "Error getting shift",
+                        error: err
+                    };
+
+                    res.json(output);
+                    return;
+                } else {
+                    var shiftArraySize = resultShift.length;
+
+                    if (shiftArraySize > 0) {
+                        if(shiftArraySize == 1){
+                            previous_shift = resultShift[0];
+                        }
+                        else{
+                            //take the latest shift.
+                            previous_shift = resultShift[shiftArraySize - 1];
+                        }
+                        
+                        //If previous shift is Night shift (16h-23h), employee starting at/after midnight
+                        //Then use previous date as base_date (because before 12.00 AM is yesterday)
+                        if(previous_shift.shift_id == 3){
+                            base_date = moment().add(-1, 'day').format('YYYY-MM-DD');
+                        }
+                        else{
+                            base_date = moment().format("YYYY-MM-DD");
+                        }
+
+                        base_start_time = moment(base_date + " " + previous_shift.shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        base_end_time = moment(base_date + " " + previous_shift.shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+                        console.log(base_start_time, base_end_time);
+
+                        //Get grand total cash amount of all orders in previous shift.
+                        getPreviousShiftTotal(base_start_time, base_end_time, function(error, resultTotal){
+                            //console.log('resultTotal: ', resultTotal);
+                            if(error){
+                                res.json({
+                                    status: 0,
+                                    message: error.message,
+                                    err: error.error
+                                });
+                                return;
+                            }
+                            else{
+                                if(resultTotal.total === null){
+                                    output = {
+                                        status: 0,
+                                        message: "No customer orders were found in previous shift"
+                                    };
+
+                                    //res.json(output);
+                                    //return;
+                                }
+                                else{
+                                    output = {
+                                        status: 1,
+                                        message: resultTotal.message,
+                                        total: resultTotal.total
+                                    };
+
+                                    //res.json(output);
+                                    //return;
+                                }
+                                
+                                res.json(output);
+                                return;
+                            }
+                        });
+                        
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such shift found found'
+                        };
+                        res.json(output);
+                    return;
+                    }
+                    
+                }
+            });
+        });
+    };
+
     //get all orders for shift on a specific day.
     this.getPerDayAndShift = function (orderObj, res) {
         var output = {}, queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?',
@@ -285,13 +428,13 @@ function CustomerOrder() {
         var insertedOrderID, feedback, output = {};
         var products = orderObj.orderItems; //array of items.
         var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
-        var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?)";
+        var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?)";
         var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id, product_id, product_quantity, amount) VALUES ";
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
         var payment_status_id = 1;//order is only submitted when payment has been received.
-        var order_status_id = 1;
+        var order_status_id = 1, added_by = orderObj.added_by;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null){
             if(total_amount == '' || total_amount == null){
@@ -313,7 +456,7 @@ function CustomerOrder() {
             
             //submit customer order.
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
-                queryInsertOrder, queryInsertOrderDetails, products, function(err, result){
+                added_by, queryInsertOrder, queryInsertOrderDetails, products, function(err, result){
                 res.json(err || result);
            });
         }
