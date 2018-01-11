@@ -267,8 +267,8 @@ function CustomerOrder() {
                             previous_shift = resultShift[shiftArraySize - 1];
                         }
                         
-                        //If previous shift is Night shift (16h-23h), employee starting at/after midnight
-                        //Then use previous date as base_date (because before 12.00 AM is yesterday)
+                        //If previous shift is Night shift (16h-23h), employee starting at/after midnight.
+                        //Then use previous date as base_date (because before 12.00 AM is yesterday), else today.
                         if(previous_shift.shift_id == 3){
                             base_date = moment().add(-1, 'day').format('YYYY-MM-DD');
                         }
@@ -329,7 +329,7 @@ function CustomerOrder() {
                             message: 'No such shift found found'
                         };
                         res.json(output);
-                    return;
+                        return;
                     }
                     
                 }
