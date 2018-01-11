@@ -282,7 +282,7 @@ function CustomerOrder() {
 
                         //Get grand total cash amount of all orders in previous shift.
                         getPreviousShiftTotal(base_start_time, base_end_time, function(error, resultTotal){
-                            //console.log('resultTotal: ', resultTotal);
+                            
                             if(error){
                                 res.json({
                                     status: 0,
@@ -295,7 +295,10 @@ function CustomerOrder() {
                                 if(resultTotal.total === null){
                                     output = {
                                         status: 0,
-                                        message: "No customer orders were found in previous shift"
+                                        message: "No customer orders were found in previous shift",
+                                        shift_name: previous_shift.shift_name,
+                                        shift_start: base_start_time,
+                                        shift_end: base_end_time
                                     };
 
                                     //res.json(output);
@@ -305,7 +308,10 @@ function CustomerOrder() {
                                     output = {
                                         status: 1,
                                         message: resultTotal.message,
-                                        total: resultTotal.total
+                                        total: resultTotal.total,
+                                        shift_name: previous_shift.shift_name,
+                                        shift_start: base_start_time,
+                                        shift_end: base_end_time
                                     };
 
                                     //res.json(output);
