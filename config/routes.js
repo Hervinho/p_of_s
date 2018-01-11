@@ -4,6 +4,7 @@ var Role = require('../models/Role');
 var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
+var ProductStatus = require('../models/ProductStatus');
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 var CustomerOrderDetails = require('../models/CustomerOrderDetails');
@@ -397,6 +398,31 @@ var ProductTypeAPIs = function (express) {
 	});
 };
 
+var ProductStatusAPIs = function (express) {
+	//get all product statuses.
+	express.get('/productstatuses', function (req, res) {
+		ProductStatus.getAll(res);
+	});
+
+	//get a single product status.
+	express.get('/productstatuses/:id', function (req, res) {
+		var id = req.params.id;
+		ProductStatus.getOne(id, res);
+	});
+
+	//create new product status.
+	express.post('/productstatuses', function (req, res) {
+		var productTypeObj = req.body;
+		ProductStatus.create(productTypeObj, res);
+	});
+
+	//update new product status
+	express.put('/productstatuses', function (req, res) {
+		var productTypeObj = req.body;
+		ProductStatus.update(productTypeObj, res);
+	});
+};
+
 var CustomerOrderAPIs = function (express) {
 	//get all customer orders.
 	express.get('/customerorders', function (req, res) {
@@ -597,6 +623,12 @@ var ProductAPIs = function (express) {
 		Product.getByType(productTypeId, res);
 	});
 
+	//get all products of certain status.
+	express.get('/products/statuses/:id', function (req, res) {
+		var productStatusId = req.params.id;
+		Product.getByStatus(productStatusId, res);
+	});
+
 	//get a specific product.
 	express.get('/products/:id', function (req, res) {
 		var productId = req.params.id;
@@ -632,6 +664,21 @@ var ProductAPIs = function (express) {
 			});
 		}
 		
+	});
+
+	//Activate/deactivate product. Only by Admin
+	express.put('/products/statuses', function (req, res) {
+		var productObj = req.body;
+		if(roleID == 1){
+			Product.updateStatus(productObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		//Product.updateStatus(productObj, res);
 	});
 };
 
@@ -804,6 +851,7 @@ module.exports = {
 		PaymentStatusAPIs(apiRoutes);
 		PaymentTypeAPIs(apiRoutes);
 		ProductTypeAPIs(apiRoutes);
+		ProductStatusAPIs(apiRoutes);
 		PromotionStatusAPIs(apiRoutes);
 		CustomerOrderStatusAPIs(apiRoutes);
 		CustomerOrderAPIs(apiRoutes);

@@ -73,6 +73,42 @@ function Product() {
         });
     };
 
+    //get all products of specific satus.
+    this.getByStatus = function (productStatusId, res) {
+        var output = {},
+            query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_status_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [productStatusId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            products: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No products found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get a specific product.
     this.getOne = function (productId, res) {
         var output = {},
@@ -112,8 +148,9 @@ function Product() {
     //add new product.
     this.create = function (productObj, res) {
         var output = {},
-            feedback, query = "INSERT INTO product VALUES(?,?,?,?,?,?)";
+            feedback, query = "INSERT INTO product VALUES(?,?,?,?,?,?,?)";
         var product_type_id = productObj.product_type_id,
+            product_status_id = 2,
             product_name = productObj.product_name,
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
@@ -132,7 +169,7 @@ function Product() {
                     return;
                 }
 
-                con.query(query, [null, product_type_id, product_name, product_desc, product_price, added_by], function (err, result) {
+                con.query(query, [null, product_type_id, product_status_id, product_name, product_desc, product_price, added_by], function (err, result) {
                     con.release();
                     if (err) {
                         output = {
@@ -213,6 +250,67 @@ function Product() {
             output = {
                 status: 0,
                 message: 'Invalid product data submitted'
+            };
+
+            res.json(output);
+        }
+    };
+
+    //change product status.
+    this.updateStatus = function (productObj, res) {
+        var product_id = productObj.product_id,
+            operation_value = productObj.operation_value,
+            keyword, product_status_id,
+            query = "UPDATE product SET product_status_id=? WHERE product_id=?";
+        //console.log(productObj);
+        
+        if ((undefined !== product_id && product_id != '') && (undefined !== operation_value && operation_value != '')
+        ) {
+            if (operation_value == 1) {
+                keyword = 'Activation';
+                product_status_id = 1;
+            } else if (operation_value == 2) {
+                keyword = 'Deactivation';
+                product_status_id = 2;
+            }
+
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error connecting to database"
+                    });
+                    return;
+                }
+
+                con.query(query, [product_status_id, product_id], function (err, result) {
+                    con.release();
+                    if (err) {
+                        feedback = 'Error with product ' + keyword;
+                        output = {
+                            status: 0,
+                            message: feedback,
+                            error: err
+                        };
+
+                        res.json(output);
+                    } else {
+                        feedback = 'Product ' + keyword + ' successful';
+                        output = {
+                            status: 1,
+                            message: feedback,
+                            updatedProductId: product_id
+                        };
+
+                        res.json(output);
+                    }
+                });
+            });
+        } else {
+            feedback = 'Invalid Product data submitted';
+            output = {
+                status: 0,
+                message: feedback
             };
 
             res.json(output);
