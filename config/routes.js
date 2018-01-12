@@ -512,6 +512,12 @@ var EmployeeAPIs = function (express) {
 		Employee.countAllByGender(genderId, res);
 	});
 
+	//Count total number of active employees of a certain role.
+	express.get('/employees/roles/:id/count', function (req, res) {
+		var roleId = req.params.id;
+		Employee.countAllByRole(roleId, res);
+	});
+
 	//get all employees.
 	express.get('/employees', function (req, res) {
 		Employee.getAll(res);

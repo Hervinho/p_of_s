@@ -1,10 +1,12 @@
-var genders = [], genderNames = [], employeeCount = [];
+var genders = [], genderNames = [], employeeCountGender = [];
+var roles = [], roleNames = [], employeeCountRole = [];
 
 $(document).ready(function () {
     var message, employeeID, roleFilterTypeVal, statusFilterTypeVal;
 
     LoadAllEmployees();
     LoadAllGenders();
+    LoadAllRoles();
 
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
@@ -23,7 +25,7 @@ $(document).ready(function () {
 
 function LoadAllEmployees() {
 
-    LoadAllRoles();
+    //LoadAllRoles();
     LoadAllStatuses();
     LoadAllShifts();
     //LoadAllGenders();
@@ -119,26 +121,7 @@ function LoadAllRoles() {
         url: '/api/v1/roles',
         dataType: "json",
         cache: false,
-        success: function (data) {
-            //console.log(data);
-            var html = '<option value = "0"></option>';
-            if (data.status == 1 && data.roles.length > 0) {
-                var roles = data.roles;
-                for (var key = 0, size = roles.length; key < size; key++) {
-                    html += '<option value =' + roles[key].role_id + ' >' +
-                    roles[key].role_name +
-                        '</option>';
-                }
-            } else {
-                html += '<option value = "0">No roles found</option>';
-            }
-
-            $("#employeeFilterRole").html(html);
-
-            //Also Populate dialogViewEmployee and dialogAddEmployee
-            $("#txtViewEmployeeRole").html(html);
-            $("#txtAddEmployeeRole").html(html);
-        },
+        success: handleRoleData,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -277,7 +260,7 @@ function countEmployeesPerGender(array) {
             dataType: "json",
             cache: false,
             success: function (data) {
-                employeeCount.push(data[0].empGenderCount);
+                employeeCountGender.push(data[0].empGenderCount);
             },
             error: function (e) {
                 message = "Something went wrong";
@@ -286,20 +269,56 @@ function countEmployeesPerGender(array) {
 
         });
     }
-    console.log('employeeCount: ', employeeCount);
+    //console.log('employeeCountGender: ', employeeCountGender);
+}
+
+//function to get number of employees of certain role.
+function countEmployeesPerRole(array) {
+
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/employees/roles/' + array[key].role_id + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                employeeCountRole.push(data[0].empRoleCount);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    //console.log('employeeCountRole: ', employeeCountRole);
 }
 
 //function to display the chart
-function displayChart(genderNamesArray, empCount) {
-    if ($("#employeeBarChart").length) {
-        var f = document.getElementById("employeeBarChart"),
+function displayChart(namesArray, empCount, divId) {
+    
+    var num_colors = [], colorsArray = [
+        "#008000", "#808080", "#800000", "#FFFF00", "#00FFFF", "#008080",
+        "#0000FF", "#800080", "#C2C87D", "#129696", "##F9E79F", "#D7BDE2"
+    ];
+    
+    //Randomly choose which colors will be on the chart.
+    for(var key = 0, size = namesArray.length; key < size; key++){
+        num_colors[key] = colorsArray[Math.floor(Math.random() * colorsArray.length)];
+    }
+    
+    if ($("#" + divId).length) {
+        var f = document.getElementById(divId),
             i = {
                 datasets: [{
                     data: empCount,
-                    backgroundColor: ["#455C73", "#9B59B6", "#BDC3C7"],
+                    backgroundColor: num_colors,
                     label: "Employee Chart by Gender"
                 }],
-                labels: genderNamesArray
+                labels: namesArray
             };
         new Chart(f, {
             data: i,
@@ -339,7 +358,7 @@ function handleEmployeesData(data) {
 
 function handleGenderData(data){
     //console.log(data);
-    var html = '<option value = "0"></option>';
+    var html = '<option value = "0"></option>', genderChartId = "employeeBarChartGender";
     if (data.status == 1 && data.genders.length > 0) {
         genders = data.genders;
         for (var key = 0, size = genders.length; key < size; key++) {
@@ -356,7 +375,31 @@ function handleGenderData(data){
     $("#txtViewEmployeeGender").html(html);
     $("#txtAddEmployeeGender").html(html);
 
-    //count number of employees of certain gender.
+    //count number of employees of certain gender and display in chart.
     countEmployeesPerGender(genders);
-    displayChart(genderNames, employeeCount);
+    displayChart(genderNames, employeeCountGender, genderChartId);
+}
+
+function handleRoleData(data){
+    //console.log(data);
+    var html = '<option value = "0"></option>', roleChartId = "employeeBarChartRole";
+    if (data.status == 1 && data.roles.length > 0) {
+        roles = data.roles;
+        for (var key = 0, size = roles.length; key < size; key++) {
+            html += '<option value =' + roles[key].role_id + ' >' + roles[key].role_name + '</option>';
+            roleNames[key] = roles[key].role_name;
+        }
+    } else {
+        html += '<option value = "0">No roles found</option>';
+    }
+
+    $("#employeeFilterRole").html(html);
+
+    //Also Populate dialogViewEmployee and dialogAddEmployee
+    $("#txtViewEmployeeRole").html(html);
+    $("#txtAddEmployeeRole").html(html);
+
+    //count number of employees of certain role and display in chart.
+    countEmployeesPerRole(roles);
+    displayChart(roleNames, employeeCountRole, roleChartId);
 }

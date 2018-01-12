@@ -14,13 +14,21 @@
 
                   <div class="entertainer-layout">
                       <div class="entertainer-content">
-                        <div class="mdl-grid">
-                          <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <label class="control-label">Filter by Role</label>
-                              <select id="employeeFilterRole" class="form-control" required="required">
+                        <!-- Pie Chart -->
+                        <!--<div class="mdl-grid" style="mdl-cell mdl-cell--12-col">
+                            <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                <label class="control-label">Employee Chart By Gender</label>
+                                <canvas id="employeeBarChart"></canvas>
+                            </div>
+                        </div>-->
 
-                              </select>
-                          </div>
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                <label class="control-label">Filter by Role</label>
+                                <select id="employeeFilterRole" class="form-control" required="required">
+
+                                </select>
+                            </div>
 
                           <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
                               <label class="control-label">Filter by Status</label>
@@ -28,13 +36,6 @@
 
                               </select>
                           </div>
-
-                          <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <label class="control-label">Filter By Shift</label>
-                              <select id="employeeFilterShift" class="form-control" required="required">
-
-                              </select>
-                          </div>-->
 
                         </div>
 
@@ -67,13 +68,16 @@
                           </div>
 
                         <!-- Pie Chart -->
-                        <div class="x_panel">
-                            <div class="x_title">
-                                <h3>Employee Chart <small>All Genders</small></h3>
-                                <div class="clearfix"></div>
+                        <br><br>
+                        <div class="mdl-grid mdl-cell mdl-cell--12-col">
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet" style="">
+                                <label class="control-label"><strong>Employee Chart By Gender</strong></label>
+                                <canvas id="employeeBarChartGender"></canvas>
                             </div>
-                            <div class="x_content1">
-                                <canvas id="employeeBarChart"></canvas>
+
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet" style="">
+                                <label class="control-label"><strong>Employee Chart By Role</strong></label>
+                                <canvas id="employeeBarChartRole"></canvas>
                             </div>
                         </div>
 
