@@ -42,6 +42,20 @@ var recordLogin = function (employeeId, callback) {
 };
 
 function Employee() {
+    //Count total number of active male/females employees.
+    //Will be used in home page charts
+    this.countAllByGender = function (genderId, res) {
+        var query = 'SELECT COUNT(*) AS empGenderCount FROM employee WHERE employee_status_id = 1 ' +
+        'AND employee_gender_id = ?';
+
+        connection.acquire(function (err, con) {
+        con.query(query, genderId, function (err, result) {
+            con.release();
+            res.json(result);
+        });
+        });
+    };
+
     //get all employees
     this.getAll = function (res) {
         var output = {},

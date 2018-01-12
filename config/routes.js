@@ -506,6 +506,12 @@ var ShiftAPIs = function (express) {
 };
 
 var EmployeeAPIs = function (express) {
+	//Count total number of active male/females employees.
+	express.get('/employees/genders/:id/count', function (req, res) {
+		var genderId = req.params.id;
+		Employee.countAllByGender(genderId, res);
+	});
+
 	//get all employees.
 	express.get('/employees', function (req, res) {
 		Employee.getAll(res);

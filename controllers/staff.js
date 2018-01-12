@@ -1,7 +1,10 @@
+var genders = [], genderNames = [], employeeCount = [];
+
 $(document).ready(function () {
     var message, employeeID, roleFilterTypeVal, statusFilterTypeVal;
 
     LoadAllEmployees();
+    LoadAllGenders();
 
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
@@ -23,7 +26,7 @@ function LoadAllEmployees() {
     LoadAllRoles();
     LoadAllStatuses();
     LoadAllShifts();
-    LoadAllGenders();
+    //LoadAllGenders();
 
     //Reset all filters.
     $("#employeeFilterRole").val(0);
@@ -59,26 +62,7 @@ function LoadAllGenders() {
         url: '/api/v1/genders',
         dataType: "json",
         cache: false,
-        success: function (data) {
-            //console.log(data);
-            var html = '<option value = "0"></option>';
-            if (data.status == 1 && data.genders.length > 0) {
-                var genders = data.genders;
-                for (var key = 0, size = genders.length; key < size; key++) {
-                    html += '<option value =' + genders[key].gender_id + ' >' +
-                    genders[key].gender_name +
-                        '</option>';
-                }
-            } else {
-                html += '<option value = "0">No genders found</option>';
-            }
-
-            //$("#employeeFilterGender").html(html);
-
-            //Also Populate dialogViewEmployee and dialogAddEmployee
-            $("#txtViewEmployeeGender").html(html);
-            $("#txtAddEmployeeGender").html(html);
-        },
+        success: handleGenderData,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -280,6 +264,54 @@ function FilterEmployeesByRole(roleId) {
     });
 }
 
+//function to get number of employees of certain gender.
+function countEmployeesPerGender(array) {
+
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/employees/genders/' + array[key].gender_id + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                employeeCount.push(data[0].empGenderCount);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    console.log('employeeCount: ', employeeCount);
+}
+
+//function to display the chart
+function displayChart(genderNamesArray, empCount) {
+    if ($("#employeeBarChart").length) {
+        var f = document.getElementById("employeeBarChart"),
+            i = {
+                datasets: [{
+                    data: empCount,
+                    backgroundColor: ["#455C73", "#9B59B6", "#BDC3C7"],
+                    label: "Employee Chart by Gender"
+                }],
+                labels: genderNamesArray
+            };
+        new Chart(f, {
+            data: i,
+            type: "pie",
+            otpions: {
+                legend: !1
+            }
+        })
+    }
+
+}
+
 /*********** AJAX Callback functions ***********/
 
 function handleEmployeesData(data) {
@@ -303,4 +335,28 @@ function handleEmployeesData(data) {
     //console.log(html);
     $("#tblEmployees tbody").html(html);
     //$('#tblEmployees').dataTable({processing:true});
+}
+
+function handleGenderData(data){
+    //console.log(data);
+    var html = '<option value = "0"></option>';
+    if (data.status == 1 && data.genders.length > 0) {
+        genders = data.genders;
+        for (var key = 0, size = genders.length; key < size; key++) {
+            html += '<option value =' + genders[key].gender_id + ' >' + genders[key].gender_name + '</option>';
+            genderNames[key] = genders[key].gender_name;
+        }
+    } else {
+        html += '<option value = "0">No genders found</option>';
+    }
+    
+    //$("#employeeFilterGender").html(html);
+    
+    //Also Populate dialogViewEmployee and dialogAddEmployee
+    $("#txtViewEmployeeGender").html(html);
+    $("#txtAddEmployeeGender").html(html);
+
+    //count number of employees of certain gender.
+    countEmployeesPerGender(genders);
+    displayChart(genderNames, employeeCount);
 }
