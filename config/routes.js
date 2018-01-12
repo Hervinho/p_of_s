@@ -487,10 +487,12 @@ var CustomerOrderAPIs = function (express) {
 		var orderObj = req.body;
 		orderObj.orderItems = [{
 			product_id: 1,
+			product_size_id: 1,
 			product_quantity: 10,
 			amount: 100
 		}, {
 			product_id: 5,
+			product_size_id: 3,
 			product_quantity: 2,
 			amount: 50
 		}]; //just for testing until UI cart is ready

@@ -9,11 +9,13 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
         if (index == productsArray.length - 1) {
             string += "(" + customerOrderId + ", " + 
                 productsArray[index].product_id + ", " +
+                productsArray[index].product_size_id + ", " +
                 productsArray[index].product_quantity + ", " +
                 productsArray[index].amount + ")";
         } else {
             string += "(" + customerOrderId + ", " + 
                 productsArray[index].product_id + ", " +
+                productsArray[index].product_size_id + ", " +
                 productsArray[index].product_quantity + ", " +
                 productsArray[index].amount + "),";
         }
@@ -486,20 +488,24 @@ function CustomerOrder() {
         var products = orderObj.orderItems; //array of items.
         var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
         var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?)";
-        var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id, product_id, product_quantity, amount) VALUES ";
+        var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,product_quantity,amount) VALUES ";
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
         var payment_status_id = 1;//order is only submitted when payment has been received.
         var order_status_id = 1, added_by = orderObj.added_by;
 
-        if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null){
+        if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
+            products.length <= 0){
             if(total_amount == '' || total_amount == null){
                 feedback = 'Total amount due cannot be null';
             }
 
             else if(payment_type_id == '' || payment_type_id == null){
                 feedback = 'Payment type not selected';
+            }
+            else if(products.length <= 0){
+                feedback = 'Products array cannot be empty';
             }
 
             output = {status: 0, message: feedback};
