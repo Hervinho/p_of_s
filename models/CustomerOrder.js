@@ -1,5 +1,6 @@
 var connection = require('../config/connection');
 var moment = require('moment');
+var Shift = require('./Shift');
 
 //Function to build query string for order details.
 var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
@@ -191,7 +192,7 @@ function CustomerOrder() {
     };
 
     //get all orders of a specific payment type.
-    this.counttAllByPaymentType = function (paymentTypeId, res) {
+    this.countAllByPaymentType = function (paymentTypeId, res) {
         var output = {},
             query = 'SELECT COUNT(*) AS ordersCountPaymentType FROM customer_order WHERE payment_type_id = ?';
 
@@ -205,6 +206,31 @@ function CustomerOrder() {
             }
 
             con.query(query, [paymentTypeId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
+    //count all orders captured by a certain employee.
+    this.countAllPerEmployee = function(employeeId, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountEmployee FROM customer_order WHERE added_by = ?';
+        var shiftCallback, shiftTimes;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(query, [employeeId], function (err, result) {
                 con.release();
                 if (err) {
                     res.json(err);

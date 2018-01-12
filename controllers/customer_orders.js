@@ -1,9 +1,11 @@
 var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderFilterShiftVal;
 var payment_types = [], paymentTypeNames = [], orderCountPaymentType = [];
+var employees = [], employeeNames = [], orderCountEmployee = [];
 
 $(document).ready(function () {
    LoadAllOrders();
    LoadAllPaymentTypes();
+   LoadAllEmployees();
 
     $(document).on('change', '.form-control, .any-date', function () {
         orderFilterCustomerVal = $("#orderFilterCustomer").val();
@@ -16,7 +18,6 @@ $(document).ready(function () {
         } 
         else if(orderFilterCustomerVal == 0 && orderFilterShiftVal != 0 && isValidDate){
             FilterOrdersByDayAndShift(orderFilterShiftVal, orderFilterDateVal);
-            //toastr.info("Hey");
         }
     });
 });
@@ -196,6 +197,24 @@ function LoadAllPaymentTypes(){
     });
 }
 
+function LoadAllEmployees(){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/employees',
+        dataType: "json",
+        cache: false,
+        success: handleEmployeeData,
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 //function to get number of customer orders of a certain payment type.
 function countOrdersPerPaymentType(array) {
 
@@ -218,7 +237,30 @@ function countOrdersPerPaymentType(array) {
 
         });
     }
-    console.log('orderCountPaymentType: ', orderCountPaymentType);
+}
+
+//function to get number of customer orders captured by a specific employee.
+function countOrdersPerEmployee(array) {
+
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/customerorders/employees/' + array[key].employee_id + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                orderCountEmployee.push(data[0].orderCountEmployee);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
 }
 
 //function to display the chart
@@ -313,4 +355,20 @@ function handlePaymentTypeData(data){
     //count number of customer orders of a certain payment type. and display in chart.
     countOrdersPerPaymentType(payment_types);
     displayChart(paymentTypeNames, orderCountPaymentType, orderChartId);
+}
+
+function handleEmployeeData(data){
+    //console.log('payment_types: ', data);
+    var orderChartId = "orderBarChartEmployee";
+
+    if (data.status == 1 && data.employees.length > 0) {
+        employees = data.employees;
+        for (var key = 0, size = employees.length; key < size; key++) {
+            employeeNames[key] = employees[key].employee_name;
+        }
+    }
+
+    //count number of customer orders of a certain payment type. and display in chart.
+    countOrdersPerEmployee(employees);
+    displayChart(employeeNames, orderCountEmployee, orderChartId);
 }
