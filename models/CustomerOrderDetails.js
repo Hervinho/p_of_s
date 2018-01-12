@@ -6,6 +6,7 @@ function CustomerOrderDetails() {
         var output = {},
             query = 'SELECT * FROM customer_order_details ' +
                 'LEFT JOIN product ON customer_order_details.product_id = product.product_id ' +
+                'LEFT JOIN product_size ON customer_order_details.product_size_id = product_size.product_size_id ' +
                 'WHERE customer_order_id = ?';
 
         connection.acquire(function (err, con) {
@@ -33,7 +34,7 @@ function CustomerOrderDetails() {
                             message: 'No data found'
                         };
                     }
-                    //console.log(output);
+                    
                     res.json(output);
                 }
             });

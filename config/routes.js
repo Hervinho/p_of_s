@@ -5,6 +5,7 @@ var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
 var ProductStatus = require('../models/ProductStatus');
+var ProductSize = require('../models/ProductSize');
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 var CustomerOrderDetails = require('../models/CustomerOrderDetails');
@@ -312,6 +313,19 @@ var PromotionStatusAPIs = function (express) {
 	express.put('/promotionstatuses', function (req, res) {
 		var promotionStatusObj = req.body;
 		PromotionStatus.update(promotionStatusObj, res);
+	});
+};
+
+var ProductSizeAPIs = function (express) {
+	//get all product sizes.
+	express.get('/productsizes', function (req, res) {
+		ProductSize.getAll(res);
+	});
+
+	//get a single product size.
+	express.get('/productsizes/:id', function (req, res) {
+		var id = req.params.id;
+		ProductSize.getOne(id, res);
 	});
 };
 
@@ -898,6 +912,7 @@ module.exports = {
 		ShiftBookingAPIs(apiRoutes);
 		ShiftBookingStatusAPIs(apiRoutes);
 		LoginRecordAPIs(apiRoutes);
+		ProductSizeAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
