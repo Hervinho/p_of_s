@@ -424,6 +424,12 @@ var ProductStatusAPIs = function (express) {
 };
 
 var CustomerOrderAPIs = function (express) {
+	//Count total number of customer orders of a certain payment type.
+	express.get('/customerorders/paymenttypes/:id/count', function (req, res) {
+		var paymentTypeId = req.params.id;
+		CustomerOrder.counttAllByPaymentType(paymentTypeId, res);
+	});
+
 	//get all customer orders.
 	express.get('/customerorders', function (req, res) {
 		CustomerOrder.getAll(res);

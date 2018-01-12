@@ -190,6 +190,31 @@ function CustomerOrder() {
         });
     };
 
+    //get all orders of a specific payment type.
+    this.counttAllByPaymentType = function (paymentTypeId, res) {
+        var output = {},
+            query = 'SELECT COUNT(*) AS ordersCountPaymentType FROM customer_order WHERE payment_type_id = ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(query, [paymentTypeId], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
     //get a specific order.
     this.getOne = function (orderId, res) {
         var output = {},
