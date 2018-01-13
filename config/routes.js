@@ -516,6 +516,12 @@ var CustomerOrderAPIs = function (express) {
 		var orderObj = req.body;
 		CustomerOrder.updateStatus(orderObj, res);
 	});
+
+	//update collection status
+	express.put('/customerorders/:id/collection', function (req, res) {
+		var orderId = req.params.id;
+		CustomerOrder.updateCollectionStatus(orderId, res);
+	});
 };
 
 var ShiftAPIs = function (express) {

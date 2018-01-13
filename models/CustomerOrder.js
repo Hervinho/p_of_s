@@ -26,10 +26,10 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
 
 //Function to  insert product order.
 var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId,
-    addedBy, insertOrder, insertOrderDetails, productsArray, callback) {
+    addedBy, collectionStatusId, insertOrder, insertOrderDetails, productsArray, callback) {
     var feedback, output = {};
     connection.acquire(function (err, con) {
-        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy], function (err, result) {
+        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy, collectionStatusId], function (err, result) {
             con.release();
             if (!!err) {
                 console.log(err);
@@ -201,6 +201,7 @@ function CustomerOrder() {
             query = 'SELECT * FROM customer_order ' +
             'LEFT JOIN customer_order_status ON customer_order.order_status_id = customer_order_status.customer_order_status_id ' +
             'WHERE customer_order.order_status_id = 3 AND customer_order_timestamp LIKE ? ' +
+            'AND customer_order.collection_status_id = 2 ' +
             'ORDER BY customer_order_timestamp DESC';
 
         connection.acquire(function (err, con) {
@@ -274,7 +275,7 @@ function CustomerOrder() {
         });
     };
 
-    //get all orders of a specific payment type.
+    //count all orders of a specific payment type.
     this.countAllByPaymentType = function (paymentTypeId, res) {
         var output = {},
             query = 'SELECT COUNT(*) AS ordersCountPaymentType FROM customer_order WHERE payment_type_id = ?';
@@ -568,12 +569,13 @@ function CustomerOrder() {
         var insertedOrderID, feedback, output = {};
         var products = orderObj.orderItems; //array of items.
         var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
-        var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?)";
+        var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?,?)";
         var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,product_quantity,amount) VALUES ";
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
         var payment_status_id = 1;//order is only submitted when payment has been received.
+        var collection_status_id = 2;//order not yet collected
         var order_status_id = 1, added_by = orderObj.added_by;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
@@ -600,7 +602,7 @@ function CustomerOrder() {
             
             //submit customer order.
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
-                added_by, queryInsertOrder, queryInsertOrderDetails, products, function(err, result){
+                added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, function(err, result){
                 res.json(err || result);
            });
         }
@@ -658,6 +660,43 @@ function CustomerOrder() {
             };
             res.json(output);
         }
+    };
+
+    //update collection status for order.
+    this.updateCollectionStatus = function(orderId, res){
+        var output = {}, feedback, queryUpdate = 'UPDATE customer_order SET collection_status_id = 1 WHERE customer_order_id = ?';
+
+        //if((undefined !== customrOrderId && customrOrderId != '')){
+            connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+    
+                con.query(queryUpdate, [orderId], function (err, result) {
+                    con.release();
+                    if (err) {
+                        //console.log(err);
+                        output = {
+                            status: 0,
+                            message: "Error updating order status",
+                            error: err
+                        };
+                        res.json(output);
+                    } else {
+                        
+                        output = {
+                            status: 1,
+                            message: "Customer order has been collected."
+                        };
+                        res.json(output);
+                    }
+                });
+            });
+        //}
     };
 }
 
