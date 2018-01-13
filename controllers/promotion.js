@@ -11,7 +11,7 @@ $(document).ready(function () {
             FilterPromotionsByStatus(promotionFilterStatusVal);
         } 
         else if(promotionFilterStatusVal == 0 && promotionFilterTypeVal != 0){
-            FilterPromotionsByType(promotionFilterTypeVal);
+            FilterPromotionsByProduct(promotionFilterTypeVal);
         }
         else {
             LoadAllPromotions();
@@ -21,7 +21,7 @@ $(document).ready(function () {
 
 function LoadAllPromotions(){
     LoadAllPromotionStatuses();
-    LoadAllProductTypes();
+    LoadAllProducts();
 
     //Reset all filters.
     $("#promotionFilterStatus").val(0);
@@ -68,12 +68,12 @@ function FilterPromotionsByStatus(statusId){
     });
 }
 
-function FilterPromotionsByType(typeId){
+function FilterPromotionsByProduct(productId){
     $.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/promotions/types/' + typeId,
+        url: '/api/v1/promotions/products/' + productId,
         dataType: "json",
         cache: false,
         beforeSend: function () {
@@ -124,25 +124,25 @@ function LoadAllPromotionStatuses(){
     });
 }
 
-function LoadAllProductTypes() {
+function LoadAllProducts() {
     $.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/producttypes',
+        url: '/api/v1/products',
         dataType: "json",
         cache: false,
         success: function (data) {
             var html = '<option value = "0"></option>';
-            if (data.status == 1 && data.product_types.length > 0) {
-                var product_types = data.product_types;
-                for (var key = 0, size = product_types.length; key < size; key++) {
-                    html += '<option value =' + product_types[key].product_type_id + ' >' +
-                        product_types[key].product_type_name +
+            if (data.status == 1 && data.products.length > 0) {
+                var products = data.products;
+                for (var key = 0, size = products.length; key < size; key++) {
+                    html += '<option value =' + products[key].product_id + ' >' +
+                        products[key].product_name +
                         '</option>';
                 }
             } else {
-                html += '<option value = "0">No product types found</option>';
+                html += '<option value = "0">No product found</option>';
             }
 
             $("#promotionFilterType").html(html);
@@ -180,12 +180,12 @@ function ViewPromotionInfo(id){
             var promotionValidFrom = promotion.valid_from_date;
             var promotionValidUntil = promotion.valid_to_date;
             var promotionStatusId = promotion.promotion_status_id;
-            var promotionTypeId = promotion.product_type_id;
+            var productId = promotion.product_id;
             var promotionAddedBy = promotion.employee_name;
 
             $("#txtViewPromotionName").val(promotionName);
             $("#txtViewPromotionStatus").val(promotionStatusId);
-            $("#txtViewPromotionType").val(promotionTypeId);
+            $("#txtViewPromotionType").val(productId);
             $("#txtViewPromotionValidFrom").val(promotionValidFrom);
             $("#txtViewPromotionValidUntil").val(promotionValidUntil);
             $("#txtViewPromotionDescription").val(promotionDesc);

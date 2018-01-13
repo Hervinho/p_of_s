@@ -16,7 +16,7 @@ function UpdatePromotion() {
         valid_to_date: $("#txtViewPromotionValidUntil").val(),
         promotion_desc: $("#txtViewPromotionDescription").val(),
         promotion_price: parseInt($("#txtViewPromotionPrice").val()),
-        product_type_id: parseInt($("#txtViewPromotionType").val())
+        product_id: parseInt($("#txtViewPromotionType").val())
     };
 
     //Validations
@@ -99,9 +99,9 @@ function validateEditPromotionForm(promotionObj) {
         message = 'Invalid dates provided.';
     }
 
-    if (promotionObj.product_type_id === 0 || promotionObj.product_type_id === null || promotionObj.product_type_id === undefined) {
+    if (promotionObj.product_id === 0 || promotionObj.product_id === null || promotionObj.product_id === undefined) {
         flag = false;
-        message = 'No Product Type selected. Please select Product Type';
+        message = 'No Product selected. Please select Product';
     }
 
     return flag;

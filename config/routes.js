@@ -212,10 +212,10 @@ var PromotionAPIs = function(express){
 		Promotion.getPerStatus(id, res);
 	});
 
-	//get all promotions of a certain type.
-	express.get('/promotions/types/:id', function (req, res) {
+	//get all promotions of a certain product.
+	express.get('/promotions/products/:id', function (req, res) {
 		var id = req.params.id;
-		Promotion.getPerType(id, res);
+		Promotion.getPerProduct(id, res);
 	});
 
 	//get a specific promotion.
