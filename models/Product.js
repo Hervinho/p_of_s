@@ -204,8 +204,9 @@ function Product() {
     //update product.
     this.update = function (productObj, res) {
         var output = {},
-            feedback, query = "UPDATE product SET product_type_id=?, product_name=?, product_desc=?, product_price=? WHERE product_id=?";
+            feedback, query = "UPDATE product SET product_type_id=?, product_status_id=?,product_name=?, product_desc=?, product_price=? WHERE product_id=?";
         var product_type_id = productObj.product_type_id,
+            product_status_id = productObj.product_status_id,
             product_name = productObj.product_name,
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
@@ -213,7 +214,7 @@ function Product() {
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
             (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
-            (undefined !== product_id && product_id != '')
+            (undefined !== product_id && product_id != '') && (undefined !== product_status_id && product_status_id != '')
         ) {
             connection.acquire(function (err, con) {
                 if (err) {
@@ -224,7 +225,7 @@ function Product() {
                     return;
                 }
 
-                con.query(query, [product_type_id, product_name, product_desc, product_price, product_id], function (err, result) {
+                con.query(query, [product_type_id, product_status_id, product_name, product_desc, product_price, product_id], function (err, result) {
                     con.release();
                     if (err) {
                         output = {

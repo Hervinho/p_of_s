@@ -13,6 +13,7 @@ function UpdateProduct() {
         product_id: productId,
         product_name: $("#txtViewProductName").val(),
         product_type_id: parseInt($("#txtViewProductType").val()),
+        product_status_id: parseInt($("#txtViewProductStatus").val()),
         product_desc: $("#txtViewProductDescription").val(),
         product_price: parseInt($("#txtViewProductPrice").val())
     };
@@ -88,7 +89,11 @@ function validateEditProductForm(productObj) {
     }
     if (productObj.product_type_id === 0 || productObj.product_type_id === null || productObj.product_type_id === undefined) {
         flag = false;
-        message = 'Error retrieving selected Product Type';
+        message = 'No product type. Please select a Product Type';
+    }
+    if (productObj.product_status_id === 0 || productObj.product_status_id === null || productObj.product_status_id === undefined) {
+        flag = false;
+        message = 'No product status. Please select a Product Status';
     }
 
     return flag;
