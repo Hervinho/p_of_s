@@ -195,6 +195,47 @@ function CustomerOrder() {
         });
     };
 
+    //get all customer orders that are ready for collection.
+    this.getAllReadyForCollection = function (res) {
+        var output = {}, today = moment().format("YYYY-MM-DD"),
+            query = 'SELECT * FROM customer_order ' +
+            'LEFT JOIN customer_order_status ON customer_order.order_status_id = customer_order_status.customer_order_status_id ' +
+            'WHERE customer_order.order_status_id = 3 AND customer_order_timestamp LIKE ? ' +
+            'ORDER BY customer_order_timestamp DESC';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            today = '%' + today + '%';
+
+            con.query(query, [today], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            ready_orders: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No orders ready for collection was found.'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get all orders of a specific customer.
     this.getAllPerCustomer = function (customerId, res) {
         var output = {},

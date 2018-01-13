@@ -1,0 +1,52 @@
+<%- include layout/head.ejs %>
+    <%- include layout/main_sidebar.ejs %>
+
+        <!-- MAIN PAGE CONTENT START -->
+        <main class="mdl-layout__content mdl-color--white">
+            <div class="entertainer-content">
+                <div class="mdl-grid back-end-content">
+
+                  <div class="entertainer-layout">
+                      <div class="entertainer-content">
+                        <div class="mdl-grid">
+                          
+                        </div>
+
+
+                          <table id="tblReadyCustomerOrders" class="mdl-data-table mdl-js-data-table">
+                              <!-- class="mdl-data-table mdl-js-data-table" -->
+                              <thead>
+                                  <tr>
+                                      <th class="mdl-data-table__cell--non-numeric">Order Number</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Date Captured</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Total Amount</th>
+                                      <th class="mdl-data-table__cell--non-numeric">View</th>
+
+                                  </tr>
+                              </thead>
+                              <tbody>
+
+                              </tbody>
+                          </table>
+                          <!-- /block -->
+
+                          <div hidden class="alert-info" style="overflow:auto;height:20px;">
+                              <span class="label label-default" id="lbSelectedReadyCustomerOrder"></span>
+                          </div>
+
+                      </div>
+                  </div>
+
+
+                    <!-- Dialog -->
+                    <% include partials/view/dialogViewCustomerOrder.ejs %>
+
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- MAIN PAGE CONTENT END -->
+        <script type="text/javascript" src="/controllers/order_collection.js"></script>
+
+        <%- include layout/footer.ejs %>

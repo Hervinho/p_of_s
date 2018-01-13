@@ -460,6 +460,11 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getAllNewToBePrepared(res);
 	});
 
+	//get all customer orders that are ready for collection.
+	express.get('/customerorders/ready', function (req, res) {
+		CustomerOrder.getAllReadyForCollection(res);
+	});
+
 	//get all orders for a specific customer.
 	express.get('/customerorders/customers/:id', function (req, res) {
 		var customerId = req.params.id;
@@ -838,6 +843,39 @@ var configViews = function (express) {
 				});
 		} else { //Admin view orders in the kitchen without shift booking.
 			res.render('kitchen', {
+				employeeCode: employeeCode
+			});
+		}
+
+	});
+
+	//Customer orders collection.
+	express.get('/customers/orders/collections', isUserLoggedIn, function (req, res) {
+		
+		//For Bluebird Promise ONLY.
+		if (roleID != 1) { //Check if employee booked this shift before placing an order
+
+			ShiftBooking.checkShiftForEmployee(employeeID)
+				.then(function (output) {
+					if (output.status == 1) {
+						res.render('customer_order_collections', {
+							employeeCode: employeeCode
+						});
+					} else {
+						res.render('401_orders', {
+							employeeCode: employeeCode,
+							shiftMessage: output.message
+						});
+					}
+				})
+				.catch(function (err) {
+					res.render('401_orders', {
+						employeeCode: employeeCode,
+						shiftMessage: err
+					});
+				});
+		} else { //Admin view orders in the kitchen without shift booking.
+			res.render('customer_order_collections', {
 				employeeCode: employeeCode
 			});
 		}
