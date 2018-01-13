@@ -155,6 +155,46 @@ function CustomerOrder() {
         });
     };
 
+    //get all customer orders that are new. Will be sent to the kitchen.
+    this.getAllNewToBePrepared = function (res) {
+        var output = {}, today = moment().format("YYYY-MM-DD"),
+            query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+            'LEFT JOIN customer_order_status ON customer_order.order_status_id = customer_order_status.customer_order_status_id ' +
+            'WHERE (customer_order.order_status_id = 1 OR customer_order.order_status_id = 2) AND customer_order_timestamp LIKE ?';
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            today = '%' + today + '%';
+
+            con.query(query, [today], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer_orders: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No new orders found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //get all orders of a specific customer.
     this.getAllPerCustomer = function (customerId, res) {
         var output = {},
@@ -541,15 +581,28 @@ function CustomerOrder() {
                     return;
                 }
     
-                con.query(queryUpdate, [customrOrderId, orderStatusId], function (err, result) {
+                con.query(queryUpdate, [orderStatusId, customrOrderId], function (err, result) {
                     con.release();
                     if (err) {
-                        res.json({status: 0, message: err});
+                        //console.log(err);
+                        output = {
+                            status: 0,
+                            message: "Error updating order status",
+                            error: err
+                        };
+                        res.json(output);
                     } else {
-                        feedback = 'Customer Order status successfully updated';
+                        if(orderStatusId == 2){
+                            feedback = 'Customer Order is being prepared in the kitchen.';
+                        }
+                        else if(orderStatusId == 3){
+                            feedback = 'Customer Order is ready for collection.';
+                        }
+                        
                         output = {
                             status: 1,
-                            message: feedback
+                            message: feedback,
+                            status_id: orderStatusId
                         };
                         res.json(output);
                     }

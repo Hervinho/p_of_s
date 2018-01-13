@@ -341,13 +341,13 @@ var CustomerOrderStatusAPIs = function (express) {
 		CustomerOrderStatus.getOne(id, res);
 	});
 
-	//create new promotion status.
+	//create new customer order
 	express.post('/cust_orderstatuses', function (req, res) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.create(customerOrderStatusObj, res);
 	});
 
-	//update promotion status.
+	//update customer order
 	express.put('/cust_orderstatuses', function (req, res) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.update(customerOrderStatusObj, res);
@@ -455,6 +455,11 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getAll(res);
 	});
 
+	//get all customer orders that are new. Will be sent to the kitchen.
+	express.get('/customerorders/new', function (req, res) {
+		CustomerOrder.getAllNewToBePrepared(res);
+	});
+
 	//get all orders for a specific customer.
 	express.get('/customerorders/customers/:id', function (req, res) {
 		var customerId = req.params.id;
@@ -502,7 +507,7 @@ var CustomerOrderAPIs = function (express) {
 	});
 
 	//update order status
-	express.put('/customerorders', function (req, res) {
+	express.put('/customerorders/status', function (req, res) {
 		var orderObj = req.body;
 		CustomerOrder.updateStatus(orderObj, res);
 	});
@@ -800,6 +805,39 @@ var configViews = function (express) {
 				});
 		} else { //Admin can place order without shift booking.
 			res.render('place_orders', {
+				employeeCode: employeeCode
+			});
+		}
+
+	});
+
+	//Kitchen.
+	express.get('/kitchen', isUserLoggedIn, function (req, res) {
+		
+		//For Bluebird Promise ONLY.
+		if (roleID != 1) { //Check if employee booked this shift before placing an order
+
+			ShiftBooking.checkShiftForEmployee(employeeID)
+				.then(function (output) {
+					if (output.status == 1) {
+						res.render('kitchen', {
+							employeeCode: employeeCode
+						});
+					} else {
+						res.render('401_orders', {
+							employeeCode: employeeCode,
+							shiftMessage: output.message
+						});
+					}
+				})
+				.catch(function (err) {
+					res.render('401_orders', {
+						employeeCode: employeeCode,
+						shiftMessage: err
+					});
+				});
+		} else { //Admin view orders in the kitchen without shift booking.
+			res.render('kitchen', {
 				employeeCode: employeeCode
 			});
 		}

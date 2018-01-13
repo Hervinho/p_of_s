@@ -1,0 +1,54 @@
+<!-- The Modal  dialogViewNewCustomerOrder -->
+<div id="dialogViewNewCustomerOrder" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">View Order Details</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                            
+                            <div class="mdl-cell mdl-cell--12-col">
+                                
+                                <div class="mdl-grid">
+                                    <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                        <label class="control-label">Order Status</label>
+                                        <select id="orderFilterStatus" class="form-control" required="required">
+
+                                        </select>
+                                        <br><br>
+                                        <a>
+                                            <button type="button" onclick="return UpdateOrderStatus();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                        </a>
+                                    </div>
+                                    
+                                </div>><br><br>
+
+                                <table id="tblNewCustomerOrderDetails" class="mdl-data-table mdl-js-data-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="mdl-data-table__cell--non-numeric">Product Name</th>
+                                            <th class="mdl-data-table__cell--non-numeric">Product Size</th>
+                                            <th class="mdl-data-table__cell--non-numeric">Quantity Ordered</th>
+                                            <th class="mdl-data-table__cell--non-numeric">Amount (Quantity * Product Price)</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/update/update_order_status.js"></script>
