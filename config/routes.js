@@ -715,7 +715,7 @@ var ProductAPIs = function (express) {
 		
 	});
 
-	//update product.
+	//update product. Only by Admin
 	express.put('/products', function (req, res) {
 		var productObj = req.body;
 		if(roleID == 1){
@@ -730,20 +730,6 @@ var ProductAPIs = function (express) {
 		
 	});
 
-	//Activate/deactivate product. Only by Admin
-	express.put('/products/statuses', function (req, res) {
-		var productObj = req.body;
-		if(roleID == 1){
-			Product.updateStatus(productObj, res);
-		}
-		else{
-			res.json({
-				status: 0,
-				message: roleMessage
-			});
-		}
-		//Product.updateStatus(productObj, res);
-	});
 };
 
 var SupplierAPIs = function (express) {

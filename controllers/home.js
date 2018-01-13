@@ -243,8 +243,6 @@ function handleProductsData(data) {
                 products[key].product_desc + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + products[key].product_price + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 products[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                //'<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #2ECF33;" type="button" onclick="return UpdateProductStatus(1,\'' + products[key].product_id + '\');">Activate</button>  ' + 
-                //'<button class="mdl-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="background-color: #EE4A4A;" type="button" onclick="return UpdateProductStatus(2,\'' + products[key].product_id + '\');">Discontinue</button></td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewProduct" onclick="return ViewProductInfo(\'' + products[key].product_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';

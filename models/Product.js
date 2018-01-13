@@ -256,67 +256,6 @@ function Product() {
             res.json(output);
         }
     };
-
-    //change product status.
-    this.updateStatus = function (productObj, res) {
-        var product_id = productObj.product_id,
-            operation_value = productObj.operation_value,
-            keyword, product_status_id,
-            query = "UPDATE product SET product_status_id=? WHERE product_id=?";
-        //console.log(productObj);
-        
-        if ((undefined !== product_id && product_id != '') && (undefined !== operation_value && operation_value != '')
-        ) {
-            if (operation_value == 1) {
-                keyword = 'Activation';
-                product_status_id = 1;
-            } else if (operation_value == 2) {
-                keyword = 'Deactivation';
-                product_status_id = 2;
-            }
-
-            connection.acquire(function (err, con) {
-                if (err) {
-                    res.json({
-                        status: 100,
-                        message: "Error connecting to database"
-                    });
-                    return;
-                }
-
-                con.query(query, [product_status_id, product_id], function (err, result) {
-                    con.release();
-                    if (err) {
-                        feedback = 'Error with product ' + keyword;
-                        output = {
-                            status: 0,
-                            message: feedback,
-                            error: err
-                        };
-
-                        res.json(output);
-                    } else {
-                        feedback = 'Product ' + keyword + ' successful';
-                        output = {
-                            status: 1,
-                            message: feedback,
-                            updatedProductId: product_id
-                        };
-
-                        res.json(output);
-                    }
-                });
-            });
-        } else {
-            feedback = 'Invalid Product data submitted';
-            output = {
-                status: 0,
-                message: feedback
-            };
-
-            res.json(output);
-        }
-    };
 }
 
 module.exports = new Product();

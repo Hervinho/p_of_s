@@ -435,9 +435,6 @@ function CustomerOrder() {
                                         shift_start: base_start_time,
                                         shift_end: base_end_time
                                     };
-
-                                    //res.json(output);
-                                    //return;
                                 }
                                 else{
                                     output = {
@@ -448,9 +445,6 @@ function CustomerOrder() {
                                         shift_start: base_start_time,
                                         shift_end: base_end_time
                                     };
-
-                                    //res.json(output);
-                                    //return;
                                 }
                                 
                                 res.json(output);
