@@ -5,6 +5,10 @@ var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
 var ProductStatus = require('../models/ProductStatus');
+<<<<<<< HEAD
+=======
+var ProductSize = require('../models/ProductSize');
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 var PromotionStatus = require('../models/PromotionStatus');
 var CustomerOrderStatus = require('../models/CustomerOrderStatus');
 var CustomerOrderDetails = require('../models/CustomerOrderDetails');
@@ -315,6 +319,22 @@ var PromotionStatusAPIs = function (express) {
 	});
 };
 
+<<<<<<< HEAD
+=======
+var ProductSizeAPIs = function (express) {
+	//get all product sizes.
+	express.get('/productsizes', function (req, res) {
+		ProductSize.getAll(res);
+	});
+
+	//get a single product size.
+	express.get('/productsizes/:id', function (req, res) {
+		var id = req.params.id;
+		ProductSize.getOne(id, res);
+	});
+};
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 var CustomerOrderStatusAPIs = function (express) {
 	//get all customer order statuses.
 	express.get('/cust_orderstatuses', function (req, res) {
@@ -327,13 +347,21 @@ var CustomerOrderStatusAPIs = function (express) {
 		CustomerOrderStatus.getOne(id, res);
 	});
 
+<<<<<<< HEAD
 	//create new promotion status.
+=======
+	//create new customer order
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	express.post('/cust_orderstatuses', function (req, res) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.create(customerOrderStatusObj, res);
 	});
 
+<<<<<<< HEAD
 	//update promotion status.
+=======
+	//update customer order
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	express.put('/cust_orderstatuses', function (req, res) {
 		var customerOrderStatusObj = req.body;
 		CustomerOrderStatus.update(customerOrderStatusObj, res);
@@ -424,11 +452,39 @@ var ProductStatusAPIs = function (express) {
 };
 
 var CustomerOrderAPIs = function (express) {
+<<<<<<< HEAD
+=======
+	//Count total number of customer orders of a certain payment type.
+	express.get('/customerorders/paymenttypes/:id/count', function (req, res) {
+		var paymentTypeId = req.params.id;
+		CustomerOrder.countAllByPaymentType(paymentTypeId, res);
+	});
+
+	//count all orders captured by a certain employee.
+	express.get('/customerorders/employees/:id/count', function (req, res) {
+		var employeeId = req.params.id;
+		CustomerOrder.countAllPerEmployee(employeeId, res);
+	});
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	//get all customer orders.
 	express.get('/customerorders', function (req, res) {
 		CustomerOrder.getAll(res);
 	});
 
+<<<<<<< HEAD
+=======
+	//get all customer orders that are new. Will be sent to the kitchen.
+	express.get('/customerorders/new', function (req, res) {
+		CustomerOrder.getAllNewToBePrepared(res);
+	});
+
+	//get all customer orders that are ready for collection.
+	express.get('/customerorders/ready', function (req, res) {
+		CustomerOrder.getAllReadyForCollection(res);
+	});
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	//get all orders for a specific customer.
 	express.get('/customerorders/customers/:id', function (req, res) {
 		var customerId = req.params.id;
@@ -461,10 +517,18 @@ var CustomerOrderAPIs = function (express) {
 		var orderObj = req.body;
 		orderObj.orderItems = [{
 			product_id: 1,
+<<<<<<< HEAD
+=======
+			product_size_id: 1,
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 			product_quantity: 10,
 			amount: 100
 		}, {
 			product_id: 5,
+<<<<<<< HEAD
+=======
+			product_size_id: 3,
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 			product_quantity: 2,
 			amount: 50
 		}]; //just for testing until UI cart is ready
@@ -474,7 +538,11 @@ var CustomerOrderAPIs = function (express) {
 	});
 
 	//update order status
+<<<<<<< HEAD
 	express.put('/customerorders', function (req, res) {
+=======
+	express.put('/customerorders/status', function (req, res) {
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 		var orderObj = req.body;
 		CustomerOrder.updateStatus(orderObj, res);
 	});
@@ -506,6 +574,21 @@ var ShiftAPIs = function (express) {
 };
 
 var EmployeeAPIs = function (express) {
+<<<<<<< HEAD
+=======
+	//Count total number of active male/females employees.
+	express.get('/employees/genders/:id/count', function (req, res) {
+		var genderId = req.params.id;
+		Employee.countAllByGender(genderId, res);
+	});
+
+	//Count total number of active employees of a certain role.
+	express.get('/employees/roles/:id/count', function (req, res) {
+		var roleId = req.params.id;
+		Employee.countAllByRole(roleId, res);
+	});
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	//get all employees.
 	express.get('/employees', function (req, res) {
 		Employee.getAll(res);
@@ -766,6 +849,75 @@ var configViews = function (express) {
 
 	});
 
+<<<<<<< HEAD
+=======
+	//Kitchen.
+	express.get('/kitchen', isUserLoggedIn, function (req, res) {
+		
+		//For Bluebird Promise ONLY.
+		if (roleID != 1) { //Check if employee booked this shift before placing an order
+
+			ShiftBooking.checkShiftForEmployee(employeeID)
+				.then(function (output) {
+					if (output.status == 1) {
+						res.render('kitchen', {
+							employeeCode: employeeCode
+						});
+					} else {
+						res.render('401_orders', {
+							employeeCode: employeeCode,
+							shiftMessage: output.message
+						});
+					}
+				})
+				.catch(function (err) {
+					res.render('401_orders', {
+						employeeCode: employeeCode,
+						shiftMessage: err
+					});
+				});
+		} else { //Admin view orders in the kitchen without shift booking.
+			res.render('kitchen', {
+				employeeCode: employeeCode
+			});
+		}
+
+	});
+
+	//Customer orders collection.
+	express.get('/customers/orders/collections', isUserLoggedIn, function (req, res) {
+		
+		//For Bluebird Promise ONLY.
+		if (roleID != 1) { //Check if employee booked this shift before placing an order
+
+			ShiftBooking.checkShiftForEmployee(employeeID)
+				.then(function (output) {
+					if (output.status == 1) {
+						res.render('customer_order_collections', {
+							employeeCode: employeeCode
+						});
+					} else {
+						res.render('401_orders', {
+							employeeCode: employeeCode,
+							shiftMessage: output.message
+						});
+					}
+				})
+				.catch(function (err) {
+					res.render('401_orders', {
+						employeeCode: employeeCode,
+						shiftMessage: err
+					});
+				});
+		} else { //Admin view orders in the kitchen without shift booking.
+			res.render('customer_order_collections', {
+				employeeCode: employeeCode
+			});
+		}
+
+	});
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	//Profile page
 	express.get('/profile', isUserLoggedIn, function (req, res) {
 		res.render('profile', {
@@ -874,6 +1026,10 @@ module.exports = {
 		ShiftBookingAPIs(apiRoutes);
 		ShiftBookingStatusAPIs(apiRoutes);
 		LoginRecordAPIs(apiRoutes);
+<<<<<<< HEAD
+=======
+		ProductSizeAPIs(apiRoutes);
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

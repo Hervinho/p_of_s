@@ -1,7 +1,18 @@
+<<<<<<< HEAD
+=======
+var genders = [], genderNames = [], employeeCountGender = [];
+var roles = [], roleNames = [], employeeCountRole = [];
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 $(document).ready(function () {
     var message, employeeID, roleFilterTypeVal, statusFilterTypeVal;
 
     LoadAllEmployees();
+<<<<<<< HEAD
+=======
+    LoadAllGenders();
+    LoadAllRoles();
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
@@ -20,10 +31,17 @@ $(document).ready(function () {
 
 function LoadAllEmployees() {
 
+<<<<<<< HEAD
     LoadAllRoles();
     LoadAllStatuses();
     LoadAllShifts();
     LoadAllGenders();
+=======
+    //LoadAllRoles();
+    LoadAllStatuses();
+    LoadAllShifts();
+    //LoadAllGenders();
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     //Reset all filters.
     $("#employeeFilterRole").val(0);
@@ -59,6 +77,7 @@ function LoadAllGenders() {
         url: '/api/v1/genders',
         dataType: "json",
         cache: false,
+<<<<<<< HEAD
         success: function (data) {
             //console.log(data);
             var html = '<option value = "0"></option>';
@@ -79,6 +98,9 @@ function LoadAllGenders() {
             $("#txtViewEmployeeGender").html(html);
             $("#txtAddEmployeeGender").html(html);
         },
+=======
+        success: handleGenderData,
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -135,6 +157,7 @@ function LoadAllRoles() {
         url: '/api/v1/roles',
         dataType: "json",
         cache: false,
+<<<<<<< HEAD
         success: function (data) {
             //console.log(data);
             var html = '<option value = "0"></option>';
@@ -155,6 +178,9 @@ function LoadAllRoles() {
             $("#txtViewEmployeeRole").html(html);
             $("#txtAddEmployeeRole").html(html);
         },
+=======
+        success: handleRoleData,
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -280,6 +306,93 @@ function FilterEmployeesByRole(roleId) {
     });
 }
 
+<<<<<<< HEAD
+=======
+//function to get number of employees of certain gender.
+function countEmployeesPerGender(array) {
+
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/employees/genders/' + array[key].gender_id + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                employeeCountGender.push(data[0].empGenderCount);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    //console.log('employeeCountGender: ', employeeCountGender);
+}
+
+//function to get number of employees of certain role.
+function countEmployeesPerRole(array) {
+
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/employees/roles/' + array[key].role_id + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                employeeCountRole.push(data[0].empRoleCount);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    //console.log('employeeCountRole: ', employeeCountRole);
+}
+
+//function to display the chart
+function displayChart(namesArray, empCount, divId) {
+    
+    var num_colors = [], colorsArray = [
+        "#008000", "#808080", "#800000", "#FFFF00", "#00FFFF", "#008080",
+        "#0000FF", "#800080", "#C2C87D", "#129696", "##F9E79F", "#D7BDE2"
+    ];
+    
+    //Randomly choose which colors will be on the chart.
+    for(var key = 0, size = namesArray.length; key < size; key++){
+        num_colors[key] = colorsArray[Math.floor(Math.random() * colorsArray.length)];
+    }
+    
+    if ($("#" + divId).length) {
+        var f = document.getElementById(divId),
+            i = {
+                datasets: [{
+                    data: empCount,
+                    backgroundColor: num_colors,
+                    label: "Employee Chart by Gender"
+                }],
+                labels: namesArray
+            };
+        new Chart(f, {
+            data: i,
+            type: "pie",
+            otpions: {
+                legend: !1
+            }
+        })
+    }
+
+}
+
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 /*********** AJAX Callback functions ***********/
 
 function handleEmployeesData(data) {
@@ -304,3 +417,54 @@ function handleEmployeesData(data) {
     $("#tblEmployees tbody").html(html);
     //$('#tblEmployees').dataTable({processing:true});
 }
+<<<<<<< HEAD
+=======
+
+function handleGenderData(data){
+    //console.log(data);
+    var html = '<option value = "0"></option>', genderChartId = "employeeBarChartGender";
+    if (data.status == 1 && data.genders.length > 0) {
+        genders = data.genders;
+        for (var key = 0, size = genders.length; key < size; key++) {
+            html += '<option value =' + genders[key].gender_id + ' >' + genders[key].gender_name + '</option>';
+            genderNames[key] = genders[key].gender_name;
+        }
+    } else {
+        html += '<option value = "0">No genders found</option>';
+    }
+    
+    //$("#employeeFilterGender").html(html);
+    
+    //Also Populate dialogViewEmployee and dialogAddEmployee
+    $("#txtViewEmployeeGender").html(html);
+    $("#txtAddEmployeeGender").html(html);
+
+    //count number of employees of certain gender and display in chart.
+    countEmployeesPerGender(genders);
+    displayChart(genderNames, employeeCountGender, genderChartId);
+}
+
+function handleRoleData(data){
+    //console.log(data);
+    var html = '<option value = "0"></option>', roleChartId = "employeeBarChartRole";
+    if (data.status == 1 && data.roles.length > 0) {
+        roles = data.roles;
+        for (var key = 0, size = roles.length; key < size; key++) {
+            html += '<option value =' + roles[key].role_id + ' >' + roles[key].role_name + '</option>';
+            roleNames[key] = roles[key].role_name;
+        }
+    } else {
+        html += '<option value = "0">No roles found</option>';
+    }
+
+    $("#employeeFilterRole").html(html);
+
+    //Also Populate dialogViewEmployee and dialogAddEmployee
+    $("#txtViewEmployeeRole").html(html);
+    $("#txtAddEmployeeRole").html(html);
+
+    //count number of employees of certain role and display in chart.
+    countEmployeesPerRole(roles);
+    displayChart(roleNames, employeeCountRole, roleChartId);
+}
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb

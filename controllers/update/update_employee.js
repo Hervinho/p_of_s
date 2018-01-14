@@ -63,6 +63,7 @@ function UpdateEmployee(){
 
 function validateEditEmployeeForm(employee) {
     var flag = true;
+<<<<<<< HEAD
     var name_format = /[!@#$%^&*()_+\-=\[\]{};.:"\\|,<>\/?]/;
     var no_numbers = /\d/;
     //var isMobilePhone = validator.isMobilePhone(employee.employee_phone, 'en-ZA');
@@ -95,6 +96,9 @@ function validateEditEmployeeForm(employee) {
         flag = false;
         message = 'No gender selected. Please select a gender.';
     }*/
+=======
+    
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
     if(employee.employee_role_id === 0){
         flag = false;
         message = 'No role selected. Please select a role.';
@@ -103,10 +107,13 @@ function validateEditEmployeeForm(employee) {
         flag = false;
         message = 'No status selected. Please select a status.';
     }
+<<<<<<< HEAD
     /*if(employee.employee_role_id !== 1 && employee.employee_shift_id === 0){
         flag = false;
         message = 'No shift selected. Please select a shift.';
     }*/
+=======
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     return flag;
 }
