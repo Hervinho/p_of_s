@@ -1,0 +1,72 @@
+<%- include layout/head.ejs %>
+    <%- include layout/main_sidebar.ejs %>
+        <style>
+            .mdl-textfield .mdl-js-textfield {
+                width: 100px !important;
+            }
+        </style>
+        <!-- MAIN PAGE CONTENT START -->
+        <main class="mdl-layout__content mdl-color--white">
+            <div class="entertainer-content">
+                <div class="mdl-grid back-end-content">
+
+
+                    <div class="entertainer-layout">
+                        <div class="entertainer-content">
+
+                            <h1>Place New Order</h1>
+                            <div class="mdl-grid">
+                                <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                    <label class="control-label">Choose Customers:</label>
+                                    <select id="customerSelect" class="form-control" required="required">
+                                        <option value="none">None</option>
+                                    </select>
+                                </div>
+                                <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                    <label class="control-label">Payment Method:</label>
+                                    <select id="paymentSelect" class="form-control" required="required">
+                                    </select>
+                                </div>
+                                <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                                    <a data-target="#dialogCheckout" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow modal-trigger">
+                                       Checkout <i class="material-icons">checkout</i>
+                                    </a>
+
+                                </div>
+                            </div>
+                            <br>
+
+                            <table id="tblPlaceOrders" class="mdl-data-table mdl-js-data-table">
+                                <!-- class="mdl-data-table mdl-js-data-table" -->
+                                <thead>
+                                    <tr>
+                                        <th class="mdl-data-table__cell--non-numeric">Name</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Price</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Size</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Quantity</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Total</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Add to cart</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Remove from cart</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <!-- Dialog -->
+                    <% include partials/view/dialogViewCheckout.ejs %>
+
+                </div>
+            </div>
+
+        </main>
+        <!-- MAIN PAGE CONTENT END -->
+        <!--<script type="text/javascript" src="/controllers/update/update_profile.js"></script>-->
+
+        <script type="text/javascript" src="/controllers/place_orders.js"></script>
+
+        <%- include layout/footer.ejs %>

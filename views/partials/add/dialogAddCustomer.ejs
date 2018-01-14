@@ -1,0 +1,62 @@
+<!-- The Modal  dialogAddCustomer -->
+<div id="dialogAddCustomer" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">Add Customer</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                        
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtAddCustomerGender" class="gender-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtAddCustomerGender">Customer Gender</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Customer Name..." type="text" id="txtAddCustomerName">
+                                    <label class="mdl-textfield__label" for="txtAddCustomerName">Customer Name</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Customer Email..." type="text" id="txtAddCustomerEmail">
+                                    <label class="mdl-textfield__label" for="txtAddCustomerEmail">Customer Email</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="Customer Phone..." type="text" id="txtAddCustomerPhone">
+                                    <label class="mdl-textfield__label" for="txtAddCustomerPhone">Customer Phone</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return AddCustomer();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/add/add_customer.js"></script>

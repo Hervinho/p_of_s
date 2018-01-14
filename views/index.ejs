@@ -1,0 +1,56 @@
+<% layout('layout/index_layout') -%>
+
+        <!-- MAIN PAGE CONTENT END -->
+        <main class="mdl-layout__content mdl-color--grey-200">
+            <div class="login-layout mdl-grid">
+                <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-desktop"></div>
+                <div class="mdl-color--white  mdl-cell mdl-cell--4-col mdl-cell--4-col-desktop mdl-cell--6-col-tablet ">
+                    <div class="login-header">
+                        <i class="material-icons login-header-avatar">person</i>
+                    </div>
+                    <div class="login-content">
+
+                        <form action="#" class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="text" id="txtEmployeeCode">
+                                    <label class="mdl-textfield__label" for="txtEmployeeCode">Employee Code</label>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield">
+                                    <input class="mdl-textfield__input" type="password" id="txtEmployeePassword">
+                                    <label class="mdl-textfield__label" for="txtEmployeePassword">Password</label>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return Login();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow">
+                                        Log In
+                                    </button>
+                                </a>
+                            </div>
+
+                            <br><br>
+                            <div class="mdl-cell mdl-cell--12-col">
+
+                                <a href="/forgotpassword" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Forgot Password</a>
+                            
+                            </div>
+
+                            <br><br>
+                            <div class="mdl-cell mdl-cell--12-col">
+
+                                <a href="/setpassword" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Setup Password For New Employee</a>
+                            
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN PAGE CONTENT END -->
+
+<script type="text/javascript" src="controllers/login.js"></script>

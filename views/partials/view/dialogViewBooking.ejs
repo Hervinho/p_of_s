@@ -1,0 +1,70 @@
+<!-- The Modal  dialogViewBooking -->
+<div id="dialogViewBooking" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">View Shift Booking Info</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewBookingStatus" class="booking-status-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewBookingStatus">Booking Status</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select disabled id="txtViewBookingEmployee" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewBookingEmployee">Employee</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewBookingShift" class="shift-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewBookingShift">Shift Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input readonly = "readonly" size="4" class="mdl-textfield__input" placeholder="Date submitted..." type="text" id="txtViewBookingTimestamp">
+                                    <label class="mdl-textfield__label" for="txtViewBookingTimestamp">Date submitted</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="any-date mdl-textfield__input" placeholder="Booking Date..." type="text" id="txtViewBookingDate">
+                                    <label class="mdl-textfield__label" for="txtViewBookingDate">Booking Date</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return UpdateBooking();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/update/update_booking.js"></script>

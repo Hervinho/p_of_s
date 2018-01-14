@@ -1,0 +1,75 @@
+<!-- The Modal  dialogViewProduct -->
+<div id="dialogViewProduct" class="form-modal">
+    <div class="form-modal-content">
+        <div class="form-modal-header"> <span class="form-close">&times;</span> </div>
+        <div class="form-modal-body">
+            <div class="mdl-grid back-end-content form-layout">
+                <div class=" mdl-cell mdl-cell--4-col-phone mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                    <div class="form-header">
+                        <div class="mdl-typography--headline">View Product Info</div>
+                    </div>
+                    <div class="form-content">
+                        <form action="#" class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input readonly="readonly" size="4" class="mdl-textfield__input" placeholder="" type="text" id="txtViewProductAddedBy">
+                                    <label class="mdl-textfield__label" for="txtViewProductAddedBy">Product Added By</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select id="txtViewProductType" class="product-type-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewProductType">Produt Type</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield  mdl-textfield--floating-label">
+                                    <select disabled id="txtViewProductStatus" class="product-status-change" required="required">
+
+                                    </select>
+                                    <label class="mdl-textfield__label" for="txtViewProductStatus">Product Status</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input size="4" class="mdl-textfield__input" placeholder="Product Name..." type="text" id="txtViewProductName">
+                                    <label class="mdl-textfield__label" for="txtViewProductName">Product Name</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <input class="mdl-textfield__input" placeholder="4..." type="text" id="txtViewProductPrice">
+                                    <label class="mdl-textfield__label" for="txtViewProductPrice">Product Price</label>
+                                </div>
+
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                    <textarea class="mdl-textfield__input" placeholder="Product Description..." type="text" rows="3" id="txtViewProductDescription"></textarea>
+                                    <label class="mdl-textfield__label" for="txtViewProductDescription">Product Description</label>
+                                </div>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--12-col">
+                                <br>
+                                <a>
+                                    <button type="button" onclick="return UpdateProduct();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> SAVE </button>
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/controllers/update/update_product.js"></script>
