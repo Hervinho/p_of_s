@@ -1,9 +1,4 @@
 var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderFilterShiftVal;
-<<<<<<< HEAD
-
-$(document).ready(function () {
-   LoadAllOrders();
-=======
 var payment_types = [], paymentTypeNames = [], orderCountPaymentType = [];
 var employees = [], employeeNames = [], orderCountEmployee = [];
 
@@ -11,7 +6,6 @@ $(document).ready(function () {
    LoadAllOrders();
    LoadAllPaymentTypes();
    LoadAllEmployees();
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     $(document).on('change', '.form-control, .any-date', function () {
         orderFilterCustomerVal = $("#orderFilterCustomer").val();
@@ -24,10 +18,6 @@ $(document).ready(function () {
         } 
         else if(orderFilterCustomerVal == 0 && orderFilterShiftVal != 0 && isValidDate){
             FilterOrdersByDayAndShift(orderFilterShiftVal, orderFilterDateVal);
-<<<<<<< HEAD
-            //toastr.info("Hey");
-=======
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
         }
     });
 });
@@ -189,8 +179,6 @@ function ViewOrderDetails(id){
     });
 }
 
-<<<<<<< HEAD
-=======
 function LoadAllPaymentTypes(){
     $.ajax({
         type: 'GET',
@@ -309,7 +297,6 @@ function displayChart(namesArray, orderCount, divId) {
 
 }
 
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 /*********** AJAX Callback functions ***********/
 
 function handleOrdersData(data) {
@@ -334,20 +321,14 @@ function handleOrdersData(data) {
 }
 
 function handleOrderDetailsData(data) {
-<<<<<<< HEAD
-=======
     //console.log(data.customer_order_details[0]);
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
     var html = '';
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
         for (var key = 0, size = customer_order_details.length; key < size; key++) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
             customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-<<<<<<< HEAD
-=======
             customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
             customer_order_details[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
             'R ' + customer_order_details[key].amount + '</td>' +
             '</tr>';
@@ -357,8 +338,6 @@ function handleOrderDetailsData(data) {
     }
     //console.log(html);
     $("#tblCustomerOrderDetails tbody").html(html);
-<<<<<<< HEAD
-=======
 }
 
 function handlePaymentTypeData(data){
@@ -394,5 +373,4 @@ function handleEmployeeData(data){
     //count number of customer orders of a certain payment type. and display in chart.
     countOrdersPerEmployee(employees);
     displayChart(employeeNames, orderCountEmployee, orderChartId);
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 }

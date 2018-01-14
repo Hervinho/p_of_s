@@ -22,7 +22,7 @@
                 type: 'GET',
                 crossDomain: true,
                 contentType: 'application/json; charset=utf-8',
-                url: '/api/v1/products',
+                url: '/api/v1/products/statuses/1',
                 dataType: "json",
                 cache: false,
                 beforeSend: function () {
@@ -106,7 +106,7 @@
 
                 },
                 success: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     if (data.status === 1) {
                         $.each(data.payment_types, function (key, value) {
                             $('#paymentSelect')
@@ -175,7 +175,8 @@
                     }
                     var price = data.products[key].product_price;
                     sizes[key] = size;
-                    total[key] = (price * quantity[key]) + parseInt(sizes[key]);
+                    //total[key] = (price * quantity[key]) + parseInt(sizes[key]);
+                    total[key] = (price + parseInt(sizes[key])) * quantity[key];
                     $('#total' + key).val(total[key]);
 
                 });
@@ -199,7 +200,7 @@
 
                     carts.orderItems.push({
                         key: key,
-                        product_size_id: sizes[key] === "0" ? 0 : (parseInt(sizes[key]) / 10) - 1,
+                        product_size_id: sizes[key] === "0" ? 1 : (parseInt(sizes[key]) / 10),
                         product_id: data.products[key].product_id,
                         product_quantity: quantity[key],
                         amount: total[key]

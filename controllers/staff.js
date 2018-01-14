@@ -1,18 +1,12 @@
-<<<<<<< HEAD
-=======
 var genders = [], genderNames = [], employeeCountGender = [];
 var roles = [], roleNames = [], employeeCountRole = [];
 
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 $(document).ready(function () {
     var message, employeeID, roleFilterTypeVal, statusFilterTypeVal;
 
     LoadAllEmployees();
-<<<<<<< HEAD
-=======
     LoadAllGenders();
     LoadAllRoles();
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     $(document).on('change', '.form-control', function () {
         roleFilterTypeVal = $("#employeeFilterRole").val();
@@ -31,17 +25,10 @@ $(document).ready(function () {
 
 function LoadAllEmployees() {
 
-<<<<<<< HEAD
-    LoadAllRoles();
-    LoadAllStatuses();
-    LoadAllShifts();
-    LoadAllGenders();
-=======
     //LoadAllRoles();
     LoadAllStatuses();
     LoadAllShifts();
     //LoadAllGenders();
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     //Reset all filters.
     $("#employeeFilterRole").val(0);
@@ -77,30 +64,7 @@ function LoadAllGenders() {
         url: '/api/v1/genders',
         dataType: "json",
         cache: false,
-<<<<<<< HEAD
-        success: function (data) {
-            //console.log(data);
-            var html = '<option value = "0"></option>';
-            if (data.status == 1 && data.genders.length > 0) {
-                var genders = data.genders;
-                for (var key = 0, size = genders.length; key < size; key++) {
-                    html += '<option value =' + genders[key].gender_id + ' >' +
-                    genders[key].gender_name +
-                        '</option>';
-                }
-            } else {
-                html += '<option value = "0">No genders found</option>';
-            }
-
-            //$("#employeeFilterGender").html(html);
-
-            //Also Populate dialogViewEmployee and dialogAddEmployee
-            $("#txtViewEmployeeGender").html(html);
-            $("#txtAddEmployeeGender").html(html);
-        },
-=======
         success: handleGenderData,
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -157,30 +121,7 @@ function LoadAllRoles() {
         url: '/api/v1/roles',
         dataType: "json",
         cache: false,
-<<<<<<< HEAD
-        success: function (data) {
-            //console.log(data);
-            var html = '<option value = "0"></option>';
-            if (data.status == 1 && data.roles.length > 0) {
-                var roles = data.roles;
-                for (var key = 0, size = roles.length; key < size; key++) {
-                    html += '<option value =' + roles[key].role_id + ' >' +
-                    roles[key].role_name +
-                        '</option>';
-                }
-            } else {
-                html += '<option value = "0">No roles found</option>';
-            }
-
-            $("#employeeFilterRole").html(html);
-
-            //Also Populate dialogViewEmployee and dialogAddEmployee
-            $("#txtViewEmployeeRole").html(html);
-            $("#txtAddEmployeeRole").html(html);
-        },
-=======
         success: handleRoleData,
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -306,8 +247,6 @@ function FilterEmployeesByRole(roleId) {
     });
 }
 
-<<<<<<< HEAD
-=======
 //function to get number of employees of certain gender.
 function countEmployeesPerGender(array) {
 
@@ -392,7 +331,6 @@ function displayChart(namesArray, empCount, divId) {
 
 }
 
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 /*********** AJAX Callback functions ***********/
 
 function handleEmployeesData(data) {
@@ -417,8 +355,6 @@ function handleEmployeesData(data) {
     $("#tblEmployees tbody").html(html);
     //$('#tblEmployees').dataTable({processing:true});
 }
-<<<<<<< HEAD
-=======
 
 function handleGenderData(data){
     //console.log(data);
@@ -467,4 +403,3 @@ function handleRoleData(data){
     countEmployeesPerRole(roles);
     displayChart(roleNames, employeeCountRole, roleChartId);
 }
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb

@@ -42,8 +42,6 @@ var recordLogin = function (employeeId, callback) {
 };
 
 function Employee() {
-<<<<<<< HEAD
-=======
     //Count total number of active male/females employees.
     this.countAllByGender = function (genderId, res) {
         var query = 'SELECT COUNT(*) AS empGenderCount FROM employee WHERE employee_status_id = 1 ' +
@@ -70,7 +68,6 @@ function Employee() {
         });
     };
 
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
     //get all employees
     this.getAll = function (res) {
         var output = {},
@@ -352,18 +349,10 @@ function Employee() {
                 con.query(query, [null, employee_id_number, employee_dob, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_status_id], function (err, result) {
                     con.release();
                     if (err) {
-<<<<<<< HEAD
-                        //console.log(err);
-                        if (err.code == 'ER_DUP_ENTRY') {
-                            output = {
-                                status: 0,
-                                message: 'Same IDnumber/Code/email/phone number already exists',
-=======
                         if (err.code == 'ER_DUP_ENTRY') {
                             output = {
                                 status: 0,
                                 message: 'Same ID_number/Code/email/phone number already exists',
->>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
                                 error: err
                             };
                         } else {
