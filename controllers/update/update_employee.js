@@ -63,7 +63,42 @@ function UpdateEmployee(){
 
 function validateEditEmployeeForm(employee) {
     var flag = true;
+<<<<<<< HEAD
+    var name_format = /[!@#$%^&*()_+\-=\[\]{};.:"\\|,<>\/?]/;
+    var no_numbers = /\d/;
+    //var isMobilePhone = validator.isMobilePhone(employee.employee_phone, 'en-ZA');
+    //var isEmail = validator.isEmail(employee.employee_email);
+
+    /*if(name_format.test(employee.employee_name) === true || no_numbers.test(employee.employee_name) === true) {
+        flag = false;
+        message = 'Employee Name contains illegal characters.';
+    }
+
+    if (employee.employee_name.length <= 1) {
+        flag = false;
+        message = 'Employee Name cannot be empty.';
+    }
+
+    if (employee.employee_code.length <= 1) {
+        flag = false;
+        message = 'Employee Code cannot be empty.';
+    }
+
+    if(!isMobilePhone){
+        flag = false;
+        message = 'Employee Phone number is invalid';
+    }
+    if(!isEmail){
+        flag = false;
+        message = 'Employee email is invalid';
+    }
+    if(employee.employee_gender_id === 0){
+        flag = false;
+        message = 'No gender selected. Please select a gender.';
+    }*/
+=======
     
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
     if(employee.employee_role_id === 0){
         flag = false;
         message = 'No role selected. Please select a role.';
@@ -72,6 +107,13 @@ function validateEditEmployeeForm(employee) {
         flag = false;
         message = 'No status selected. Please select a status.';
     }
+<<<<<<< HEAD
+    /*if(employee.employee_role_id !== 1 && employee.employee_shift_id === 0){
+        flag = false;
+        message = 'No shift selected. Please select a shift.';
+    }*/
+=======
+>>>>>>> 2ba520d84b4ac6fea911785348698e542ba016bb
 
     return flag;
 }
