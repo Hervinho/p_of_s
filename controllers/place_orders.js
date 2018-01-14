@@ -83,13 +83,13 @@
                 html += '<li class="mdl-list__item mdl-list__item--two-line">' +
                     '<span class="mdl-list__item-primary-content">' +
                     '<span>' + _product.product_name + ' x ' + value.product_quantity + '(' + pSizes[parseInt(value.product_size_id)] + ') </span>' +
-                    ' <span class="mdl-list__item-sub-title">Amount: ' + total[value.key] + '</span>' +
+                    ' <span class="mdl-list__item-sub-title">Amount: R' + total[value.key] + '</span>' +
                     ' </span>' +
                     '</li>';
 
 
             });
-
+            html += '<li class="mdl-list__item mdl-list__item--two-line"><span class="mdl-list__item-primary-content">Order Total: R' + carts.total_amount + '</span></li>';
             $('.checkout-list ').empty();
             $('.checkout-list ').append(html);
         }
@@ -238,6 +238,33 @@
             carts.customer_id = $('#customerSelect').val();
             carts.payment_type_id = $('#paymentSelect').val();
             console.log(carts);
+
+            //Submit.
+            $.ajax({
+                type: 'POST',
+                crossDomain: true,
+                data: JSON.stringify(carts),
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/customerorders',
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    if (data.status == 0) {
+                        toastr.error(data.message);
+                    } else {
+                        toastr.success(data.message);
+                        //clear form.
+                        //$("#txtAddBookingShift").val(0);
+                        //$("#txtAddBookingDate").val("");
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    message = 'Something went wrong';
+                    toastr.error(message);
+                }
+    
+            });
 
         });
 
