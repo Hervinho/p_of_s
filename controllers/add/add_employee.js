@@ -42,6 +42,11 @@ function AddEmployee(){
                     $("#txtAddEmployeePhone").val("");
                     $("#txtAddEmployeeGender").val(0);
                     $("#txtAddEmployeeRole").val(0);
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

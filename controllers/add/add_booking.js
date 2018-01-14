@@ -32,6 +32,11 @@ function AddBooking(){
                     //clear form.
                     $("#txtAddBookingShift").val(0);
                     $("#txtAddBookingDate").val("");
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

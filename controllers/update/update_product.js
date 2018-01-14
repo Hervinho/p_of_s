@@ -42,6 +42,11 @@ function UpdateProduct() {
 
                     //Reset label for selected event.
                     $("#lbSelectedProduct").text('Selected Product');
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

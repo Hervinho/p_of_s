@@ -45,6 +45,11 @@ function UpdatePromotion() {
 
                     //Reset label for selected event.
                     $("#lbSelectedPromotion").text('Selected Promotion');
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

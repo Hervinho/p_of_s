@@ -41,12 +41,12 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
                 callback(null, output);
             } else {
                 insertedOrderID = result.insertId;
-                console.log('OrderID: ', insertedOrderID);
+                //console.log('OrderID: ', insertedOrderID);
 
                 //Building order details query that will be excuted once.
                 var builtQueryString = buildOrderDetailsQuery(productsArray, insertedOrderID);
                 insertOrderDetails += builtQueryString;
-                console.log('Order details query: ', insertOrderDetails);
+                //console.log('Order details query: ', insertOrderDetails);
 
                 //Now insert order details in DB.
                 connection.acquire(function (err, con) {
@@ -431,7 +431,7 @@ function CustomerOrder() {
                                 if(resultTotal.total === null){
                                     output = {
                                         status: 0,
-                                        message: "No customer orders were found in previous shift",
+                                        message: "No orders were placed in previous shift",
                                         shift_name: previous_shift.shift_name,
                                         shift_start: base_start_time,
                                         shift_end: base_end_time

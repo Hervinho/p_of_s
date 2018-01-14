@@ -29,6 +29,7 @@ function LoadAllOrders(){
     //Reset all filters.
     $("#orderFilterCustomer").val(0);
     $("#orderFilterShift").val(0);
+    $("#orderFilterDate").val("");
 
     $.ajax({
         type: 'GET',

@@ -17,7 +17,6 @@ function AddProduct() {
 
     //Validations
     if (validateAddProductForm(productObj) == true) {
-        //toastr.success('HEY');
         //console.log(productObj);
         $.ajax({
             type: 'POST',
@@ -37,6 +36,11 @@ function AddProduct() {
                     $("#txtAddProductDescription").val("");
                     $("#txtAddProductPrice").val("");
                     $("#txtAddProductType").val(0);
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
 
                 }
             },

@@ -237,7 +237,7 @@
         $('#placeOrder').click(function () {
             carts.customer_id = $('#customerSelect').val();
             carts.payment_type_id = $('#paymentSelect').val();
-            console.log(carts);
+            //console.log(carts);
 
             //Submit.
             $.ajax({
@@ -253,9 +253,10 @@
                         toastr.error(data.message);
                     } else {
                         toastr.success(data.message);
-                        //clear form.
-                        //$("#txtAddBookingShift").val(0);
-                        //$("#txtAddBookingDate").val("");
+                        //reload page to clear cart.
+                        setTimeout(function() {
+                            location.reload();
+                          }, 500);
                     }
                 },
                 error: function (e) {

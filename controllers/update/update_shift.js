@@ -36,6 +36,11 @@ function UpdateShift() {
 
                     //Reset label for selected event.
                     $("#lbSelectedShift").text('Selected Shift');
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

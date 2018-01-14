@@ -42,6 +42,11 @@ function UpdateBooking(){
 
                     //Reset label for selected event.
                     $("#lbSelectedShiftBooking").text('Selected Shift Booking');
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

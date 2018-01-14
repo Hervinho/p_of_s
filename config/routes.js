@@ -495,19 +495,8 @@ var CustomerOrderAPIs = function (express) {
 	//create new customer order.
 	express.post('/customerorders', function (req, res) {
 		var orderObj = req.body;
-		orderObj.orderItems = [{
-			product_id: 1,
-			product_size_id: 1,
-			product_quantity: 10,
-			amount: 100
-		}, {
-			product_id: 5,
-			product_size_id: 3,
-			product_quantity: 2,
-			amount: 50
-		}]; //just for testing until UI cart is ready
-		//orderObj.added_by = employeeID;
-		orderObj.added_by = 1;//ONLY for testing without UI
+		orderObj.added_by = employeeID;
+		//orderObj.added_by = 1;//ONLY for testing without UI
 		CustomerOrder.create(orderObj, res);
 	});
 

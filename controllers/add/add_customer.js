@@ -38,6 +38,11 @@ function AddCustomer() {
                     $("#txtAddCustomerEmail").val("");
                     $("#txtAddCustomerPhone").val(0);
 
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
+
                 }
             },
             error: function (e) {

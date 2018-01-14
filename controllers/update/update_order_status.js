@@ -37,6 +37,10 @@ $(document).ready(function () {
                     
                     //update select dropdown.
                     $("#orderFilterStatus").val(data.status_id);
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {

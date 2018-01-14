@@ -59,6 +59,10 @@ function UpdateCollectionStatus(id){
         success: function(data){
             if(data.status == 1){
                 toastr.success(data.message);
+                //Reload page.
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
             }
         },
         error: function (e) {

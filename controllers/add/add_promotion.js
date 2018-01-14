@@ -37,6 +37,11 @@ function AddPromotion(){
                     $("#txtAddPromoValidFrom").val("");
                     $("#txtAddPromoValidUntil").val("");
                     $("#txtAddPromoPrice").val("");
+
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
                 }
             },
             error: function (e) {
