@@ -41,8 +41,8 @@ function CardPayment() {
 
     //get all details of all bank cards used for a certain order.
     this.getOnePerOrder = function (orderId, res) {
-        var output = {},
-            query = 'SELECT * FROM card_payment WHERE order_id = ?';
+        var output = {}, query = 'SELECT * FROM card_payment ' + 
+            'LEFT JOIN account_type ON card_payment.account_type_id = account_type.account_type_id WHERE order_id = ?';
 
         connection.acquire(function (err, con) {
             if (err) {

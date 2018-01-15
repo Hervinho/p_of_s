@@ -160,7 +160,7 @@ function FilterOrdersByDayAndShift(shiftId, date){
 }
 
 function ViewOrderDetails(id){
-    //promotionID = id;
+    customerOrderID = id;
     $("#lbSelectedCustomerOrder").text(id);
 
     $.ajax({
@@ -171,6 +171,24 @@ function ViewOrderDetails(id){
         dataType: "json",
         cache: false,
         success: handleOrderDetailsData,
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function ViewCardPaymentDetails(orderId){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/bankcards/orders/' + orderId,
+        dataType: "json",
+        cache: false,
+        success: handleCardDetailsData,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -339,6 +357,7 @@ function handleOrderDetailsData(data) {
     }
     //console.log(html);
     $("#tblCustomerOrderDetails tbody").html(html);
+    ViewCardPaymentDetails(customerOrderID);
 }
 
 function handlePaymentTypeData(data){
@@ -374,4 +393,23 @@ function handleEmployeeData(data){
     //count number of customer orders of a certain payment type. and display in chart.
     countOrdersPerEmployee(employees);
     displayChart(employeeNames, orderCountEmployee, orderChartId);
+}
+
+function handleCardDetailsData(data){
+    
+    var card_info, html = '';
+    if (data.status == 0) {
+        document.getElementById("bankCardDetails").style.display = 'none';
+    } else {
+        //console.log('Card data:', data);
+        document.getElementById("bankCardDetails").style.display = 'block';
+        card_info = data.card_payments[0];
+
+        html += '<p><strong>Account Type: </strong>' + card_info.account_type_name + '</p>' +
+            '<p><strong>Card Number: </strong>' + card_info.card_number + '</p>' +
+            '<p><strong>Card Holder Name: </strong>' + card_info.card_holder + '</p>' +
+            '<p><strong>Card Validity: </strong>' + card_info.card_validity + '</p>';
+
+        $("#bankCardDetails ").html(html);
+    }
 }
