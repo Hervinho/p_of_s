@@ -21,6 +21,8 @@ var ShiftBooking = require('../models/ShiftBooking');
 var ShiftBookingStatus = require('../models/ShiftBookingStatus');
 var LoginRecord = require('../models/LoginRecord');
 var Topping = require('../models/Topping');
+var AccountType = require('../models/AccountType');
+var CardPayment = require('../models/CardPayment');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, shiftMessage, 
@@ -49,6 +51,26 @@ function isUserLoggedIn(req, res, next) {
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
+
+var CardPaymentAPIs = function(express){
+	//get all details of all bank cards used for orders.
+	express.get('/bankcards', function (req, res) {
+		CardPayment.getAll(res);
+	});
+
+	//get all details of all bank cards used for a certain order.
+	express.get('/bankcards/orders/:id', function (req, res) {
+		var orderId = req.params.id;
+		CardPayment.getOnePerOrder(orderId, res);
+	});
+};
+
+var AccountTypeAPIs = function(express){
+	//get all account types.
+	express.get('/accounttypes', function (req, res) {
+		AccountType.getAll(res);
+	});
+};
 
 var ToppingAPIs = function(express){
 	//get all toppings.
@@ -543,6 +565,7 @@ var CustomerOrderAPIs = function (express) {
 		orderObj.bankCardObj = {
 			account_type_id: 1, card_number: '1234', card_holder: 'John Doe',validity: '07/17 - 07/21'
 		};
+		
 		/* -------------- */
 		CustomerOrder.create(orderObj, res);
 	});
@@ -1020,6 +1043,8 @@ module.exports = {
 		LoginRecordAPIs(apiRoutes);
 		ProductSizeAPIs(apiRoutes);
 		ToppingAPIs(apiRoutes);
+		AccountTypeAPIs(apiRoutes);
+		CardPaymentAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
