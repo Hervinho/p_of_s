@@ -26,10 +26,45 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
     return string;
 };
 
+//Function to insert card payment details.
+var saveBankCardDetails = function(orderId, cardObj, callback){
+    var feedback, output = {}, query = "INSERT INTO card_payment VALUES(?,?,?,?,?,?)";
+    var accTypeId = cardObj.account_type_id, cardNumber = cardObj.card_number, cardHolder = cardObj.card_holder, 
+        validity = cardObj.validity;
+
+    connection.acquire(function (err, con) {
+        if (err) {
+            output = { status: 100, message: "Error in connection database" };
+            callback(null, output);
+        }
+
+        con.query(query, [null, orderId, accTypeId, cardNumber, cardHolder, validity], function (err, result) {
+          con.release();
+          if (err) {
+            feedback = 'Error inserting card ingo';
+            output = {
+                status: 0,
+                message: feedback,
+                error: err
+              };
+              callback(null, output);
+          } else {
+            feedback = 'Card successfully inserted';
+            output = {
+              status: 1,
+              message: feedback
+            };
+            callback(null, output);
+          }
+        });
+      });
+};
+
 //Function to  insert product order.
 var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId,
-    addedBy, collectionStatusId, insertOrder, insertOrderDetails, productsArray, callback) {
-    var feedback, output = {};
+    addedBy, collectionStatusId, insertOrder, insertOrderDetails, productsArray, bankCardObj, callback) {
+    var feedback, output = {}, saveCardDetails;
+
     connection.acquire(function (err, con) {
         con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy, collectionStatusId], function (err, result) {
             con.release();
@@ -45,10 +80,18 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
                 insertedOrderID = result.insertId;
                 console.log('OrderID: ', insertedOrderID);
 
+                //card details will be handled here. if payment type = card.
+                console.log('bankCardObj: ', bankCardObj);
+                if(undefined != bankCardObj || bankCardObj != null){
+                    saveCardDetails = saveBankCardDetails(insertedOrderID, bankCardObj, function(error, results){
+                        console.log(error || results.message);
+                    });
+                }
+
                 //Building order details query that will be excuted once.
                 var builtQueryString = buildOrderDetailsQuery(productsArray, insertedOrderID);
                 insertOrderDetails += builtQueryString;
-                console.log('Order details query: ', insertOrderDetails);
+                //console.log('Order details query: ', insertOrderDetails);
 
                 //Now insert order details in DB.
                 connection.acquire(function (err, con) {
@@ -575,6 +618,7 @@ function CustomerOrder() {
         var payment_status_id = 1;//order is only submitted when payment has been received.
         var collection_status_id = 2;//order not yet collected
         var order_status_id = 1, added_by = orderObj.added_by;
+        var bankCardObj = orderObj.bankCardObj;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
             products.length <= 0){
@@ -600,7 +644,7 @@ function CustomerOrder() {
             
             //submit customer order.
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
-                added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, function(err, result){
+                added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, function(err, result){
                 res.json(err || result);
            });
         }
