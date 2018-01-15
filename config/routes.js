@@ -20,6 +20,7 @@ var Promotion = require('../models/Promotion');
 var ShiftBooking = require('../models/ShiftBooking');
 var ShiftBookingStatus = require('../models/ShiftBookingStatus');
 var LoginRecord = require('../models/LoginRecord');
+var Topping = require('../models/Topping');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, shiftMessage, 
@@ -48,6 +49,31 @@ function isUserLoggedIn(req, res, next) {
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
+
+var ToppingAPIs = function(express){
+	//get all toppings.
+	express.get('/toppings', function (req, res) {
+		Topping.getAll(res);
+	});
+
+	//get a single topping.
+	express.get('/toppings/:id', function (req, res) {
+		var id = req.params.id;
+		Topping.getOne(id, res);
+	});
+
+	//create topping.
+	express.post('/toppings', function (req, res) {
+		var toppingObj = req.body;
+		Topping.create(toppingObj, res);
+	});
+
+	//update topping.
+	express.put('/toppings', function (req, res) {
+		var toppingObj = req.body;
+		Topping.update(toppingObj, res);
+	});
+};
 
 var ShiftBookingStatusAPIs = function(express){
 	//get all booking statuses.
@@ -496,7 +522,24 @@ var CustomerOrderAPIs = function (express) {
 	express.post('/customerorders', function (req, res) {
 		var orderObj = req.body;
 		orderObj.added_by = employeeID;
-		//orderObj.added_by = 1;//ONLY for testing without UI
+		//ONLY for testing without UI
+		/*orderObj.added_by = 1;
+		orderObj.orderItems = [
+			{
+				product_id: 2,
+				product_size_id: 1,
+				topping_id: 1,
+				product_quantity: 1,
+				amount: 100
+			},
+			{
+				product_id: 3,
+				product_size_id: 2,
+				topping_id: 1,
+				product_quantity: 2,
+				amount: 150
+			}
+		];*/
 		CustomerOrder.create(orderObj, res);
 	});
 
@@ -972,6 +1015,7 @@ module.exports = {
 		ShiftBookingStatusAPIs(apiRoutes);
 		LoginRecordAPIs(apiRoutes);
 		ProductSizeAPIs(apiRoutes);
+		ToppingAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

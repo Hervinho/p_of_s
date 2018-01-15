@@ -10,12 +10,14 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
             string += "(" + customerOrderId + ", " + 
                 productsArray[index].product_id + ", " +
                 productsArray[index].product_size_id + ", " +
+                productsArray[index].topping_id + ", " +
                 productsArray[index].product_quantity + ", " +
                 productsArray[index].amount + ")";
         } else {
             string += "(" + customerOrderId + ", " + 
                 productsArray[index].product_id + ", " +
                 productsArray[index].product_size_id + ", " +
+                productsArray[index].topping_id + ", " +
                 productsArray[index].product_quantity + ", " +
                 productsArray[index].amount + "),";
         }
@@ -41,12 +43,12 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
                 callback(null, output);
             } else {
                 insertedOrderID = result.insertId;
-                //console.log('OrderID: ', insertedOrderID);
+                console.log('OrderID: ', insertedOrderID);
 
                 //Building order details query that will be excuted once.
                 var builtQueryString = buildOrderDetailsQuery(productsArray, insertedOrderID);
                 insertOrderDetails += builtQueryString;
-                //console.log('Order details query: ', insertOrderDetails);
+                console.log('Order details query: ', insertOrderDetails);
 
                 //Now insert order details in DB.
                 connection.acquire(function (err, con) {
@@ -565,7 +567,7 @@ function CustomerOrder() {
         var products = orderObj.orderItems; //array of items.
         var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
         var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?,?)";
-        var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,product_quantity,amount) VALUES ";
+        var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,topping_id,product_quantity,amount) VALUES ";
 
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
