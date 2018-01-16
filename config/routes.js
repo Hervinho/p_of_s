@@ -20,7 +20,7 @@ var Promotion = require('../models/Promotion');
 var ShiftBooking = require('../models/ShiftBooking');
 var ShiftBookingStatus = require('../models/ShiftBookingStatus');
 var LoginRecord = require('../models/LoginRecord');
-var Topping = require('../models/Topping');
+var BaseType = require('../models/BaseType');
 var AccountType = require('../models/AccountType');
 var CardPayment = require('../models/CardPayment');
 
@@ -72,28 +72,28 @@ var AccountTypeAPIs = function(express){
 	});
 };
 
-var ToppingAPIs = function(express){
+var BaseTypeAPIs = function(express){
 	//get all toppings.
-	express.get('/toppings', function (req, res) {
-		Topping.getAll(res);
+	express.get('/basetypes', function (req, res) {
+		BaseType.getAll(res);
 	});
 
 	//get a single topping.
-	express.get('/toppings/:id', function (req, res) {
+	express.get('/basetypes/:id', function (req, res) {
 		var id = req.params.id;
-		Topping.getOne(id, res);
+		BaseType.getOne(id, res);
 	});
 
 	//create topping.
-	express.post('/toppings', function (req, res) {
+	express.post('/basetypes', function (req, res) {
 		var toppingObj = req.body;
-		Topping.create(toppingObj, res);
+		BaseType.create(toppingObj, res);
 	});
 
 	//update topping.
-	express.put('/toppings', function (req, res) {
+	express.put('/basetypes', function (req, res) {
 		var toppingObj = req.body;
-		Topping.update(toppingObj, res);
+		BaseType.update(toppingObj, res);
 	});
 };
 
@@ -327,6 +327,12 @@ var LoginRecordAPIs = function(express){
 	express.get('/loginrecords/employees/:id', function (req, res) {
 		var employeeId = req.params.id;
 		LoginRecord.getPerEmployee(employeeId, res);
+	});
+
+	//get all login records for a specific day.
+	express.get('/loginrecords/date/:date', function (req, res) {
+		var date = req.params.date;
+		LoginRecord.getPerDate(date, res);
 	});
 
 	//get all login records for shift on a specific day.
@@ -1042,7 +1048,7 @@ module.exports = {
 		ShiftBookingStatusAPIs(apiRoutes);
 		LoginRecordAPIs(apiRoutes);
 		ProductSizeAPIs(apiRoutes);
-		ToppingAPIs(apiRoutes);
+		BaseTypeAPIs(apiRoutes);
 		AccountTypeAPIs(apiRoutes);
 		CardPaymentAPIs(apiRoutes);
 	},

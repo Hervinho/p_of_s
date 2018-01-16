@@ -75,6 +75,52 @@ function LoginRecord(){
         });
     };
 
+    //get all login records for a specific day.
+    this.getPerDate = function (date, res) {
+        var output = {},
+            query = 'SELECT * FROM login_record LEFT JOIN employee ON login_record.employee_id = employee.employee_id ' +
+            'WHERE login_timestamp LIKE ?';
+        //console.log(date);
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(query, ['%' + date + '%'], function (err, result) {
+                con.release();
+                if (err) {
+                    ouptut = {
+                        status: 0,
+                        message: 'Error getting login records',
+                        error: err
+                    };
+                    res.json(output);
+                } else {
+                    //console.log(result);
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            login_records: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No login records for this date was found'
+                        };
+                    }
+                    res.json(output);
+
+                }
+            });
+        });
+
+    };
+
     //get all login records for shift on a specific day.
     this.getPerDayAndShift = function (recordObj, res) {
         var output = {}, queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?',

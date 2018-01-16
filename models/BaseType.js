@@ -1,9 +1,9 @@
 var connection = require('../config/connection');
 
-function Topping() {
-  //get all toppings.
+function BaseType() {
+  //get all base_types.
   this.getAll = function (res) {
-    var output = {}, query = 'SELECT * FROM topping';
+    var output = {}, query = 'SELECT * FROM base_type';
 
     connection.acquire(function (err, con) {
       if (err) {
@@ -18,10 +18,10 @@ function Topping() {
         }
         else{
           if(result.length > 0){
-            output = {status: 1, toppings: result};
+            output = {status: 1, base_types: result};
         }
         else{
-            output = {status: 0, message:'No toppings found'};
+            output = {status: 0, message:'No base types found'};
         }
         res.json(output);
         }
@@ -29,9 +29,9 @@ function Topping() {
     });
   };
 
-  //get a single topping.
+  //get a single base_type.
   this.getOne = function (id, res) {
-    var output = {}, query = 'SELECT * FROM topping WHERE topping_id = ?';
+    var output = {}, query = 'SELECT * FROM base_type WHERE base_type_id = ?';
 
     connection.acquire(function (err, con) {
       if (err) {
@@ -46,10 +46,10 @@ function Topping() {
       }
       else{
         if(result.length > 0){
-          output = {status: 1, topping: result[0]};
+          output = {status: 1, base_type: result[0]};
       }
       else{
-          output = {status: 0, message:'No such topping found'};
+          output = {status: 0, message:'No such base type found'};
       }
       res.json(output);
       }
@@ -57,36 +57,36 @@ function Topping() {
     });
   };
 
-  //create topping.
-  this.create = function (toppingObj, res) {
+  //create base_type.
+  this.create = function (baseTypeObj, res) {
     var output = {},
-      query = "INSERT iNTO topping(topping_name, topping_desc) VALUES(?,?)";
-    var feedback, topping_name = toppingObj.topping_name, topping_desc = toppingObj.topping_desc;
+      query = "INSERT iNTO base_type(base_type_name, base_type_desc) VALUES(?,?)";
+    var feedback, base_type_name = baseTypeObj.base_type_name, base_type_desc = baseTypeObj.base_type_desc;
 
-    if ((undefined !== topping_name && topping_name != '') && (undefined !== topping_desc && topping_desc != '')) {
+    if ((undefined !== base_type_name && base_type_name != '') && (undefined !== base_type_desc && base_type_desc != '')) {
       connection.acquire(function (err, con) {
         if (err) {
           res.json({ status: 100, message: "Error in connection database" });
           return;
         }
 
-        con.query(query, [topping_name, topping_desc], function (err, result) {
+        con.query(query, [base_type_name, base_type_desc], function (err, result) {
           con.release();
           if (err) {
             res.json(err);
           } else {
-            feedback = 'Topping successfully created';
+            feedback = 'BaseType successfully created';
             output = {
               status: 1,
               message: feedback,
-              createdToppingId: result.insertId
+              createdBaseTypeId: result.insertId
             };
             res.json(output);
           }
         });
       });
     } else {
-      feedback = 'Invalid Topping data submitted';
+      feedback = 'Invalid Base Type data submitted';
       output = {
         status: 0,
         message: feedback
@@ -97,15 +97,15 @@ function Topping() {
 
   };
 
-  //update topping.
-  this.update = function (toppingObj, res) {
+  //update base_type.
+  this.update = function (baseTypeObj, res) {
     var output = {},
-      queryFind = 'SELECT * FROM topping WHERE topping_id = ?',
-      query = "UPDATE topping SET topping_name = ?, topping_desc = ? WHERE topping_id = ?";
-    var feedback, topping_name = toppingObj.topping_name, topping_desc = toppingObj.topping_desc, topping_id = toppingObj.topping_id;
+      queryFind = 'SELECT * FROM base_type WHERE base_type_id = ?',
+      query = "UPDATE base_type SET base_type_name = ?, base_type_desc = ? WHERE base_type_id = ?";
+    var feedback, base_type_name = baseTypeObj.base_type_name, base_type_desc = baseTypeObj.base_type_desc, base_type_id = baseTypeObj.base_type_id;
 
-    if ((undefined !== topping_name && topping_name != '') && (undefined !== topping_desc && topping_desc != '') && 
-        (undefined !== topping_id && topping_id != '')
+    if ((undefined !== base_type_name && base_type_name != '') && (undefined !== base_type_desc && base_type_desc != '') && 
+        (undefined !== base_type_id && base_type_id != '')
     ) {
       connection.acquire(function (err, con) {
         if (err) {
@@ -113,7 +113,7 @@ function Topping() {
           return;
         }
 
-        con.query(queryFind, topping_id, function (err, result) {
+        con.query(queryFind, base_type_id, function (err, result) {
           con.release();
           if (err) {
             res.json(err);
@@ -126,16 +126,16 @@ function Topping() {
                   return;
                 }
 
-                con.query(query, [topping_name, topping_desc, topping_id], function (err, result) {
+                con.query(query, [base_type_name, base_type_desc, base_type_id], function (err, result) {
                   con.release();
                   if (err) {
                     res.json(err);
                   } else {
-                    feedback = 'Topping successfully updated';
+                    feedback = 'BaseType successfully updated';
                     output = {
                       status: 1,
                       message: feedback,
-                      updatedToppingName: topping_name
+                      updatedBaseTypeName: base_type_name
                     };
                     res.json(output);
                   }
@@ -144,7 +144,7 @@ function Topping() {
             } else {
               output = {
                 status: 0,
-                message: 'No Topping with such Id found'
+                message: 'No BaseType with such Id found'
               };
               res.json(output);
             }
@@ -154,7 +154,7 @@ function Topping() {
       });
 
     } else {
-      feedback = 'Invalid Topping data submitted';
+      feedback = 'Invalid BaseType data submitted';
       output = {
         status: 0,
         message: feedback
@@ -166,4 +166,4 @@ function Topping() {
   };
 }
 
-module.exports = new Topping();
+module.exports = new BaseType();

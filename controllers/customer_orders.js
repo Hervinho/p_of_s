@@ -357,6 +357,8 @@ function handleOrderDetailsData(data) {
     }
     //console.log(html);
     $("#tblCustomerOrderDetails tbody").html(html);
+
+    //if order was paid with card, get details of the card.
     ViewCardPaymentDetails(customerOrderID);
 }
 
@@ -398,6 +400,8 @@ function handleEmployeeData(data){
 function handleCardDetailsData(data){
     
     var card_info, html = '';
+
+    //if payment was cash, hide div.
     if (data.status == 0) {
         document.getElementById("bankCardDetails").style.display = 'none';
     } else {

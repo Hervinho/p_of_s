@@ -89,9 +89,9 @@ function handleOrdersData(data) {
         var customer_orders = data.customer_orders;
         for (var key = 0, size = customer_orders.length; key < size; key++) {
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
-                customer_orders[key].customer_order_timestamp + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
-                'R ' + customer_orders[key].total_amount + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                customer_orders[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_orders[key].customer_order_id + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
+                customer_orders[key].customer_order_timestamp + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                //customer_orders[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewNewCustomerOrder" onclick="return ViewOrderDetails(\'' + customer_orders[key].customer_order_id + '\', \'' + customer_orders[key].order_status_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';

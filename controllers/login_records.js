@@ -3,7 +3,7 @@ $(document).ready(function () {
     
     LoadAllLoginRecords();
     
-    $(document).on('change', '.form-control, .any-date', function () {
+    /*$(document).on('change', '.form-control, .any-date', function () {
         loginRecordFilterEmployeeVal = $("#loginRecordFilterEmployee").val();
         loginRecordFilterShiftVal = $("#loginRecordFilterShift").val();
         loginRecordFilterDateVal = $("#loginRecordFilterDate").val();
@@ -17,7 +17,7 @@ $(document).ready(function () {
             FilterRecordsByDayAndShift(loginRecordFilterShiftVal, loginRecordFilterDateVal);
             //toastr.info("Yay");
         }
-    });
+    });*/
 });
 
 function LoadAllLoginRecords() {
@@ -115,6 +115,37 @@ function LoadAllShifts() {
         }
 
     });
+}
+
+function FilterRecordsByDate(){
+    loginRecordFilterDateVal = $("#loginRecordFilterDate").val();
+    isValidDate = moment(loginRecordFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
+    //console.log('Date: ', $("#loginRecordFilterDate").val());//testing
+
+    if(isValidDate == true){
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/loginrecords/date/' + loginRecordFilterDateVal,
+            dataType: "json",
+            cache: false,
+            beforeSend: function () {
+                var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+                $("#tblLoginRecords tbody").html(wait);
+            },
+            success: handleRecordsData,
+            error: function (e) {
+                console.log(e);
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+    
+        });
+    }
+    else{
+        toastr.error("Invalid date submitted");
+    }
 }
 
 function FilterRecordsByEmployee(employeeId){
