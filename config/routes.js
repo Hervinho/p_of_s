@@ -23,6 +23,7 @@ var LoginRecord = require('../models/LoginRecord');
 var BaseType = require('../models/BaseType');
 var AccountType = require('../models/AccountType');
 var CardPayment = require('../models/CardPayment');
+var Topping = require('../models/Topping');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, shiftMessage, 
@@ -73,27 +74,52 @@ var AccountTypeAPIs = function(express){
 };
 
 var BaseTypeAPIs = function(express){
-	//get all toppings.
+	//get all base types.
 	express.get('/basetypes', function (req, res) {
 		BaseType.getAll(res);
 	});
 
-	//get a single topping.
+	//get a single base type.
 	express.get('/basetypes/:id', function (req, res) {
 		var id = req.params.id;
 		BaseType.getOne(id, res);
 	});
 
-	//create topping.
+	//create base type.
 	express.post('/basetypes', function (req, res) {
 		var toppingObj = req.body;
 		BaseType.create(toppingObj, res);
 	});
 
-	//update topping.
+	//update base type.
 	express.put('/basetypes', function (req, res) {
 		var toppingObj = req.body;
 		BaseType.update(toppingObj, res);
+	});
+};
+
+var ToppingAPIs = function(express){
+	//get all toppings.
+	express.get('/toppings', function (req, res) {
+		Topping.getAll(res);
+	});
+
+	//get a single topping.
+	express.get('/toppings/:id', function (req, res) {
+		var id = req.params.id;
+		Topping.getOne(id, res);
+	});
+
+	//create topping.
+	express.post('/toppings', function (req, res) {
+		var toppingObj = req.body;
+		Topping.create(toppingObj, res);
+	});
+
+	//update topping.
+	express.put('/toppings', function (req, res) {
+		var toppingObj = req.body;
+		Topping.update(toppingObj, res);
 	});
 };
 
@@ -557,6 +583,7 @@ var CustomerOrderAPIs = function (express) {
 				product_id: 2,
 				product_size_id: 1,
 				topping_id: 1,
+				base_type_id: 3,
 				product_quantity: 1,
 				amount: 100
 			},
@@ -564,6 +591,7 @@ var CustomerOrderAPIs = function (express) {
 				product_id: 3,
 				product_size_id: 2,
 				topping_id: 1,
+				base_type_id: 3,
 				product_quantity: 2,
 				amount: 150
 			}
@@ -1051,6 +1079,7 @@ module.exports = {
 		BaseTypeAPIs(apiRoutes);
 		AccountTypeAPIs(apiRoutes);
 		CardPaymentAPIs(apiRoutes);
+		ToppingAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

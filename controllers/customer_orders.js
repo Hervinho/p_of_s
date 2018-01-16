@@ -345,12 +345,22 @@ function handleOrderDetailsData(data) {
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
         for (var key = 0, size = customer_order_details.length; key < size; key++) {
+            
+            if(customer_order_details[key].topping_name == null){
+                customer_order_details[key].topping_name = '-';
+            }
+            if(customer_order_details[key].base_type_name == null){
+                customer_order_details[key].base_type_name = '-';
+            }
+
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            'R ' + customer_order_details[key].amount + '</td>' +
-            '</tr>';
+                customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].topping_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].base_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                'R ' + customer_order_details[key].amount + '</td>' +
+                '</tr>';
         }
     } else {
         html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
