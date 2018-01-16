@@ -995,6 +995,20 @@ var configViews = function (express) {
 
 	});
 
+	//Sales Report Page.
+	express.get('/report/sales', isUserLoggedIn, function (req, res) {
+		if (roleID == 1) {
+			res.render('sales_reports', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode, roleMessage: roleMessage
+			});
+		}
+
+	});
+
 	//Login Records Page.
 	express.get('/loginrecords', isUserLoggedIn, function (req, res) {
 		if (roleID == 1) {
