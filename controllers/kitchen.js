@@ -110,12 +110,15 @@ function handleOrderDetailsData(data) {
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
         for (var key = 0, size = customer_order_details.length; key < size; key++) {
-            html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customer_order_details[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            'R ' + customer_order_details[key].amount + '</td>' +
-            '</tr>';
+            //show only if product type != drink.
+            if(customer_order_details[key].product_type_id != 3){
+                html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                'R ' + customer_order_details[key].amount + '</td>' +
+                '</tr>';
+            }            
         }
 
     } else {
