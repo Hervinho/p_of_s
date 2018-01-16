@@ -640,6 +640,12 @@ var ShiftAPIs = function (express) {
 		var shiftObj = req.body;
 		Shift.update(shiftObj, res);
 	});
+
+	//delete a specific shift.
+	express.delete('/shifts/:id', function (req, res) {
+		var shiftId = req.params.id;
+		Shift.delete(shiftId, res);
+	});
 };
 
 var EmployeeAPIs = function (express) {

@@ -80,3 +80,39 @@ function validateEditShiftForm(shiftObj) {
 
     return flag;
 }
+
+function DeleteShift(){
+    id = $("#lbSelectedShift").html().toString();
+    
+    if (confirm('Are you sure you want to delete shift?')) {
+        
+        $.ajax({
+            type: 'DELETE',
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/shifts/' + id,
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                if (data.status == 0) {
+                    toastr.error(data.message);
+                } else {
+                    toastr.success(data.message);
+                    
+                    //Reload page.
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                message = 'Something went wrong';
+                toastr.error(message);
+            }
+
+        });
+    } else {
+        //Do nothing
+    }
+}

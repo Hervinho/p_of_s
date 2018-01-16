@@ -201,6 +201,44 @@ function Shift() {
         }
 
     };
+
+    //delete shift.
+    this.delete = function (shiftId, res) {
+        var feedback, output = {}, query = "DELETE FROM shift WHERE shift_id=?";
+
+        connection.acquire(function (err, con) {
+                if (err) {
+                    res.json({
+                        status: 100,
+                        message: "Error in connection database"
+                    });
+                    return;
+                }
+
+                con.query(query, [shiftId], function (err, result) {
+                    con.release();
+                    if (err) {
+                        output = {
+                            status: 0,
+                            message: 'Error deleting shift',
+                            error: err
+                        };
+
+                        res.json(output);
+                    } else {
+                        feedback = 'Shift successfully deleted';
+                        output = {
+                            status: 1,
+                            message: feedback,
+                            deletedShiftId: shiftId
+                        };
+
+                        res.json(output);
+                    }
+                });
+        });       
+
+    };
 }
 
 module.exports = new Shift();
