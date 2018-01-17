@@ -285,18 +285,72 @@ function ShiftBooking(){
                 });
                 return;
             }
-            
-            //Only make bookings at least one day in advance.
-            if(booking_date == today){
-                feedback = "Only make bookings at least a day in advance";
-                res.json({
-                    status: 0,
-                    message: feedback
-                });
-                return;
-            }
 
-            connection.acquire(function (err, con) {
+            //Get booked shift details. Then compare times.
+            shiftDetails = Shift.getFiltered(shift_id, function (err, resultShift) {
+                var start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
+                    shift_start_time = moment(booking_date + ' ' + start).format("YYYY-MM-DD HH:mm:ss");
+                    shift_end_time = moment(booking_date + ' ' + end).format("YYYY-MM-DD HH:mm:ss");
+                    
+                    console.log('Start: ' + shift_start_time, 'End: ', shift_end_time);
+                    console.log('Current: ', timestamp);
+                    
+                    //Book before and during shift for demo purposes.
+                    if ((timestamp < shift_start_time) || (timestamp > shift_start_time && timestamp < shift_end_time)) {
+                        console.log('Can book during the shift');
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error connecting to database"
+                                });
+                                return;
+                            }
+                
+                            con.query(query, [null, employee_id, shift_id, booking_date, timestamp, booking_status_id], function (err, result) {
+                                con.release();
+                                if (err) {
+                                    if(err.code == 'ER_DUP_ENTRY'){
+                                        feedback = 'Error. You already booked for this shift';
+                                    }
+                                    else{
+                                        feedback = 'Error booking shift';
+                                    }
+                                    
+                                    output = {
+                                        status: 0,
+                                        message: feedback,
+                                        error: err
+                                    };
+            
+                                    res.json(output);
+                                } else {
+                                    feedback = 'Shift successfully booked';
+                                    output = {
+                                        status: 1,
+                                        message: feedback,
+                                        insertedBookingId: result.insertId
+                                    };
+            
+                                    res.json(output);
+                                }
+                            });
+                        });
+                    }
+                    else if(timestamp > shift_end_time){
+                        //console.log('Cannot book after the shift');
+                        feedback = 'Cannot book after the shift';
+                        output = {
+                            status: 0,
+                            message: feedback
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+            });
+
+            /*connection.acquire(function (err, con) {
                 if (err) {
                     res.json({
                         status: 100,
@@ -308,7 +362,13 @@ function ShiftBooking(){
                 con.query(query, [null, employee_id, shift_id, booking_date, timestamp, booking_status_id], function (err, result) {
                     con.release();
                     if (err) {
-                        feedback = 'Error booking shift';
+                        if(err.code == 'ER_DUP_ENTRY'){
+                            feedback = 'Error. You already booked for this shift';
+                        }
+                        else{
+                            feedback = 'Error booking shift';
+                        }
+                        
                         output = {
                             status: 0,
                             message: feedback,
@@ -327,7 +387,7 @@ function ShiftBooking(){
                         res.json(output);
                     }
                 });
-            });
+            });*/
         }
         else{
             feedback = 'Invalid Booking data submitted';

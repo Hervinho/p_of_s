@@ -170,7 +170,7 @@ var ShiftBookingAPIs = function (express) {
 	//book a shift.
 	express.post('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
-		bookingObj.employee_id = employeeID;
+		//bookingObj.employee_id = employeeID;//uncomment after testing
 		ShiftBooking.create(bookingObj, res);
 		
 	});
@@ -301,7 +301,7 @@ var PromotionAPIs = function(express){
 	//create promotion. Only by Admin
 	express.post('/promotions', function (req, res) {
 		var promotionObj = req.body;
-		/*if(roleID == 1){
+		if(roleID == 1){
 			promotionObj.employee_id = employeeID;
 			Promotion.create(promotionObj, res);
 		}
@@ -310,9 +310,9 @@ var PromotionAPIs = function(express){
 				status: 0,
 				message: roleMessage
 			});
-		}*/
-		promotionObj.products = [{product_id:1}, {product_id:2}];
-		promotionObj.employee_id = 1;
+		}
+		//promotionObj.products = [{product_id:1}, {product_id:2}];
+		//promotionObj.employee_id = 1;
 		Promotion.create(promotionObj, res);
 	});
 
