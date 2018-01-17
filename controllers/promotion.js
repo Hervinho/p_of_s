@@ -180,12 +180,12 @@ function ViewPromotionInfo(id){
             var promotionValidFrom = promotion.valid_from_date;
             var promotionValidUntil = promotion.valid_to_date;
             var promotionStatusId = promotion.promotion_status_id;
-            var productId = promotion.product_id;
+            //var productId = promotion.product_id;
             var promotionAddedBy = promotion.employee_name;
 
             $("#txtViewPromotionName").val(promotionName);
             $("#txtViewPromotionStatus").val(promotionStatusId);
-            $("#txtViewPromotionType").val(productId);
+            //$("#txtViewPromotionType").val(productId);
             $("#txtViewPromotionValidFrom").val(promotionValidFrom);
             $("#txtViewPromotionValidUntil").val(promotionValidUntil);
             $("#txtViewPromotionDescription").val(promotionDesc);

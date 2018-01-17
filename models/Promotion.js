@@ -4,6 +4,22 @@ var moment = require('moment'),
 var emailAPI = "http://54.210.132.91:6060/notifications/email";
 var Customer = require('./Customer');
 
+//Function to build query string for order details.
+var buildQuery = function (array, promotionId) {
+    var string = '';
+    for (var index = 0; index < array.length; index++) {
+        if (index == array.length - 1) {
+            string += "(" + promotionId + ", " + 
+                array[index].product_id + ")";
+        } else {
+            string += "(" + promotionId + ", " + 
+                array[index].product_id + "),";
+        }
+    }
+
+    return string;
+};
+
 function Promotion() {
     //get all promotions.
     this.getAll = function (res) {
@@ -85,7 +101,10 @@ function Promotion() {
 
     //get all promotions of a certain type.
     this.getPerProduct = function(productId, res){
-        var output = {}, query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE product_id = ?";
+        var output = {}, query = "SELECT * FROM promotion " +
+            "LEFT JOIN promotion_product ON promotion.promotion_id = promotion_product.promotion_id " +
+            "LEFT JOIN employee ON promotion.added_by = employee.employee_id " +
+            "WHERE promotion_product.product_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -120,8 +139,10 @@ function Promotion() {
 
     //get a specific promotion.
     this.getOne = function (id, res) {
-        var output = {},
-            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?";
+        var output = {}, promoProducts = [];
+            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?",
+            queryDetails = "SELECT * FROM promotion_product LEFT JOIN product ON promotion_product.product_id = product.product_id " +
+                "WHERE promotion_product.promotion_id = ?";
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -138,17 +159,61 @@ function Promotion() {
                     res.json(err);
                 } else {
                     if (result.length > 0) {
-                        output = {
-                            status: 1,
-                            promotion: result[0]
-                        };
+
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error connecting to database"
+                                });
+                                return;
+                            }
+                
+                            con.query(queryDetails, [id], function (err, resultDetails) {
+                                con.release();
+                                if (err) {
+                                    output = {
+                                        status: 0,
+                                        message: "Error getting promotion products",
+                                        error:err
+                                    };
+
+                                    res.json(output);
+                                    return;
+
+                                } else {
+                                    console.log('Res: ', resultDetails);
+                                    if(resultDetails.length > 0){
+                                        output = {
+                                            status: 1,
+                                            promotion: result[0],
+                                            products:resultDetails
+                                        };
+                                    }
+                                    else{
+                                        output = {
+                                            status: 1,
+                                            promotion: result[0],
+                                            products:null
+                                        };
+                                    }
+
+                                    res.json(output);
+                                    return;
+                                }
+                            });
+                        });
+
                     } else {
                         output = {
                             status: 0,
                             message: 'No such promotion found'
                         };
+
+                        res.json(output);
+                        return;
                     }
-                    res.json(output);
+                    
                 }
             });
         });
@@ -157,12 +222,13 @@ function Promotion() {
     //create promotion.
     this.create = function (promotionObj, res) {
         var output = {},
-            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?,?)",
-            today = moment().format('YYYY-MM-DD');
+            query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?)",
+            queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES",
+            today = moment().format('YYYY-MM-DD'), insertedPromotionId;
         var promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
             promotion_status_id = 2,
-            product_id = promotionObj.product_id,
+            products = promotionObj.products,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
             promotion_price = promotionObj.promotion_price,
@@ -170,8 +236,7 @@ function Promotion() {
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
-            (undefined !== promotion_price && promotion_price != '') && (undefined !== product_id && product_id != '') &&
-            (undefined !== added_by && added_by != '')
+            (undefined !== promotion_price && promotion_price != '') && (undefined !== added_by && added_by != '')
         ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
@@ -202,7 +267,7 @@ function Promotion() {
                     return;
                 }
 
-                con.query(query, [null, promotion_name, promotion_desc, product_id, promotion_status_id, valid_from_date,
+                con.query(query, [null, promotion_name, promotion_desc, promotion_status_id, valid_from_date,
                     valid_to_date, promotion_price, added_by
                 ], function (err, result) {
                     con.release();
@@ -216,11 +281,37 @@ function Promotion() {
 
                         res.json(output);
                     } else {
+                        insertedPromotionId = result.insertId;
+                        
+                        //insert into promotion_product bridge table.
+                        var builtQueryString = buildQuery(products, insertedPromotionId);
+                        queryInsert += builtQueryString;
+                        console.log(queryInsert);
+                        
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error connecting to database"
+                                });
+                                return;
+                            }
+                
+                            con.query(queryInsert, function (err, result) {
+                                con.release();
+                                if (err) {
+                                    console.log('Error: ', err.code);
+                                } else {
+                                    console.log('Success');
+                                }
+                            });
+                        });
+                        
                         feedback = 'Promotion successfully added';
                         output = {
                             status: 1,
                             message: feedback,
-                            insertedPromotionId: result.insertId
+                            id: insertedPromotionId
                         };
 
                         res.json(output);

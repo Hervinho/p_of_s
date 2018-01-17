@@ -215,7 +215,7 @@ function Employee() {
     //Employee login
     this.login = function (req, res) {
         var employeeObj = req.body;
-        //console.log(employeeObj);
+        console.log(employeeObj);
         var output = {},
             feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
             //"AND employee_status_id = 1";
