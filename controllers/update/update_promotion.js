@@ -26,13 +26,8 @@ function UpdatePromotion() {
     
     //Validations
     if (validateEditPromotionForm(promotionObj) == true) {
-        /*toastr.info("Yay");
-        console.log('Before: ', promotionObj.products);
-        //remove duplicate data.
-        for(var key = 0, size = promotionObj.products.length / 2; key < size; key++){
-            newArray[key] = promotionObj.products[key];
-        }
-        console.log('After', newArray);*/
+        //toastr.info("Yay");
+        
         $.ajax({
             type: 'PUT',
             crossDomain: true,

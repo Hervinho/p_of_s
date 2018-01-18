@@ -252,14 +252,17 @@ function Customer() {
     //update customer.
     this.update = function (customerObj, res) {
         var output = {},
-            feedback, query = "UPDATE customer SET customer_name=?, customer_gender_id=?, customer_phone=? WHERE customer_id=?";
+            feedback, query = "UPDATE customer SET customer_name=?, customer_gender_id=?, customer_phone=?,customer_email=? " +
+                " WHERE customer_id=?";
         var customer_name = customerObj.customer_name,
             customer_gender_id = customerObj.customer_gender_id,
             customer_phone = customerObj.customer_phone,
+            customer_email = customerObj.customer_email,
             customer_id = customerObj.customer_id;
 
         if ((undefined !== customer_name && customer_name != '') && (undefined !== customer_gender_id && customer_gender_id != '') &&
-            (undefined !== customer_phone && customer_phone != '') && (undefined !== customer_id && customer_id != '')
+            (undefined !== customer_phone && customer_phone != '') && (undefined !== customer_id && customer_id != '') &&
+            (undefined !== customer_email && customer_email != '')
         ) {
             connection.acquire(function (err, con) {
                 if (err) {
@@ -270,7 +273,7 @@ function Customer() {
                     return;
                 }
 
-                con.query(query, [customer_name, customer_gender_id, customer_phone, customer_id], function (err, result) {
+                con.query(query, [customer_name, customer_gender_id, customer_phone, customer_email, customer_id], function (err, result) {
                     con.release();
                     if (err) {
                         feedback = 'Error updating customer';

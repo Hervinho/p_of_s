@@ -111,7 +111,7 @@ function ViewCustomerInfo(id){
         dataType: "json",
         cache: false,
         success: function (data) {
-            console.log(data.customer);
+            //console.log(data.customer);
             var customer = data.customer;
             var name = customer.customer_name;
             var phone = customer.customer_phone;
