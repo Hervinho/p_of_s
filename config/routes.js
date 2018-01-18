@@ -554,6 +554,27 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.countAllPerProductAndDate(orderdObj, res);
 	});
 
+	//count all orders per specific product TYPE and date.
+	express.get('/customerorders/producttypes/:id/date/:date/count', function (req, res) {
+		var orderdObj = {
+			product_type_id: req.params.id,
+			date: req.params.date
+		};
+		CustomerOrder.countAllPerProductTypeAndDate(orderdObj, res);
+	});
+
+	//count all orders per specific product AND date AND shift.
+	express.post('/customerorders/products/shifts/count', function (req, res) {
+		var orderObj = req.body;
+		CustomerOrder.countAllPerProductAndDateWithShift(orderObj, res);
+	});
+
+	//count all orders per specific product TYPE and date AND shift.
+	express.post('/customerorders/producttypes/shifts/count', function (req, res) {
+		var orderObj = req.body;
+		CustomerOrder.countAllPerProductTypeAndDateWithShift(orderObj, res);
+	});
+
 	//get all customer orders.
 	express.get('/customerorders', function (req, res) {
 		CustomerOrder.getAll(res);
@@ -600,6 +621,7 @@ var CustomerOrderAPIs = function (express) {
 	express.post('/customerorders', function (req, res) {
 		var orderObj = req.body;
 		//orderObj.added_by = employeeID;
+		
 		/* ------ONLY for testing without UI------ */
 		orderObj.added_by = 1;
 		orderObj.orderItems = [

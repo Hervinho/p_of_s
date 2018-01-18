@@ -2,6 +2,8 @@ var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderF
 var payment_types = [], paymentTypeNames = [], orderCountPaymentType = [];
 var employees = [], employeeNames = [], orderCountEmployee = [];
 var products = [], productNames = [], orderCountProduct = [];
+var product_types = [], productTypeNames = [], orderCountProductType = [];
+
 var colorsArray = [
         "#008000", "#808080", "#800000", "#FFFF00", "#00FFFF", "#008080",
         "#455C73", "#9B59B6", "#BDC3C7", "#26B99A", "#3498DB", "#CCEEFF",
@@ -14,8 +16,9 @@ var colorsArray = [
     ];
 
 $(document).ready(function () {
-    LoadAllShifts();
+    //LoadAllShifts();
     LoadAllProducts();
+    LoadAllProductTypes();
     LoadAllPaymentTypes();
     LoadAllEmployees();
 
@@ -34,6 +37,24 @@ function LoadAllProducts() {
         dataType: "json",
         cache: false,
         success: handleProductsData,
+        error: function (e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function LoadAllProductTypes() {
+
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/producttypes',
+        dataType: "json",
+        cache: false,
+        success: handleProductTypesData,
         error: function (e) {
             message = "Something went wrong";
             toastr.error(message);
@@ -103,14 +124,19 @@ function ResetFilters(){
 }
 
 function FilterByProductAndDate(){
+    //$("#lblPolar1").text('Moooo');
+
     //count number of customer orders of a certain product and date. and display in chart.
-    var orderChartId = "orderPolarChartProduct";
+    var orderChartId = "orderPolarChartProduct", orderPolarChartId = "orderPolarChart";
     orderFilterDateVal = $("#filterOrdersByDate").val();
     isValidDate = moment(orderFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
 
     if(isValidDate == true){
         countOrdersPerProduct(products, orderFilterDateVal);
         displayDoughnutChart(productNames, orderCountProduct, orderChartId);
+
+        countOrdersPerProductType(product_types, orderFilterDateVal);
+        displayPolarAreaChart(productTypeNames, orderCountProductType, orderPolarChartId);
     }
     else{
         toastr.error("Invalid date");
@@ -139,7 +165,32 @@ function countOrdersPerProduct(array, date){
         });
     }
     
-    console.log('orderCountProduct: ', orderCountProduct);
+    //console.log('orderCountProduct: ', orderCountProduct);
+}
+
+//function to count number of orders of certain product TYPE in given date.
+function countOrdersPerProductType(array, date){
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/customerorders/producttypes/' + array[key].product_type_id + '/date/' + date + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                orderCountProductType.push(data[0].orderCountProductType);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    
+    console.log('orderCountProductType: ', orderCountProductType);
 }
 
 //function to get number of customer orders of a certain payment type.
@@ -221,7 +272,7 @@ function displayPieChart(namesArray, orderCount, divId) {
 
 }
 
-//function to display polar area charts
+//function to display doughnut charts
 function displayDoughnutChart(namesArray, orderCount, divId) {
 
     if ($("#" + divId).length) {
@@ -250,10 +301,44 @@ function displayDoughnutChart(namesArray, orderCount, divId) {
 
 }
 
+//function to display polar area charts
+function displayPolarAreaChart(namesArray, orderCount, divId) {
+    
+    if ($("#" + divId).length) {
+        var colors = [];
+
+        //Randomly choose which colors will be on the chart.
+        for (var key = 0, size = namesArray.length; key < size; key++) {
+            colors[key] = colorsArray[Math.floor(Math.random() * colorsArray.length)];
+        }
+        
+        var f = document.getElementById(divId),
+            i = {
+                datasets: [{
+                    data: orderCount,
+                    backgroundColor: colors,
+                    label: "Polar Area Chart"
+                }],
+                labels: namesArray
+            };
+        new Chart(f, {
+            data: i,
+            type: "polarArea",
+            options: {
+                scale: {
+                    ticks: {
+                        beginAtZero: !0
+                    }
+                }
+            }
+        });
+    }
+
+}
+
 /*********** AJAX Callback functions ***********/
 function handleProductsData(data){
     //console.log('products: ', data.products);
-    var orderChartId = "orderBarChartPaymentType";
 
     if (data.status == 1 && data.products.length > 0) {
         products = data.products;
@@ -261,7 +346,19 @@ function handleProductsData(data){
             productNames[key] = products[key].product_name;
         }
     }
-    console.log(productNames);
+    //console.log(productNames);
+}
+
+function handleProductTypesData(data){
+    //console.log('product_types: ', data.product_types);
+
+    if (data.status == 1 && data.product_types.length > 0) {
+        product_types = data.product_types;
+        for (var key = 0, size = product_types.length; key < size; key++) {
+            productTypeNames[key] = product_types[key].product_type_name;
+        }
+    }
+    //console.log(productTypeNames);
 }
 
 function handlePaymentTypeData(data) {

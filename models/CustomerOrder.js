@@ -402,6 +402,167 @@ function CustomerOrder() {
         });
     };
 
+    //count all orders per specific product AND date AND shift.
+    this.countAllPerProductAndDateWithShift = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?',
+            queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?';
+        var productId = orderObj.product_id, date = orderObj.date, shiftId = orderObj.shift_id;
+        var start, end;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(queryFindShift, [shiftId], function (errShift, resultShift) {
+                con.release();
+                if (errShift) {
+                    res.json(errShift);
+                } else {
+                    console.log(resultShift.length);
+                    if(resultShift.length > 0){
+                        var start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        var end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+                        console.log(start, end);
+
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error in connection database"
+                                });
+                                return;
+                            }
+                
+                            con.query(query, [productId, start, end], function (errCount, resultCount) {
+                                con.release();
+                                if (errCount) {
+                                    res.json(errCount);
+                                    return;
+                                } else {
+                                    console.log(resultCount);
+                                    res.json(resultCount);
+                                    return;
+                                }
+                            });
+                        });
+                    }
+                    else{
+                        output = {
+                            status: 0,
+                            message: 'No such shift found'
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+                }
+            });
+        });
+    };
+
+    //count all orders per specific product TYPE and date.
+    this.countAllPerProductTypeAndDate = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
+            'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp LIKE ?';
+        var productTypeId = orderObj.product_type_id, date = orderObj.date;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date = '%' + date + '%';
+
+            con.query(query, [productTypeId, date], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
+    //count all orders per specific product TYPE and date AND shift.
+    this.countAllPerProductTypeAndDateWithShift = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
+            'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?',
+            queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?';
+        var productTypeId = orderObj.product_type_id, date = orderObj.date, shiftId = orderObj.shift_id;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            con.query(queryFindShift, [shiftId], function (errShift, resultShift) {
+                con.release();
+                if (errShift) {
+                    res.json(errShift);
+                    return;
+                } else {
+                    //res.json(result);
+                    if(resultShift.length > 0){
+                        var start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        var end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+                        console.log(start, end);
+
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error in connection database"
+                                });
+                                return;
+                            }
+                
+                            con.query(query, [productTypeId, start, end], function (errCount, resultCount) {
+                                con.release();
+                                if (errCount) {
+                                    res.json(errCount);
+                                    return;
+                                } else {
+                                    console.log(resultCount);
+                                    res.json(resultCount);
+                                    return;
+                                }
+                            });
+                        });
+                    }
+                    else{
+                        output = {
+                            status: 0,
+                            message: 'No such shift found'
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+                }
+            });
+        });
+    };
+
     //get a specific order.
     this.getOne = function (orderId, res) {
         var output = {},
@@ -647,8 +808,10 @@ function CustomerOrder() {
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
         var payment_status_id = 1;//order is only submitted when payment has been received.
+        //var payment_status_id = orderObj.payment_status_id;//order can be submitted withut payment (phone orders)
         var collection_status_id = 2;//order not yet collected
-        var order_status_id = 1, added_by = orderObj.added_by;
+        var order_status_id = 1;//new order (for kitchen)
+        var added_by = orderObj.added_by;
         var bankCardObj = orderObj.bankCardObj;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
