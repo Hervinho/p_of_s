@@ -373,6 +373,35 @@ function CustomerOrder() {
         });
     };
 
+    //count all orders per specific product AND date.
+    this.countAllPerProductAndDate = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp LIKE ?';
+        var productId = orderObj.product_id, date = orderObj.date;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date = '%' + date + '%';
+
+            con.query(query, [productId, date], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
     //get a specific order.
     this.getOne = function (orderId, res) {
         var output = {},

@@ -13,18 +13,18 @@
                         <div class="mdl-grid">
                           
                           <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <input class="any-date mdl-textfield__input" placeholder="Select Date" type="text" id="filterDate">
+                              <input class="any-date mdl-textfield__input" placeholder="Select Date" type="text" id="filterOrdersByDate">
                           </div>
 
-                          <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                          <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
                               <label class="control-label">Filter By Shift</label>
                               <select id="filterShift" class="form-control" required="required">
 
                               </select>
-                          </div>
+                          </div>-->
 
                           <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <button type="button" onclick="return FilterRecordsByDate();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Filter </button>
+                              <button type="button" onclick="return FilterByProductAndDate();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Filter </button>
                           </div>
 
                         </div>
@@ -35,30 +35,26 @@
                             </div>
                         </div>
 
-                          <!--<table id="tblCustomerOrders" class="mdl-data-table mdl-js-data-table">
-                              <thead>
-                                  <tr>
-                                      <th class="mdl-data-table__cell--non-numeric">Date Captured</th>
-                                      <th class="mdl-data-table__cell--non-numeric">Payment Type</th>
-                                      <th class="mdl-data-table__cell--non-numeric">Total Amount</th>
-                                      <th class="mdl-data-table__cell--non-numeric">Captured By</th>
-                                      <th class="mdl-data-table__cell--non-numeric">View</th>
+                        <!-- CHARTS!!!!!!!!! -->
 
-                                  </tr>
-                              </thead>
-                              <tbody>
-
-                              </tbody>
-                          </table>-->
-                          <!-- /block -->
-
-                          <div hidden class="alert-info" style="overflow:auto;height:20px;">
-                              <span class="label label-default" id="lbSelectedCustomerOrder"></span>
-                          </div>
-
-                          <!-- Pie Charts -->
+                        <!-- Other charts -->
                         <br><br>
-                        <div class="mdl-grid mdl-cell mdl-cell--12-col">
+                        <div id="otherCharts" class="mdl-grid mdl-cell mdl-cell--12-col">
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet">
+                                <label class="control-label"><strong>Sales Chart By Products</strong></label>
+                                <canvas id="orderPolarChartProduct"></canvas>
+                            </div>
+
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet">
+                                <label class="control-label"><strong>Sales Chart By .....</strong></label>
+                                <canvas id="orderPolarChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- *************** -->
+                        
+                        <!-- Pie Charts -->
+                        <br><br>
+                        <div id="pieCharts" class="mdl-grid mdl-cell mdl-cell--12-col">
                             <div class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet">
                                 <label class="control-label"><strong>Overall Sales Chart By Payment Type</strong></label>
                                 <canvas id="orderBarChartPaymentType"></canvas>
@@ -69,6 +65,7 @@
                                 <canvas id="orderBarChartEmployee"></canvas>
                             </div>
                         </div>
+                        <!-- *************** -->
 
                       </div>
                   </div>

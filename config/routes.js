@@ -545,6 +545,15 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.countAllByPaymentType(paymentTypeId, res);
 	});
 
+	//count all orders of a specific product AND date.
+	express.get('/customerorders/products/:id/date/:date/count', function (req, res) {
+		var orderdObj = {
+			product_id: req.params.id,
+			date: req.params.date
+		};
+		CustomerOrder.countAllPerProductAndDate(orderdObj, res);
+	});
+
 	//get all customer orders.
 	express.get('/customerorders', function (req, res) {
 		CustomerOrder.getAll(res);
