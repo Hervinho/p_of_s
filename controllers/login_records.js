@@ -256,4 +256,14 @@ function handleRecordsData(data) {
     $("#loginRecordFilterDateTo").val("");
 
     $("#tblLoginRecords tbody").html(html);
+    
+    //Destroy dataTable and re-initialize
+    /*$('#tblLoginRecords').dataTable().fnDestroy();
+    $('#tblLoginRecords').dataTable({
+        "processing": true,
+        //"dom": 'lBfrtip',
+        "searching": true,
+        "paging": true
+    });
+    $("#tblLoginRecords tbody").html(html);*/
 }
