@@ -20,6 +20,76 @@ var buildQuery = function (array, promotionId) {
     return string;
 };
 
+//function to update promo products.
+var updatePromotionProducts = function (array, promotionId, callback) {
+    var output = {},
+        queryDelete = "DELETE FROM promotion_product WHERE promotion_id = ?",
+        queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES";
+
+    connection.acquire(function (err, con) {
+        if (err) {
+            output = {
+                status: 100,
+                message: "Error connecting to database"
+            };
+
+            callback(null, output);
+        }
+
+        con.query(queryDelete, [promotionId], function (errDelete, resultDelete) {
+            con.release();
+            if (err) {
+                output = {
+                    status: 0,
+                    message: "Error deleting promotion products",
+                    error: errDelete
+                };
+
+                callback(null, output);
+            } else {
+                console.log('Promo products successfully deleted.');
+
+                //Now insert new products for this promo.
+                var builtQueryString = buildQuery(array, promotionId);
+                queryInsert += builtQueryString;
+                console.log(queryInsert);
+
+                connection.acquire(function (err, con) {
+                    if (err) {
+                        output = {
+                            status: 100,
+                            message: "Error connecting to database"
+                        };
+            
+                        callback(null, output);
+                    }
+            
+                    con.query(queryInsert, function (errInsert, resultInsert) {
+                        con.release();
+                        if (err) {
+                            output = {
+                                status: 0,
+                                message: "Error updating promotion products",
+                                error: errInsert
+                            };
+            
+                            callback(null, output);
+                        } else {
+                            //console.log('Promo products successfully updated.');
+                            output = {
+                                status: 1,
+                                message: 'Promo products successfully updated.'
+                            };
+
+                            callback(null, output);
+                        }
+                    });
+                });
+            }
+        });
+    });
+};
+
 function Promotion() {
     //get all promotions.
     this.getAll = function (res) {
@@ -302,7 +372,7 @@ function Promotion() {
                                 if (err) {
                                     console.log('Error: ', err.code);
                                 } else {
-                                    console.log('Success');
+                                    console.log('Promo products Successfully inserted.');
                                 }
                             });
                         });
@@ -334,11 +404,11 @@ function Promotion() {
     this.update = function (promotionObj, res) {
         var output = {},
             today = moment().format('YYYY-MM-DD'),
-            query = "UPDATE promotion SET promotion_name=?, product_id=?, " +
-            "promotion_desc=?, valid_from_date=?, valid_to_date=?, promotion_price=? WHERE promotion_id=?";
+            query = "UPDATE promotion SET promotion_name=?, promotion_desc=?, " +
+            "valid_from_date=?, valid_to_date=?, promotion_price=? WHERE promotion_id=?";
         var promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
-            product_id = promotionObj.product_id,
+            products = promotionObj.products,
             promotion_id = promotionObj.promotion_id,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
@@ -346,8 +416,7 @@ function Promotion() {
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
-            (undefined !== promotion_price && promotion_price != '') && (undefined !== promotion_id && promotion_id != '') &&
-            (undefined !== product_id && product_id != '')
+            (undefined !== promotion_price && promotion_price != '') && (undefined !== promotion_id && promotion_id != '')
         ) {
             //Convert dates to moment formats.
             valid_from_date = moment(valid_from_date).format('YYYY-MM-DD');
@@ -378,7 +447,7 @@ function Promotion() {
                     return;
                 }
 
-                con.query(query, [promotion_name, product_id, promotion_desc, valid_from_date, valid_to_date, promotion_price,
+                con.query(query, [promotion_name, promotion_desc, valid_from_date, valid_to_date, promotion_price,
                     promotion_id
                 ], function (err, result) {
                     con.release();
@@ -393,6 +462,12 @@ function Promotion() {
                         res.json(output);
                     } else {
                         feedback = 'Promotion successfully updated';
+
+                        //Delete current promo products first, then update with the new ones.
+                        updatePromotionProducts(products, promotion_id, function(errUpdate, resultUpdate){
+                            console.log(errUpdate || resultUpdate);
+                        });
+
                         output = {
                             status: 1,
                             message: feedback,

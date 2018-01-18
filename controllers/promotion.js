@@ -144,7 +144,8 @@ function LoadAllProducts() {
                         //checkbox
                     htmlCheckbox += "<label for=" + products[key].product_name + ">" + products[key].product_name +
                         "</label><input type='checkbox' id=" + products[key].product_name + " value=" + 
-                        products[key].product_id + " name=" + products[key].product_name + ">";
+                        //products[key].product_id + " name=" + products[key].product_name + ">";
+                        products[key].product_id + " name=product>";
                 }
             } else {
                 html += '<option value = "0">No product found</option>';

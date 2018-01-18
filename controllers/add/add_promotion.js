@@ -1,17 +1,25 @@
-var message, promotionObj = {};
+var message, promotionObj = {}, products = [];
 
 $(document).ready(function () {
     
 });
 
 function AddPromotion(){
+    
+    //get checkbox values.
+    $("input:checkbox[name=product]:checked").each(function () {
+        products.push({
+            product_id: parseInt($(this).val())
+        });
+    });
+
     promotionObj = {
         promotion_name: $("#txtAddPromoName").val(),
         promotion_desc: $("#txtAddPromoDescription").val(),
         valid_from_date: $("#txtAddPromoValidFrom").val(),
         valid_to_date: $("#txtAddPromoValidUntil").val(),
         promotion_price: parseInt($("#txtAddPromoPrice").val()),
-        product_id: parseInt($("#txtAddPromotionType").val())
+        products: products
     };
 
     if(validateAddPromotionForm(promotionObj) == true){
@@ -59,12 +67,13 @@ function AddPromotion(){
 
 function validateAddPromotionForm(promotionObj){
     var flag = true;
+    var productArray = promotionObj.products;
     var name_format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var no_numbers = /\d/;
     var fromdate = promotionObj.valid_from_date, todate = promotionObj.valid_to_date;
     var isValid_from_date = moment(fromdate.toString(), "YYYY-MM-DD", true).isValid(), 
         isValid_to_date = moment(todate, "YYYY-MM-DD", true).isValid();
-
+    
         if (name_format.test(promotionObj.promotion_name) || no_numbers.test(promotionObj.promotion_name)) {
             flag = false;
             message = 'Promotion Name contains illegal characters.';
@@ -95,9 +104,9 @@ function validateAddPromotionForm(promotionObj){
             message = 'Invalid dates provided.';
         }
 
-        if (promotionObj.product_id === 0 || promotionObj.product_id === null || promotionObj.product_id === undefined) {
+        if (productArray.length == 0) {
             flag = false;
-            message = 'No Product selected. Please select Product';
+            message = 'No Products selected. Please select at least one Product';
         }
     
         return flag;
