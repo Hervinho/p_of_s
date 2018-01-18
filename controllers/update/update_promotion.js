@@ -1,13 +1,18 @@
-var message, promotionId, promotionObj = {};
+var message, promotionId, promotionObj = {}, products = [], newArray = [];
 
 $(document).ready(function () {
-    //Pick up changes in all select elements.
-    $(document).on('change', '.product-type-change', function () {
-
-    });
+    
 });
 
 function UpdatePromotion() {
+    
+    //get checkbox values.
+    $("input:checkbox[name=product]:checked").each(function () {
+        products.push({
+            product_id: parseInt($(this).val())
+        });
+    });
+
     promotionId = $("#lbSelectedPromotion").html().toString();
     promotionObj = {
         promotion_id: promotionId,
@@ -16,12 +21,18 @@ function UpdatePromotion() {
         valid_to_date: $("#txtViewPromotionValidUntil").val(),
         promotion_desc: $("#txtViewPromotionDescription").val(),
         promotion_price: parseInt($("#txtViewPromotionPrice").val()),
-        product_id: parseInt($("#txtViewPromotionType").val())
+        products: products
     };
-
+    
     //Validations
     if (validateEditPromotionForm(promotionObj) == true) {
-        //toastr.info("Yay");
+        /*toastr.info("Yay");
+        console.log('Before: ', promotionObj.products);
+        //remove duplicate data.
+        for(var key = 0, size = promotionObj.products.length / 2; key < size; key++){
+            newArray[key] = promotionObj.products[key];
+        }
+        console.log('After', newArray);*/
         $.ajax({
             type: 'PUT',
             crossDomain: true,
@@ -67,12 +78,12 @@ function UpdatePromotion() {
 
 function validateEditPromotionForm(promotionObj) {
     var flag = true;
+    var productArray = promotionObj.products;
     var name_format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var no_numbers = /\d/;
     var fromdate = promotionObj.valid_from_date, todate = promotionObj.valid_to_date;
     var isValid_from_date = moment(fromdate.toString(), "YYYY-MM-DD", true).isValid(), 
         isValid_to_date = moment(todate, "YYYY-MM-DD", true).isValid();
-    //console.log(isValid_to_date);
 
     if (name_format.test(promotionObj.promotion_name) || no_numbers.test(promotionObj.promotion_name)) {
         flag = false;
@@ -104,9 +115,9 @@ function validateEditPromotionForm(promotionObj) {
         message = 'Invalid dates provided.';
     }
 
-    if (promotionObj.product_id === 0 || promotionObj.product_id === null || promotionObj.product_id === undefined) {
+    if (productArray.length == 0) {
         flag = false;
-        message = 'No Product selected. Please select Product';
+        message = 'No Products selected. Please select at least one Product';
     }
 
     return flag;

@@ -67,6 +67,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
                     con.query(queryInsert, function (errInsert, resultInsert) {
                         con.release();
                         if (err) {
+                            console.log(err.code);
                             output = {
                                 status: 0,
                                 message: "Error updating promotion products",
@@ -75,7 +76,8 @@ var updatePromotionProducts = function (array, promotionId, callback) {
             
                             callback(null, output);
                         } else {
-                            //console.log('Promo products successfully updated.');
+                            console.log('Promo products successfully updated.');
+                            console.log('resultInsert: ', resultInsert);
                             output = {
                                 status: 1,
                                 message: 'Promo products successfully updated.'
@@ -252,7 +254,7 @@ function Promotion() {
                                     return;
 
                                 } else {
-                                    console.log('Res: ', resultDetails);
+                                    //console.log('Res: ', resultDetails);
                                     if(resultDetails.length > 0){
                                         output = {
                                             status: 1,

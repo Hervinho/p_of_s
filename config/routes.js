@@ -311,15 +311,16 @@ var PromotionAPIs = function(express){
 				message: roleMessage
 			});
 		}
-		//promotionObj.products = [{product_id:1}, {product_id:2}];
-		//promotionObj.employee_id = 1;
-		//Promotion.create(promotionObj, res);
+		//Just for testing
+		/*promotionObj.products = [{product_id:1}, {product_id:2}];
+		promotionObj.employee_id = 1;
+		Promotion.create(promotionObj, res);*/
 	});
 
 	//update promotion. Only by Admin
 	express.put('/promotions', function (req, res) {
 		var promotionObj = req.body;
-		/*if(roleID == 1){
+		if(roleID == 1){
 			Promotion.update(promotionObj, res);
 		}
 		else{
@@ -327,9 +328,10 @@ var PromotionAPIs = function(express){
 				status: 0,
 				message: roleMessage
 			});
-		}*/
-		promotionObj.products = [{product_id: 3}, {product_id: 4}];
-		Promotion.update(promotionObj, res);
+		}
+		//just for testing.
+		/*promotionObj.products = [{product_id: 3}, {product_id: 4}];
+		Promotion.update(promotionObj, res);*/
 	});
 
 	//Activate/deactivate promotion. Only by Admin

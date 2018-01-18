@@ -141,16 +141,15 @@ function LoadAllProducts() {
                         products[key].product_name +
                         '</option>';
                     
-                        //checkbox
-                    htmlCheckbox += "<label for=" + products[key].product_name + ">" + products[key].product_name +
-                        "</label><input type='checkbox' id=" + products[key].product_name + " value=" + 
-                        //products[key].product_id + " name=" + products[key].product_name + ">";
-                        products[key].product_id + " name=product>";
+                    //checkbox
+                    htmlCheckbox += '<label>' + products[key].product_name +
+                        '</label><input type="checkbox" id="txtProductId' + products[key].product_id + '" value=' + 
+                        products[key].product_id + ' name=product>';
                 }
             } else {
                 html += '<option value = "0">No product found</option>';
             }
-
+            
             $("#promotionFilterType").html(html);
 
             //Also Populate productss in the dialogViewPromotion and dialogAddPromotion
@@ -179,7 +178,7 @@ function ViewPromotionInfo(id){
         dataType: "json",
         cache: false,
         success: function (data) {
-            //console.log(data);
+            //console.log(data.products);
             var promotion = data.promotion;
             var promotionName = promotion.promotion_name;
             var promotionDesc = promotion.promotion_desc;
@@ -187,17 +186,30 @@ function ViewPromotionInfo(id){
             var promotionValidFrom = promotion.valid_from_date;
             var promotionValidUntil = promotion.valid_to_date;
             var promotionStatusId = promotion.promotion_status_id;
-            //var productId = promotion.product_id;
             var promotionAddedBy = promotion.employee_name;
+            var products = data.products;
 
             $("#txtViewPromotionName").val(promotionName);
             $("#txtViewPromotionStatus").val(promotionStatusId);
-            //$("#txtViewPromotionType").val(productId);
             $("#txtViewPromotionValidFrom").val(promotionValidFrom);
             $("#txtViewPromotionValidUntil").val(promotionValidUntil);
             $("#txtViewPromotionDescription").val(promotionDesc);
             $("#txtViewPromotionPrice").val(promotionPrice);
             $("#txtViewPromotionAddedBy").val(promotionAddedBy);
+
+            //First uncheck all checkboxes.
+            $("input:checkbox[name=product]").each(function () {
+                this.checked = false;
+            });
+
+            //Only check checkboxes having products of the promotion.
+            for(var key = 0, size = products.length; key < size; key++){
+                $("input:checkbox[name=product]").each(function () {
+                    if(products[key].product_id == parseInt($(this).val())){
+                        this.checked = true;
+                    }
+                });
+            }
         },
         error: function (e) {
             console.log(e);
