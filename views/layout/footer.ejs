@@ -32,13 +32,29 @@
                   ],
                   "buttons": [{
                       extend: 'pdf',
-                      text: 'PDF'
+                      title: 'Data Export',
+                      text: 'PDF',
+                      footer: true,
+                      //messageTop: 'The information in this table is copyrighted.',
+                      exportOptions: {
+                          columns: [0, 1, 2, 3, 4, 5]
+                      }
                   }, {
                       extend: 'excel',
-                      text: 'Excel'
+                      title: 'Data Export',
+                      text: 'Excel',
+                      footer: true,
+                      exportOptions: {
+                          columns: [0, 1, 2, 3, 4, 5]
+                      }
                   }, {
                       extend: 'csv',
-                      text: 'CSV'
+                      title: 'Data Export',
+                      text: 'CSV',
+                      footer: true,
+                      exportOptions: {
+                          columns: [0, 1, 2, 3, 4, 5]
+                      }
                   }]
               });
           });
