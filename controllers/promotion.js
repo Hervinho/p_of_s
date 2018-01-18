@@ -133,13 +133,18 @@ function LoadAllProducts() {
         dataType: "json",
         cache: false,
         success: function (data) {
-            var html = '<option value = "0"></option>';
+            var html = '<option value = "0"></option>', htmlCheckbox = '';
             if (data.status == 1 && data.products.length > 0) {
                 var products = data.products;
                 for (var key = 0, size = products.length; key < size; key++) {
                     html += '<option value =' + products[key].product_id + ' >' +
                         products[key].product_name +
                         '</option>';
+                    
+                        //checkbox
+                    htmlCheckbox += "<label for=" + products[key].product_name + ">" + products[key].product_name +
+                        "</label><input type='checkbox' id=" + products[key].product_name + " value=" + 
+                        products[key].product_id + " name=" + products[key].product_name + ">";
                 }
             } else {
                 html += '<option value = "0">No product found</option>';
@@ -147,9 +152,10 @@ function LoadAllProducts() {
 
             $("#promotionFilterType").html(html);
 
-            //Also Populate product types in the dialogViewPromotion and dialogAddPromotion
-            $("#txtViewPromotionType").html(html);
-            $("#txtAddPromotionType").html(html);
+            //Also Populate productss in the dialogViewPromotion and dialogAddPromotion
+            var htmlLabel = '<label class="mdl-textfield__label" for="">Products</label>';
+            $("#txtAddProductCheckboxes").html(htmlCheckbox + htmlLabel);
+            $("#txtViewProductCheckboxes").html(htmlCheckbox + htmlLabel);
         },
         error: function (e) {
             console.log(e);

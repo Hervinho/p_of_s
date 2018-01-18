@@ -613,7 +613,7 @@ function CustomerOrder() {
         var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
         var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?,?)";
         var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,topping_id,base_type_id,product_quantity,amount) VALUES ";
-
+        //console.log(orderObj);
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
