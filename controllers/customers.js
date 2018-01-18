@@ -67,6 +67,7 @@ function LoadAllGenders() {
 
             $("#customerFilterGender").html(html);
             $("#txtAddCustomerGender").html(html);
+            $("#txtViewCustomerGender").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -99,6 +100,42 @@ function FilterCustomersByGender(genderId){
     });
 }
 
+function ViewCustomerInfo(id){
+    $("#lbSelectedCustomer").text(id);
+    
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/customers/filter/' + id,
+        dataType: "json",
+        cache: false,
+        success: function (data) {
+            console.log(data.customer);
+            var customer = data.customer;
+            var name = customer.customer_name;
+            var phone = customer.customer_phone;
+            var email = customer.customer_email;
+            var date_added = customer.customer_date_added;
+            var genderId = customer.customer_gender_id;
+            var customerAddedBy = customer.employee_name;
+
+            $("#txtViewCustomerGender").val(genderId);
+            $("#txtViewCustomerName").val(name);
+            $("#txtViewCustomerPhone").val(phone);
+            $("#txtViewCustomerEmail").val(email);
+            $("#txtViewCustomerDateAdded").val(date_added);
+            $("#txtViewCustomerAddedBy").val(customerAddedBy);
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
 /*********** AJAX Callback functions ***********/
 
 function handleCustomersData(data) {
@@ -112,7 +149,9 @@ function handleCustomersData(data) {
             customers[key].customer_phone + '</td><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_email + '</td><td class="mdl-data-table__cell--non-numeric">' +
             customers[key].customer_date_added + '</td><td class="mdl-data-table__cell--non-numeric">' +
-            customers[key].employee_name + '</td>' +
+            //customers[key].employee_name + '</td>' +
+            '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewCustomer" onclick="return ViewCustomerInfo(\'' + customers[key].customer_id + '\' )">' +
+            '<i class="material-icons">visibility</i></a></td>' +
             '</tr>';
         }
     } else {

@@ -151,6 +151,42 @@ function Customer() {
         });
     };
 
+    //get specific customer, no callback.
+    this.getFiltered = function (id, res) {
+        var output = {},
+            query = "SELECT * FROM customer LEFT JOIN employee ON customer.added_by = employee.employee_id WHERE customer_id = ?";
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(query, [id], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer: result[0]
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such customer found'
+                        };
+                    }
+                    res.json(output);
+                }
+            });
+        });
+    };
+
     //create customer.
     this.create = function (customerObj, res) {
         var output = {},

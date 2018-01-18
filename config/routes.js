@@ -751,7 +751,13 @@ var CustomerAPIs = function (express) {
 		Customer.getPerGender(genderId, res);
 	});
 
-	//get a specific customer.
+	//get specific customer, no callback.
+	express.get('/customers/filter/:id', function (req, res) {
+		var id = req.params.id;
+		Customer.getFiltered(id, res);
+	});
+
+	//get a specific customer, with callback.
 	express.get('/customers/:id', function (req, res) {
 		var customerId = req.params.id;
 		//Customer.getOne(customerId, res);

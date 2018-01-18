@@ -40,7 +40,7 @@
                                       <th class="mdl-data-table__cell--non-numeric">Phone Number</th>
                                       <th class="mdl-data-table__cell--non-numeric">Customer Email</th>
                                       <th class="mdl-data-table__cell--non-numeric">Date Added</th>
-                                      <th class="mdl-data-table__cell--non-numeric">Added By</th>
+                                      <th class="mdl-data-table__cell--non-numeric">View</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -49,13 +49,16 @@
                           </table>
                           <!-- /block -->
 
-                          
+                        <div hidden class="alert-info" style="overflow:auto;height:20px;">
+                              <span class="label label-default" id="lbSelectedCustomer"></span>
+                          </div>  
 
                       </div>
                   </div>
 
                     <!-- Dialog -->
                     <% include partials/add/dialogAddCustomer.ejs %>
+                    <% include partials/view/dialogViewCustomer.ejs %>
 
                 </div>
             </div>
