@@ -361,19 +361,28 @@ var LoginRecordAPIs = function(express){
 		LoginRecord.getPerEmployee(employeeId, res);
 	});
 
-	//get all login records for a specific day.
+	//get all login records for a specific date.
 	express.get('/loginrecords/date/:date', function (req, res) {
 		var date = req.params.date;
 		LoginRecord.getPerDate(date, res);
 	});
 
-	//get all login records for shift on a specific day.
+	//get all login records for shift on a specific date.
 	express.get('/loginrecords/shifts/:id/date/:date', function (req, res) {
 		var recordObj = {
 			shift_id: req.params.id,
 			date: req.params.date
 		};
 		LoginRecord.getPerDayAndShift(recordObj, res);
+	});
+
+	//get all login records between date range.
+	express.get('/loginrecords/datefrom/:from/dateto/:to', function (req, res) {
+		var recordObj = {
+			date_from: req.params.from,
+			date_to: req.params.to
+		};
+		LoginRecord.getPerFromDateToDate(recordObj, res);
 	});
 };
 

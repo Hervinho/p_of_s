@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    var message, loginRecordFilterEmployeeVal, loginRecordFilterShiftVal, loginRecordFilterDateVal, isValidDate;
+    var message, loginRecordFilterEmployeeVal, loginRecordFilterShiftVal, loginRecordFilterDateVal, loginRecordFilterDateToVal, 
+        isValidDate;
     
     LoadAllLoginRecords();
     
@@ -119,10 +120,12 @@ function LoadAllShifts() {
 
 function FilterRecordsByDate(){
     loginRecordFilterDateVal = $("#loginRecordFilterDate").val();
+    loginRecordFilterDateToVal = $("#loginRecordFilterDateTo").val();
     isValidDate = moment(loginRecordFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
+    isValidDateTo = moment(loginRecordFilterDateToVal.toString(), "YYYY-MM-DD", true).isValid();
     //console.log('Date: ', $("#loginRecordFilterDate").val());//testing
 
-    if(isValidDate == true){
+    if(isValidDate == true && isValidDateTo == false){
         $.ajax({
             type: 'GET',
             crossDomain: true,
@@ -143,8 +146,36 @@ function FilterRecordsByDate(){
     
         });
     }
+    else if(isValidDate == true && isValidDateTo == true){
+        
+        if(moment(loginRecordFilterDateVal).format("YYYY-MM-DD") >= moment(loginRecordFilterDateToVal).format("YYYY-MM-DD")){
+            toastr.error("Date_From cannot be greater than or equal to Date_To");
+            return;
+        }
+
+        //toastr.info("Yo");
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/loginrecords/datefrom/' + loginRecordFilterDateVal + '/dateto/' + loginRecordFilterDateToVal,
+            dataType: "json",
+            cache: false,
+            beforeSend: function () {
+                var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+                $("#tblLoginRecords tbody").html(wait);
+            },
+            success: handleRecordsData,
+            error: function (e) {
+                console.log(e);
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+    
+        });
+    }
     else{
-        toastr.error("Invalid date submitted");
+        toastr.error("");
     }
 }
 
@@ -197,18 +228,32 @@ function FilterRecordsByDayAndShift(shiftId, date){
 function handleRecordsData(data) {
 
     var html = '';
+    //console.log(data.login_records);
     if (data && data.status == 1 && data.login_records.length > 0) {
+        
         var login_records = data.login_records;
+
         for (var key = 0, size = login_records.length; key < size; key++) {
-            html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
+            html += '<tr><td class="mdl-data-table__cell--non-numeric">' +
             login_records[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
             login_records[key].employee_code + '</td><td class="mdl-data-table__cell--non-numeric">' +
             login_records[key].login_timestamp + '</td>' +
             '</tr>';
+            /*$("#tblLoginRecords").DataTable().row.add({
+                "employee_name": login_records[key].employee_name,
+                "employee_code": login_records[key].employee_code,
+                "login_timestamp": login_records[key].login_timestamp,
+            });*/
+            
         }
     } else {
         html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
+        
     }
-    //console.log(html);
+    
+    //clear filters.
+    $("#loginRecordFilterDate").val("");
+    $("#loginRecordFilterDateTo").val("");
+
     $("#tblLoginRecords tbody").html(html);
 }

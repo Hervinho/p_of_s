@@ -211,6 +211,55 @@ function LoginRecord(){
         }
 
     };
+
+    //get all login records per date. from - to
+    this.getPerFromDateToDate = function (dateObj, res) {
+        var output = {}, date_from = dateObj.date_from, date_to = dateObj.date_to, 
+            query = 'SELECT * FROM login_record LEFT JOIN employee ON login_record.employee_id = employee.employee_id ' +
+            'WHERE login_timestamp BETWEEN ? AND ?';
+        //console.log(date);
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date_from = moment(date_from + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+            date_to = moment(date_to + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
+
+            con.query(query, [date_from, date_to], function (err, result) {
+                con.release();
+                if (err) {
+                    ouptut = {
+                        status: 0,
+                        message: 'Error getting login records',
+                        error: err
+                    };
+                    res.json(output);
+                } else {
+                    //console.log(result);
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            login_records: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No login records for this date range was found'
+                        };
+                    }
+                    res.json(output);
+
+                }
+            });
+        });
+
+    };
 }
 
 module.exports = new LoginRecord();
