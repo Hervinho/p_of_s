@@ -1,15 +1,15 @@
 var mysql = require('mysql');
 
 function Connection() {
-    
+
     this.pool = null;
     this.init = function () {
         this.pool = mysql.createPool({
             connectionLimit: 1500,
             host: '127.0.0.1',
             user: 'root',
-            password: 'aXWSIWFePYs9',
-            //password: '',
+            //password: 'aXWSIWFePYs9',
+            password: '',
             dateStrings: 'date',
             database: 'pheme'
         });

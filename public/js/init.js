@@ -94,8 +94,12 @@
                     $(that).closest('.form-modal').removeClass('exit');
                 }, 400);
             });
+
+
             $('.mdl-layout__content').on('click', '.modal-trigger', function () {
-                $($(this).attr('data-target')).show();
+                if (!$(this).attr('disabled')) {
+                    $($(this).attr('data-target')).show();
+                }
             });
         };
 

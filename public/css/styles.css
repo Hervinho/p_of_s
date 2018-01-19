@@ -912,6 +912,13 @@ a.number-calc {
 .done {
     background-color: #5cb85c;
 }
+
+.hide-btn{
+    height: 0px;
+    margin: 0;
+    min-width: 0;
+}
+
 @media screen and (max-width: 1024px) {
     .form-modal {
         width: 100%;
