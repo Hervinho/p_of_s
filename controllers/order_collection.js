@@ -3,9 +3,9 @@ var message, customerOrderID, orderObj;
 $(document).ready(function () {
     
     LoadAllReadyOrders();
- });
+});
 
- function LoadAllReadyOrders(){
+function LoadAllReadyOrders(){
 
     $.ajax({
         type: 'GET',

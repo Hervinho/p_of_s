@@ -1033,7 +1033,7 @@ function CustomerOrder() {
         var customer_id = orderObj.customer_id;
         var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
         var payment_type_id = orderObj.payment_type_id;
-        var payment_status_id = 1;//order is only submitted when payment has been received.
+        var payment_status_id = orderObj.payment_status_id;//order is only submitted when payment has been received.
         //var payment_status_id = orderObj.payment_status_id;//order can be submitted withut payment (phone orders)
         var collection_status_id = 2;//order not yet collected
         var order_status_id = 1;//new order (for kitchen)
