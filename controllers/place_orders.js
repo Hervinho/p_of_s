@@ -5,18 +5,79 @@
         var total = [];
         var quantity = [];
         var sizes = [];
+        var toppings = [];
         var pSizes = ['Small', 'Medium', 'Large'];
         var carts = {
             total_amount: '0',
             payment_type_id: '0',
             customer_id: '0',
-            orderItems: []
+            orderItems: [],
+            bankCardObj: { 
+                account_type_id: 1,
+                card_number: '',
+                card_holder: '',
+                validity: ''
+            } 
         };
         var customer, payment_type;
 
         getCustomers();
         getPayments();
 
+        function getToppings(id){
+              $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/customers',
+                dataType: "json",
+                cache: false,
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                   
+                },
+                error: function (e) {
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+
+            });
+        };
+        
+        
+        function getCardTypes(){
+             $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/customers',
+                dataType: "json",
+                cache: false,
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if (data.status === 1) {
+                        $.each(data.customers, function (key, value) {
+                            $('#cardType')
+                                .append($("<option></option>")
+                                    .attr("value", value.customer_id)
+                                    .text(value.customer_name));
+                        });
+
+                    }
+                },
+                error: function (e) {
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+
+            });
+        }
+        
+        
         function getProduct() {
             $.ajax({
                 type: 'GET',
@@ -118,10 +179,16 @@
                             if ($(this).val() === 'Cash') {
                                 $('.cash').show();
                                 $('.card').hide();
+                                carts.bankCardObj = null;
                             } else {
                                 $('.cash').hide();
                                 $('.card').show();
-                            }
+                                carts.bankCardObj ={
+                                    account_type_id: 1,
+                                    card_number: '',
+                                    card_holder: '',
+                                    validity: ''
+                                };
                         });
                         getProduct();
                     }
@@ -246,6 +313,15 @@
         $('#placeOrder').click(function () {
             carts.customer_id = $('#customerSelect').val();
             carts.payment_type_id = $('#paymentSelect').val();
+            
+            // card values
+            carts.bankCardObj ={
+                account_type_id: $('#cardType').val(),
+                card_number: $('#cardNumber').val(),
+                card_holder: $('#cardHolder').val(),
+                validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val()+ '/' +$('#toCardYear').val()
+            };
+            
             //console.log(carts);
 
             //Submit.
@@ -311,8 +387,18 @@
                 $('#calc_total').val('R ' + total_calc);
                 $('#calc_change').val('R ' + (parseFloat(total_calc) - remainder).toFixed(2));
             }
+            
+            if((parseFloat(total_calc) - remainder).toFixed(2) > -1){
+                $('#checkoutBtn').removeClass('hide-btn'); 
+                $('#checkoutBtn').addClass('show-btn');
+            }
+            else{
+                $('#checkoutBtn').removeClass('show-btn');
+                $('#checkoutBtn').addClass('hide-btn');
+                  
+            }
         });
-
-
+        
+ 
     }); // end of document ready
 }(jQuery)); // end of jQuery name space

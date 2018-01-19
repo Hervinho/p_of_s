@@ -34,24 +34,43 @@
 
                                         <div class="card" style="display:none;">
                                             <h2 class="mdl-card__title-text">Card Info</h2>
-                                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                                <label class="control-label">Account Types:</label>
-                                                <select id="customerSelect" class="form-control" required="required">
-                                                    <option value="0"></option>
-                                                </select>
-                                            </div>
-                                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="acc_number">
-                                                <label class="mdl-textfield__label" for="calc_total">Account Number</label>
-                                                <span class="mdl-textfield__error">Input is not a number!</span>
-                                            </div>
-                                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                                <input class="mdl-textfield__input" type="text" id="acc_holder">
-                                                <label class="mdl-textfield__label" for="calc_change">Account Holder</label>
-                                            </div>
-                                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                                <input class="mdl-textfield__input" type="text" id="acc_holder">
-                                                <label class="mdl-textfield__label" for="calc_change">Validity</label>
+                                            <div class="mdl-grid">
+                                                <div class=" mdl-cell mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <label class="control-label">Account Types:</label>
+                                                    <select id="cardType" class="form-control" required="required">
+                                                        <option value="0"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="mdl-cell mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="cardNumber">
+                                                    <label class="mdl-textfield__label" for="cardNumber">Account Number</label>
+                                                    <span class="mdl-textfield__error">Input is not a number!</span>
+                                                </div>
+                                                
+                                                <div class="mdl-cell mdl-cell--12-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" id="cardHolder">
+                                                    <label class="mdl-textfield__label" for="cardHolder">Account Holder</label>
+                                                </div>
+                                                
+                                                <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" id="fromCardYear">
+                                                    <label class="mdl-textfield__label" for="fromCardMonth">From Year</label>
+                                                </div>
+                                                
+                                                <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" id="fromCardMonth">
+                                                    <label class="mdl-textfield__label" for="fromCardMonth">From Month</label>
+                                                </div>
+
+                                                <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" id="toCardYear">
+                                                    <label class="mdl-textfield__label" for="toCardYear">To Year</label>
+                                                </div>
+                                                
+                                                <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                                    <input class="mdl-textfield__input" type="text" id="toCardMonth">
+                                                    <label class="mdl-textfield__label" for="toCardMonth">To Month</label>
+                                                </div>
                                             </div>
 
                                         </div>
