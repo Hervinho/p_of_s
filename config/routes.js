@@ -616,7 +616,13 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getAllPerCustomer(customerId, res);
 	});
 
-	//get all orders for shift on a specific day.
+	//get all orders of a specific date. Used for End of day report.
+	express.get('/customerorders/date/:date', function (req, res) {
+		var date = req.params.date;
+		CustomerOrder.getAllPerDate(date, res);
+	});
+
+	//get all orders for shift on a specific date. Used for End of day report.
 	express.get('/customerorders/shifts/:id/date/:date', function (req, res) {
 		var orderdObj = {
 			shift_id: req.params.id,
@@ -630,6 +636,20 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getTotalAmountFromPreviousShift(res);
 	});
 
+	//get total amount from orders of a specific date. For End of day report
+	express.get('/customerorders/total/date/:date', function (req, res) {
+		var date = req.params.date;
+		CustomerOrder.getTotalAmountFromDate(date, res);
+	});
+
+	//get total amount from orders of a specific date AND SHIFT. For End of day report
+	express.get('/customerorders/total/date/:date/shifts/:id', function (req, res) {
+		var orderObj = {
+			shift_id: req.params.id,
+			date: req.params.date
+		};
+		CustomerOrder.getTotalAmountFromDateAndShift(orderObj, res);
+	});
 
 	//get a specific order.
 	express.get('/customerorders/:id', function (req, res) {
@@ -1071,6 +1091,20 @@ var configViews = function (express) {
 	express.get('/report/sales', isUserLoggedIn, function (req, res) {
 		if (roleID == 1) {
 			res.render('sales_reports', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode, roleMessage: roleMessage
+			});
+		}
+
+	});
+
+	//End of day/shift report.
+	express.get('/report/endofday', isUserLoggedIn, function (req, res) {
+		if (roleID == 1) {
+			res.render('endof_day_report', {
 				employeeCode: employeeCode
 			});
 		} else {

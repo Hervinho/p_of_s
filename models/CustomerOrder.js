@@ -125,6 +125,7 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
 };
 
 //Function to Get grand total cash amount of all orders in previous shift.
+//Can also be used to get total from any given shift, providing start end time.
 var getPreviousShiftTotal = function(start, end, callback){
     var feedback, output = {};
     var query = "SELECT SUM(total_amount) AS grand_total FROM customer_order WHERE customer_order_timestamp BETWEEN '" + 
@@ -152,9 +153,10 @@ var getPreviousShiftTotal = function(start, end, callback){
                     
                     callback(null, output);
                 } else {
+                    console.log('Total cash from previous shift successfully retrieved');
                     output = {
                         status: 1,
-                        message: "Total cash from previous shift successfully retrieved",
+                        message: "Total cash successfully retrieved",
                         total: result[0].grand_total
                     };
                     //console.log('getPreviousShiftTotal: ', result[0].grand_total);
@@ -762,6 +764,167 @@ function CustomerOrder() {
                         return;
                     }
                     
+                }
+            });
+        });
+    };
+
+    //get total amount from orders of a specific date AND shift. For End of day report
+    this.getTotalAmountFromDateAndShift = function (orderObj, res) {
+        var output = {}, date_from, date_to, queryShift = 'SELECT * FROM shift WHERE shift_id = ?';
+        var shift_id = orderObj.shift_id;
+        var date = orderObj.date;
+        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(queryShift, [shift_id], function (errShift, resultShift) {
+                con.release();
+                if (errShift) {
+                    output = {
+                        status: 0,
+                        message: 'Error getting shift data',
+                        message: errShift
+                    };
+
+                    res.json(output);
+                    return;
+                } else {
+                    
+                    date_from = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                    date_to = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+
+                    //in case only getting stuff from current date.
+                    /*date_from = moment(today + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                    date_to = moment(today + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");*/
+
+                    console.log('From: ' + date_from, 'To: ' + date_to);
+                    //Get grand total cash amount of all orders in previous shift.
+                    getPreviousShiftTotal(date_from, date_to, function (errorTotal, resultTotal) {
+
+                        if (errorTotal) {
+                            res.json({
+                                status: 0,
+                                message: errorTotal.message,
+                                err: errorTotal.error
+                            });
+                            return;
+                        } else {
+                            if (resultTotal.total === null) {
+                                output = {
+                                    status: 0,
+                                    message: "No orders were placed on this day",
+                                    total: resultTotal.total
+                                };
+                            } else {
+                                output = {
+                                    status: 1,
+                                    message: resultTotal.message,
+                                    total: resultTotal.total
+                                };
+                            }
+
+                            res.json(output);
+                            return;
+                        }
+                    });
+                }
+            });
+        });
+    };
+
+    //get total amount from orders of a specific date. For End of day report
+    this.getTotalAmountFromDate = function (date, res) {
+        var output = {},
+            date_from, date_to;
+        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+
+        date_from = moment(date + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+        date_to = moment(date + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
+
+        //in case only getting stuff from current date.
+        /*date_from = moment(today + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+        date_to = moment(today + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");*/
+
+        //Get grand total cash amount of all orders in previous shift.
+        getPreviousShiftTotal(date_from, date_to, function (errorTotal, resultTotal) {
+
+            if (errorTotal) {
+                res.json({
+                    status: 0,
+                    message: errorTotal.message,
+                    err: errorTotal.error
+                });
+                return;
+            } else {
+                if (resultTotal.total === null) {
+                    output = {
+                        status: 0,
+                        message: "No orders were placed on this day",
+                        total: resultTotal.total
+                    };
+                } else {
+                    output = {
+                        status: 1,
+                        message: resultTotal.message,
+                        total: resultTotal.total
+                    };
+                }
+
+                res.json(output);
+                return;
+            }
+        });
+    };
+
+    //get all orders of a specific date. End of day report.
+    this.getAllPerDate = function (date, res) {
+        var output = {}, date_from, date_to, 
+            query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+            'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +    
+            'WHERE customer_order_timestamp BETWEEN ? AND ?';
+        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date_from = moment(date + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+            date_to = moment(date + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
+
+            //in case only getting stuff from current date.
+            /*date_from = moment(today + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+            date_to = moment(today + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");*/
+
+            con.query(query, [date_from, date_to], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    if (result.length > 0) {
+                        output = {
+                            status: 1,
+                            customer_orders: result
+                        };
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No orders found'
+                        };
+                    }
+                    res.json(output);
                 }
             });
         });
