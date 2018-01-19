@@ -319,7 +319,7 @@
                 account_type_id: $('#cardType').val(),
                 card_number: $('#cardNumber').val(),
                 card_holder: $('#cardHolder').val(),
-                validity: $('#fromCardMonth').val()/$('#fromCardYear').val() + ' - ' + $('#toCardMonth').val()/$('#toCardYear').val()
+                validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val()+ '/' +$('#toCardYear').val()
             };
             
             //console.log(carts);
