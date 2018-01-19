@@ -749,19 +749,50 @@ var ShiftAPIs = function (express) {
 	//create new shift.
 	express.post('/shifts', function (req, res) {
 		var shiftObj = req.body;
-		Shift.create(shiftObj, res);
+
+		if(roleID == 1){
+			shiftObj.added_by = employeeID;
+			Shift.create(shiftObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 
-	//update order status
+	//update shift
 	express.put('/shifts', function (req, res) {
 		var shiftObj = req.body;
-		Shift.update(shiftObj, res);
+		if(roleID == 1){
+			shiftObj.added_by = employeeID;
+			Shift.update(shiftObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+
 	});
 
 	//delete a specific shift.
 	express.delete('/shifts/:id', function (req, res) {
-		var shiftId = req.params.id;
-		Shift.delete(shiftId, res);
+		
+		if(roleID == 1){
+			var shiftObj = {shift_id: req.params.id, added_by: employeeID};
+			Shift.delete(shiftObj, res);
+		}
+		else{
+			res.json({
+				status: 0,
+				message: roleMessage
+			});
+		}
+		
 	});
 };
 
@@ -1112,6 +1143,20 @@ var configViews = function (express) {
 	express.get('/staff', isUserLoggedIn, function (req, res) {
 		if (roleID == 1) {
 			res.render('staff', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode, roleMessage: roleMessage
+			});
+		}
+
+	});
+
+	//Audit trail page.
+	express.get('/report/audit', isUserLoggedIn, function (req, res) {
+		if (roleID == 1) {
+			res.render('audit', {
 				employeeCode: employeeCode
 			});
 		} else {

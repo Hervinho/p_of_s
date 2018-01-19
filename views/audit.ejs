@@ -1,0 +1,62 @@
+<%- include layout/head.ejs %>
+    <%- include layout/main_sidebar.ejs %>
+
+        <!-- MAIN PAGE CONTENT START -->
+        <main class="mdl-layout__content mdl-color--white">
+            <div class="entertainer-content">
+                <div class="mdl-grid back-end-content">
+
+                  <div class="entertainer-layout">
+                      <div class="entertainer-content">
+                        <h1>Audit</h1>
+                        <div class="mdl-grid">
+                          
+                          <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                              <label class="control-label">Filter by Employee</label>
+                              <select id="auditFilterEmployee" class="form-control" required="required">
+
+                              </select>
+                          </div>-->
+
+
+                        </div>
+
+                        <!--<div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
+                                <button type="button" onclick="return LoadAllAudits();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Reset Filter </button>
+                            </div>
+                        </div>-->
+
+                          <table id="tblAudits" class="mdl-data-table mdl-js-data-table">
+                              <!-- class="mdl-data-table mdl-js-data-table" -->
+                              <thead>
+                                  <tr>
+                                      <th class="mdl-data-table__cell--non-numeric">Employee Name</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Action</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                                      <th class="mdl-data-table__cell--non-numeric">Description</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+
+                              </tbody>
+                          </table>
+                          <!-- /block -->
+
+                        <div hidden class="alert-info" style="overflow:auto;height:20px;">
+                              <span class="label label-default" id="lbSelectedAudit"></span>
+                          </div>  
+
+                      </div>
+                  </div>
+
+                    <!-- Dialog -->
+
+                </div>
+            </div>
+
+        </main>
+        <!-- MAIN PAGE CONTENT END -->
+        <script type="text/javascript" src="/controllers/audit.js"></script>
+
+        <%- include layout/footer.ejs %>

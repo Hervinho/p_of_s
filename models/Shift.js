@@ -1,4 +1,5 @@
 var connection = require('../config/connection');
+var Audit = require('./Audit');
 
 function Shift() {
     //get all shifts.
@@ -118,8 +119,10 @@ function Shift() {
             query = "INSERT INTO shift (shift_name, shift_start_time, shift_end_time) VALUES (?,?,?)";
         var shift_name = shiftObj.shift_name,
             shift_start_time = shiftObj.shift_start_time,
-            shift_end_time = shiftObj.shift_end_time;
+            shift_end_time = shiftObj.shift_end_time,
+            added_by = shiftObj.added_by;
         console.log(shift_end_time);
+
         if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
             (undefined !== shift_end_time && shift_end_time != '')) {
             connection.acquire(function (err, con) {
@@ -142,6 +145,19 @@ function Shift() {
                             message: feedback,
                             createdShiftId: result.insertId
                         };
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Created shift: ' + shift_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });
@@ -163,7 +179,8 @@ function Shift() {
         var shift_name = shiftObj.shift_name,
             shift_start_time = shiftObj.shift_start_time,
             shift_end_time = shiftObj.shift_end_time,
-            shift_id = shiftObj.shift_id;
+            shift_id = shiftObj.shift_id,
+            added_by = shiftObj.added_by;
 
         if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
             (undefined !== shift_end_time && shift_end_time != '') && (undefined !== shift_id && shift_id != '')) {
@@ -187,6 +204,19 @@ function Shift() {
                             message: feedback,
                             updatedatedShiftId: shift_name
                         };
+
+                         /* Insert to audit table. */
+                         var auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated shift: ' + shift_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });
@@ -203,8 +233,9 @@ function Shift() {
     };
 
     //delete shift.
-    this.delete = function (shiftId, res) {
+    this.delete = function (shiftObj, res) {
         var feedback, output = {}, query = "DELETE FROM shift WHERE shift_id=?";
+        var shiftId = shiftObj.shift_id, added_by = shiftObj.added_by;
 
         connection.acquire(function (err, con) {
                 if (err) {
@@ -232,6 +263,18 @@ function Shift() {
                             message: feedback,
                             deletedShiftId: shiftId
                         };
+
+                         /* Insert to audit table. */
+                         var auditObj = {
+                            employee_id: added_by,
+                            action_id: 3,//delete
+                            description: 'Deleted shift ID: ' + shiftId
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         res.json(output);
                     }

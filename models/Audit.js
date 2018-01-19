@@ -5,7 +5,8 @@ function Audit() {
     //get all audits.
     this.getAll = function (res) {
         var output = {}, query = 'SELECT * FROM audit ' + 
-            'LEFT JOIN employee ON audit.employee_id = audit.employee_id';
+            'LEFT JOIN employee ON audit.employee_id = employee.employee_id ' +
+            'LEFT JOIN action ON audit.action_id = action.action_id ';
 
         connection.acquire(function (err, con) {
             if (err) {
