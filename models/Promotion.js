@@ -25,7 +25,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
     var output = {},
         queryDelete = "DELETE FROM promotion_product WHERE promotion_id = ?",
         queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES";
-
+    console.log('array: ', array);//TEST here when shit goes funny.
     connection.acquire(function (err, con) {
         if (err) {
             output = {

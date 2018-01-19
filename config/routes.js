@@ -554,6 +554,16 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.countAllPerProductAndDate(orderdObj, res);
 	});
 
+	//count all orders per specific product AND date range. From - to
+	express.get('/customerorders/products/:id/datefrom/:datefrom/dateto/:dateto/count', function (req, res) {
+		var orderdObj = {
+			product_id: req.params.id,
+			date_from: req.params.datefrom,
+			date_to: req.params.dateto
+		};
+		CustomerOrder.countAllPerProductAndDateRange(orderdObj, res);
+	});
+
 	//count all orders per specific product TYPE and date.
 	express.get('/customerorders/producttypes/:id/date/:date/count', function (req, res) {
 		var orderdObj = {
@@ -563,13 +573,23 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.countAllPerProductTypeAndDate(orderdObj, res);
 	});
 
-	//count all orders per specific product AND date AND shift.
+	//count all orders per specific product TYPE and date range. From - to.
+	express.get('/customerorders/producttypes/:id/datefrom/:datefrom/dateto/:dateto/count', function (req, res) {
+		var orderdObj = {
+			product_type_id: req.params.id,
+			date_from: req.params.datefrom,
+			date_to: req.params.dateto
+		};
+		CustomerOrder.countAllPerProductTypeAndDateRange(orderdObj, res);
+	});
+
+	//count all orders per specific product AND date AND shift. NOT NEEDED
 	express.post('/customerorders/products/shifts/count', function (req, res) {
 		var orderObj = req.body;
 		CustomerOrder.countAllPerProductAndDateWithShift(orderObj, res);
 	});
 
-	//count all orders per specific product TYPE and date AND shift.
+	//count all orders per specific product TYPE and date AND shift. NOT NEEDED.
 	express.post('/customerorders/producttypes/shifts/count', function (req, res) {
 		var orderObj = req.body;
 		CustomerOrder.countAllPerProductTypeAndDateWithShift(orderObj, res);

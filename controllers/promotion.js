@@ -201,7 +201,7 @@ function ViewPromotionInfo(id){
             $("input:checkbox[name=product]").each(function () {
                 this.checked = false;
             });
-
+            console.log(products);
             //Only check checkboxes having products of the promotion.
             for(var key = 0, size = products.length; key < size; key++){
                 $("input:checkbox[name=product]").each(function () {

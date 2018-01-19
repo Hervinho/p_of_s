@@ -3,22 +3,6 @@ $(document).ready(function () {
         isValidDate;
     
     LoadAllLoginRecords();
-    
-    /*$(document).on('change', '.form-control, .any-date', function () {
-        loginRecordFilterEmployeeVal = $("#loginRecordFilterEmployee").val();
-        loginRecordFilterShiftVal = $("#loginRecordFilterShift").val();
-        loginRecordFilterDateVal = $("#loginRecordFilterDate").val();
-        isValidDate = moment(loginRecordFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
-        //console.log('Date: ', $("#loginRecordFilterDate").val());//testing
-        
-        if (loginRecordFilterEmployeeVal != 0 && loginRecordFilterShiftVal == 0 && loginRecordFilterDateVal.length <= 0) {
-            FilterRecordsByEmployee(loginRecordFilterEmployeeVal);
-        }
-        else if(loginRecordFilterEmployeeVal == 0 && loginRecordFilterShiftVal != 0 && isValidDate){
-            FilterRecordsByDayAndShift(loginRecordFilterShiftVal, loginRecordFilterDateVal);
-            //toastr.info("Yay");
-        }
-    });*/
 });
 
 function LoadAllLoginRecords() {
@@ -239,11 +223,6 @@ function handleRecordsData(data) {
             login_records[key].employee_code + '</td><td class="mdl-data-table__cell--non-numeric">' +
             login_records[key].login_timestamp + '</td>' +
             '</tr>';
-            /*$("#tblLoginRecords").DataTable().row.add({
-                "employee_name": login_records[key].employee_name,
-                "employee_code": login_records[key].employee_code,
-                "login_timestamp": login_records[key].login_timestamp,
-            });*/
             
         }
     } else {
@@ -256,14 +235,4 @@ function handleRecordsData(data) {
     $("#loginRecordFilterDateTo").val("");
 
     $("#tblLoginRecords tbody").html(html);
-    
-    //Destroy dataTable and re-initialize
-    /*$('#tblLoginRecords').dataTable().fnDestroy();
-    $('#tblLoginRecords').dataTable({
-        "processing": true,
-        //"dom": 'lBfrtip',
-        "searching": true,
-        "paging": true
-    });
-    $("#tblLoginRecords tbody").html(html);*/
 }

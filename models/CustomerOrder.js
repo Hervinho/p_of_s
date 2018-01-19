@@ -402,7 +402,100 @@ function CustomerOrder() {
         });
     };
 
-    //count all orders per specific product AND date AND shift.
+    //count all orders per specific product AND date range. From - to
+    this.countAllPerProductAndDateRange = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?';
+        var productId = orderObj.product_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
+        
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date_from = moment(date_from + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+            date_to = moment(date_to + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
+            //console.log(date_from, date_to);
+
+            con.query(query, [productId, date_from, date_to], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
+    //count all orders per specific product TYPE and date.
+    this.countAllPerProductTypeAndDate = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
+            'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp LIKE ?';
+        var productTypeId = orderObj.product_type_id, date = orderObj.date;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date = '%' + date + '%';
+
+            con.query(query, [productTypeId, date], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
+    //count all orders per specific product TYPE and date range. From - to.
+    this.countAllPerProductTypeAndDateRange = function(orderObj, res){
+        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
+            'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
+            'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?';
+        var productTypeId = orderObj.product_type_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
+        
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error connecting to database"
+                });
+                return;
+            }
+
+            date_from = moment(date_from + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
+            date_to = moment(date_to + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
+            //console.log(date_from, date_to);
+
+            con.query(query, [productTypeId, date_from, date_to], function (err, result) {
+                con.release();
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(result);
+                }
+            });
+        });
+    };
+
+    //count all orders per specific product AND date AND shift. WILL NOT BE NEEDED
     this.countAllPerProductAndDateWithShift = function(orderObj, res){
         var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
@@ -467,37 +560,7 @@ function CustomerOrder() {
         });
     };
 
-    //count all orders per specific product TYPE and date.
-    this.countAllPerProductTypeAndDate = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
-            'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
-            'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
-            'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp LIKE ?';
-        var productTypeId = orderObj.product_type_id, date = orderObj.date;
-
-        connection.acquire(function (err, con) {
-            if (err) {
-                res.json({
-                    status: 100,
-                    message: "Error connecting to database"
-                });
-                return;
-            }
-
-            date = '%' + date + '%';
-
-            con.query(query, [productTypeId, date], function (err, result) {
-                con.release();
-                if (err) {
-                    res.json(err);
-                } else {
-                    res.json(result);
-                }
-            });
-        });
-    };
-
-    //count all orders per specific product TYPE and date AND shift.
+    //count all orders per specific product TYPE and date AND shift. WILL NOT BE NEEDED
     this.countAllPerProductTypeAndDateWithShift = function(orderObj, res){
         var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +

@@ -1,4 +1,4 @@
-var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderFilterShiftVal;
+var message, customerOrderID, orderFilterCustomerVal, orderFilterDateVal, orderFilterDateToVal;
 var payment_types = [], paymentTypeNames = [], orderCountPaymentType = [];
 var employees = [], employeeNames = [], orderCountEmployee = [];
 var products = [], productNames = [], orderCountProduct = [];
@@ -119,27 +119,45 @@ function LoadAllShifts() {
 
 function ResetFilters(){
     
-    //$("#filterShift").val(0);
+    $("#filterOrdersByDateTo").val("");
     $("#filterOrdersByDate").val("");
 }
 
 function FilterByProductAndDate(){
-    //$("#lblPolar1").text('Moooo');
-
     //count number of customer orders of a certain product and date. and display in chart.
     var orderChartId = "orderPolarChartProduct", orderPolarChartId = "orderPolarChart";
     orderFilterDateVal = $("#filterOrdersByDate").val();
+    orderFilterDateToVal = $("#filterOrdersByDateTo").val();
     isValidDate = moment(orderFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
+    isValidDateTo = moment(orderFilterDateToVal.toString(), "YYYY-MM-DD", true).isValid();
 
-    if(isValidDate == true){
+    if(isValidDate == true && isValidDateTo == false){
+        //Products
         countOrdersPerProduct(products, orderFilterDateVal);
         displayDoughnutChart(productNames, orderCountProduct, orderChartId);
 
+        //Prdocut types
         countOrdersPerProductType(product_types, orderFilterDateVal);
         displayPolarAreaChart(productTypeNames, orderCountProductType, orderPolarChartId);
     }
+    else if(isValidDate == true && isValidDateTo == true){
+        
+        if(moment(orderFilterDateVal).format("YYYY-MM-DD") >= moment(orderFilterDateToVal).format("YYYY-MM-DD")){
+            toastr.error("Date_From cannot be greater than or equal to Date_To");
+            return;
+        }
+
+        //Products
+        countOrdersPerProductInDateRange(products, orderFilterDateVal, orderFilterDateToVal);
+        displayDoughnutChart(productNames, orderCountProduct, orderChartId);
+
+        //Product types
+        countOrdersPerProductTypeInDateRange(product_types, orderFilterDateVal, orderFilterDateToVal);
+        displayPolarAreaChart(productTypeNames, orderCountProductType, orderPolarChartId);
+
+    }
     else{
-        toastr.error("Invalid date");
+        toastr.info("Select either only one date from first datepicker or select from both datepickers");
     }
 }
 
@@ -168,6 +186,31 @@ function countOrdersPerProduct(array, date){
     //console.log('orderCountProduct: ', orderCountProduct);
 }
 
+//function to count number of orders of certain product in given DATE RANGE
+function countOrdersPerProductInDateRange(array, datefrom, dateto){
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/customerorders/products/' + array[key].product_id + '/datefrom/' + datefrom + '/dateto/' + dateto +'/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                orderCountProduct.push(data[0].orderCountProduct);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    
+    //console.log('orderCountProduct: ', orderCountProduct);
+}
+
 //function to count number of orders of certain product TYPE in given date.
 function countOrdersPerProductType(array, date){
     for (var key = 0, size = array.length; key < size; key++) {
@@ -177,6 +220,31 @@ function countOrdersPerProductType(array, date){
             crossDomain: true,
             contentType: 'application/json; charset=utf-8',
             url: '/api/v1/customerorders/producttypes/' + array[key].product_type_id + '/date/' + date + '/count',
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                orderCountProductType.push(data[0].orderCountProductType);
+            },
+            error: function (e) {
+                message = "Something went wrong";
+                toastr.error(message);
+            }
+
+        });
+    }
+    
+    //console.log('orderCountProductType: ', orderCountProductType);
+}
+
+//function to count number of orders of certain product TYPE in given DATERANGE
+function countOrdersPerProductTypeInDateRange(array, datefrom, dateto){
+    for (var key = 0, size = array.length; key < size; key++) {
+        $.ajax({
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            contentType: 'application/json; charset=utf-8',
+            url: '/api/v1/customerorders/producttypes/' + array[key].product_type_id + '/datefrom/' + datefrom + '/dateto/' + dateto + '/count',
             dataType: "json",
             cache: false,
             success: function (data) {

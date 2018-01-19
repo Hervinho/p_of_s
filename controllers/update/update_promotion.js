@@ -12,7 +12,7 @@ function UpdatePromotion() {
             product_id: parseInt($(this).val())
         });
     });
-
+    console.log(products);
     promotionId = $("#lbSelectedPromotion").html().toString();
     promotionObj = {
         promotion_id: promotionId,
