@@ -193,7 +193,7 @@ function countOrdersPerProduct(array, date){
     /*console.log('orderCountProduct: ', orderCountProduct);
     console.log('Max value: ', maxArrayValue);
     console.log('Index of max value: ', maxValueIndex);*/
-    console.log('Top Sold Product: ', topSoldProduct);
+    console.log('Top Selling Product: ', topSoldProduct);
     $("#txtTopSoldProduct").text(topSoldProduct.product_name);
 }
 
@@ -222,7 +222,7 @@ function countOrdersPerProductInDateRange(array, datefrom, dateto){
     //console.log('orderCountProduct: ', orderCountProduct);
     maxArrayValue = Math.max.apply(null, orderCountProduct), maxValueIndex = orderCountProduct.indexOf(maxArrayValue);
     topSoldProduct = products[maxValueIndex];
-    console.log('Top Sold Product: ', topSoldProduct);
+    console.log('Top Selling Product: ', topSoldProduct);
 
     $("#txtTopSoldProduct").text(topSoldProduct.product_name);
 }
