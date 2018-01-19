@@ -132,6 +132,10 @@ function FilterByProductAndDate(){
     isValidDate = moment(orderFilterDateVal.toString(), "YYYY-MM-DD", true).isValid();
     isValidDateTo = moment(orderFilterDateToVal.toString(), "YYYY-MM-DD", true).isValid();
 
+    //clear the count arrays.
+    orderCountProduct.length = 0;
+    orderCountProductType.length = 0;
+
     if(isValidDate == true && isValidDateTo == false){
         //Products
         countOrdersPerProduct(products, orderFilterDateVal);
@@ -189,7 +193,8 @@ function countOrdersPerProduct(array, date){
     /*console.log('orderCountProduct: ', orderCountProduct);
     console.log('Max value: ', maxArrayValue);
     console.log('Index of max value: ', maxValueIndex);*/
-    console.log('Top sold product: ', topSoldProduct);
+    console.log('Top Sold Product: ', topSoldProduct);
+    $("#txtTopSoldProduct").text(topSoldProduct.product_name);
 }
 
 //function to count number of orders of certain product in given DATE RANGE
@@ -217,8 +222,9 @@ function countOrdersPerProductInDateRange(array, datefrom, dateto){
     //console.log('orderCountProduct: ', orderCountProduct);
     maxArrayValue = Math.max.apply(null, orderCountProduct), maxValueIndex = orderCountProduct.indexOf(maxArrayValue);
     topSoldProduct = products[maxValueIndex];
-    
-    $('#txtTopSoldProduct').text(topSoldProduct.product_name);
+    console.log('Top Sold Product: ', topSoldProduct);
+
+    $("#txtTopSoldProduct").text(topSoldProduct.product_name);
 }
 
 //function to count number of orders of certain product TYPE in given date.
@@ -268,7 +274,7 @@ function countOrdersPerProductTypeInDateRange(array, datefrom, dateto){
         });
     }
     
-    console.log('orderCountProductType: ', orderCountProductType);
+    //console.log('orderCountProductType: ', orderCountProductType);
 }
 
 //function to get number of customer orders of a certain payment type.
