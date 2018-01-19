@@ -8,7 +8,8 @@ function Connection() {
             connectionLimit: 1500,
             host: '127.0.0.1',
             user: 'root',
-            password: '',
+            password: 'aXWSIWFePYs9',
+            //password: '',
             dateStrings: 'date',
             database: 'pheme'
         });
