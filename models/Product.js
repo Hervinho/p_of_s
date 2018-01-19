@@ -1,4 +1,5 @@
 var connection = require('../config/connection');
+var Audit = require('./Audit');
 
 function Product() {
     //get all products.
@@ -155,6 +156,7 @@ function Product() {
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
             added_by = productObj.employee_id;
+        var auditObj;
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
             (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
@@ -187,6 +189,18 @@ function Product() {
                             createdProductId: result.insertId
                         };
 
+                        /* Insert to audit table. */
+                        auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Created new product: ' + product_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });
@@ -211,6 +225,7 @@ function Product() {
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
             product_id = productObj.product_id;
+        var auditObj, added_by = productObj.employee_id;
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
             (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
@@ -242,6 +257,18 @@ function Product() {
                             message: feedback,
                             updatedProductName: product_name
                         };
+
+                        /* Insert to audit table. */
+                        auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated product: ' + product_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         res.json(output);
                     }

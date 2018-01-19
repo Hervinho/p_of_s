@@ -1,6 +1,7 @@
 /* Load all models. */
 var Gender = require('../models/Gender');
 var Role = require('../models/Role');
+var Audit = require('../models/Audit');
 var PaymentStatus = require('../models/PaymentStatus');
 var PaymentType = require('../models/PaymentType');
 var ProductType = require('../models/ProductType');
@@ -52,6 +53,25 @@ function isUserLoggedIn(req, res, next) {
 
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
+
+var AuditAPIs = function(express){
+	//get all audits.
+	express.get('/audits', function (req, res) {
+		Audit.getAll(res);
+	});
+
+	//get a single audits.
+	express.get('/audits/:id', function (req, res) {
+		var id = req.params.id;
+		Audit.getOne(id, res);
+	});
+
+	//create new audits.
+	express.post('/audits', function (req, res) {
+		var auditObj = req.body;
+		Audit.create(auditObj, res);
+	});
+};
 
 var CardPaymentAPIs = function(express){
 	//get all details of all bank cards used for orders.
@@ -919,6 +939,7 @@ var ProductAPIs = function (express) {
 	express.put('/products', function (req, res) {
 		var productObj = req.body;
 		if(roleID == 1){
+			productObj.employee_id = employeeID;
 			Product.update(productObj, res);
 		}
 		else{
@@ -1215,6 +1236,7 @@ module.exports = {
 		AccountTypeAPIs(apiRoutes);
 		CardPaymentAPIs(apiRoutes);
 		ToppingAPIs(apiRoutes);
+		AuditAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);
