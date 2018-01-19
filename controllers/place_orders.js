@@ -114,7 +114,15 @@
                                     .attr("value", value.payment_type_id)
                                     .text(value.payment_type_name));
                         });
-
+                        $('#paymentSelect').change(function () {
+                            if ($(this).val() === 'Cash') {
+                                $('.cash').show();
+                                $('.card').hide();
+                            } else {
+                                $('.cash').hide();
+                                $('.card').show();
+                            }
+                        });
                         getProduct();
                     }
                 },
@@ -140,14 +148,15 @@
 
                     html += '<tr >' +
                         '<td class="mdl-data-table__cell--non-numeric">' + products[key].product_name + '</td>' +
-                        '<td class="mdl-data-table__cell--non-numeric truncate">' + products[key].product_price + '</td>' +
+                        '<td class="mdl-data-table__cell--non-numeric truncate">R ' + products[key].product_price + '</td>' +
                         '<td class="mdl-data-table__cell--non-numeric"> <select class="size" id="size' + key + '"  data-key="' + key + '" disabled> ' +
                         '<option value="0">Small</option>' +
                         '<option value="20">Medium</option>' +
                         '<option value="30">Large</option>' +
                         '</select> </td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" disabled="' + (products[key].product_type_id === 1) + '"</td>' +
                         '<td class="mdl-data-table__cell--non-numeric">  <input class="quantity" type="number" value="' + quantity[key] + '" data-key="' + key + '" id="quantity' + key + '" /> </td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"> <input class="size" type="number" value="' + total[key] + '" id="total' + key + '" disabled></td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"> <input class="total" type="text" value="R ' + total[key] + '" id="total' + key + '" disabled></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
                         '<a disabled class="mdl-button add-cart mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger" data-key="' + key + '" id="add' + key + '">+</a></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
@@ -177,7 +186,7 @@
                     sizes[key] = size;
                     //total[key] = (price * quantity[key]) + parseInt(sizes[key]);
                     total[key] = (price + parseInt(sizes[key])) * quantity[key];
-                    $('#total' + key).val(total[key]);
+                    $('#total' + key).val('R ' + total[key]);
 
                 });
 
@@ -187,7 +196,7 @@
                     total[key] -= parseInt(sizes[key]);
                     total[key] += parseInt(size);
                     sizes[key] = size;
-                    $('#total' + key).val(total[key]);
+                    $('#total' + key).val('R ' + total[key]);
                 });
 
                 $('#tblPlaceOrders .add-cart').click(function () {
@@ -222,7 +231,7 @@
                     $('#quantity' + key).val(0);
                     $('#quantity' + key).val(0);
                     total[key] = 0;
-                    $('#total' + key).val(total[key]);
+                    $('#total' + key).val('R ' + total[key]);
 
                     // $('#add' + key).attr('disabled', false);
                     $('#size' + key).attr('disabled', false);
@@ -254,9 +263,9 @@
                     } else {
                         toastr.success(data.message);
                         //reload page to clear cart.
-                        setTimeout(function() {
+                        setTimeout(function () {
                             location.reload();
-                          }, 500);
+                        }, 500);
                     }
                 },
                 error: function (e) {
@@ -264,9 +273,44 @@
                     message = 'Something went wrong';
                     toastr.error(message);
                 }
-    
+
             });
 
+        });
+
+
+        $.each(['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', '.'], function (key, value) {
+            if (key === 9) {
+                $('.calc-grid').append('<div class="mdl-cell mdl-cell--4-col"> <a class="mdl-button mdl-js-button mdl-button--fab number-calc" data-action=' + -1 + '> <i class="material-icons">' +
+                    value + '</i> </a> </div>')
+            } else {
+                value + ' data-action="' + value + '"> <i class="material-icons">' +
+                    $('.calc-grid').append('<div class="mdl-cell mdl-cell--4-col"> <a data-action=' + value +
+                        ' class="mdl-button mdl-js-button mdl-button--fab number-calc ">' + value + '</a> </div>')
+            }
+        });
+
+        var total_calc = '';
+        $('#calc_total').val('R 0.00');
+        $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
+
+        $('#checkoutBtn').click(function () {
+            $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
+        });
+
+        $('.calc-grid').on('click', '.number-calc', function () {
+            var action = $(this).data('action');
+
+            if (action === -1) {
+                $('#calc_total').val('R 0.00');
+                $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
+                total_calc = '';
+            } else {
+                total_calc += action;
+                var remainder = parseFloat(carts.total_amount);
+                $('#calc_total').val('R ' + total_calc);
+                $('#calc_change').val('R ' + (parseFloat(total_calc) - remainder).toFixed(2));
+            }
         });
 
 
