@@ -701,6 +701,15 @@ var CustomerOrderAPIs = function (express) {
 		var orderId = req.params.id;
 		CustomerOrder.updateCollectionStatus(orderId, res);
 	});
+
+	//Update payment and collection status for order.
+	express.put('/customerorders/collection/payment', function (req, res) {
+		var orderObj = req.body;
+		orderObj.bankCardObj = {
+			account_type_id: 2, card_number: '123456789', card_holder: 'Jane Doe', validity: '03/17 - 03/21'
+		};//only for testing
+		CustomerOrder.updatePaymentAndCollectionStatus(orderObj, res);
+	});
 };
 
 var ShiftAPIs = function (express) {

@@ -1,4 +1,4 @@
-var message, customerOrderID;
+var message, customerOrderID, orderObj;
 
 $(document).ready(function () {
     
@@ -59,10 +59,49 @@ function UpdateCollectionStatus(id){
         success: function(data){
             if(data.status == 1){
                 toastr.success(data.message);
+                $("#lbSelectedReadyCustomerOrder").text('');
+                
                 //Reload page.
                 setTimeout(function() {
                     location.reload();
                 }, 500);
+            }
+            else{
+                toastr.error(data.message);
+                $("#lbSelectedReadyCustomerOrder").text('');
+            }
+        },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+//Update payment and collection status for order.
+//Called if order was processed and is ready, but was not yet paid for.
+function UpdatePaymentAndCollectionStatus(){
+    $.ajax({
+        type: 'PUT',
+        crossDomain: true,
+        data: JSON.stringify(orderObj),
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/customerorders/collection/payment',
+        dataType: "json",
+        cache: false,
+        success: function(data){
+            if(data.status == 1){
+                toastr.success(data.message);
+                //Reload page.
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
+            }
+            else{
+                toastr.error(data.message);
+                $("#lbSelectedReadyCustomerOrder").text('');
             }
         },
         error: function (e) {

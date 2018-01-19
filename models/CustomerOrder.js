@@ -1071,7 +1071,7 @@ function CustomerOrder() {
 
     };
 
-    //update order status.
+    //update order status for kitchen (Ready, preparing).
     this.updateStatus = function(orderObj, res){
         var output = {}, feedback, queryUpdate = 'UPDATE customer_order SET order_status_id = ? WHERE customer_order_id = ?';
         var customrOrderId = orderObj.customer_order_id, orderStatusId = orderObj.order_status_id;
@@ -1125,40 +1125,171 @@ function CustomerOrder() {
     };
 
     //update collection status for order.
-    this.updateCollectionStatus = function(orderId, res){
-        var output = {}, feedback, queryUpdate = 'UPDATE customer_order SET collection_status_id = 1 WHERE customer_order_id = ?';
+    this.updateCollectionStatus = function (orderId, res) {
+        var output = {},
+            feedback, queryFind = 'SELECT * FROM customer_order WHERE customer_order_id = ?',
+            queryUpdate = 'UPDATE customer_order SET collection_status_id = 1 WHERE customer_order_id = ?';
 
-        //if((undefined !== customrOrderId && customrOrderId != '')){
-            connection.acquire(function (err, con) {
-                if (err) {
-                    res.json({
-                        status: 100,
-                        message: "Error in connection database"
-                    });
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(queryFind, [orderId], function (errOrder, resultOrder) {
+                con.release();
+                if (errOrder) {
+                    output = {
+                        status: 0,
+                        message: "Error getting order",
+                        error: errOrder
+                    };
+
+                    res.json(output);
                     return;
-                }
-    
-                con.query(queryUpdate, [orderId], function (err, result) {
-                    con.release();
-                    if (err) {
-                        //console.log(err);
+                } else {
+                    //check if order was already paid.
+                    if (resultOrder[0].payment_status_id == 1) {
+
+                        //update collection status.
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error in connection database"
+                                });
+                                return;
+                            }
+
+                            con.query(queryUpdate, [orderId], function (err, result) {
+                                con.release();
+                                if (err) {
+                                    output = {
+                                        status: 0,
+                                        message: "Error updating collection status for order",
+                                        error: err
+                                    };
+
+                                    res.json(output);
+                                    return;
+                                } else {
+                                    output = {
+                                        status: 1,
+                                        message: "Customer order has been collected.",
+                                        order_id: orderId
+                                    };
+
+                                    res.json(output);
+                                    return;
+                                }
+                            });
+                        });
+                    } else {
                         output = {
                             status: 0,
-                            message: "Error updating order status",
-                            error: err
+                            message: 'No payment was received for this order. Please capture payment first!!',
+                            order_id: orderId
                         };
+
                         res.json(output);
-                    } else {
-                        
-                        output = {
-                            status: 1,
-                            message: "Customer order has been collected."
-                        };
-                        res.json(output);
+                        return;
                     }
-                });
+                }
             });
-        //}
+        });
+    };
+
+    //Update payment and collection status for order. Happens when order has been processed and ready for collection
+    //but needs to be paid for first, before being collected.
+    this.updatePaymentAndCollectionStatus = function (orderObj, res) {
+        var output = {},
+            feedback, queryFind = 'SELECT * FROM customer_order WHERE customer_order_id = ?',
+            queryUpdate = 'UPDATE customer_order SET payment_status_id = 1, collection_status_id = 1 ' +
+            'WHERE customer_order_id = ?';
+        var orderId = orderObj.order_id, bankCardObj = orderObj.bankCardObj;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(queryFind, [orderId], function (errOrder, resultOrder) {
+                con.release();
+                if (errOrder) {
+                    output = {
+                        status: 0,
+                        message: "Error getting order",
+                        error: errOrder
+                    };
+
+                    res.json(output);
+                    return;
+                } else {
+                    //check if order was not paid.
+                    if (resultOrder[0].payment_status_id != 1) {
+                        
+                        //Handle payment. If card is used, save card details.
+                        console.log('bankCardObj: ', bankCardObj);
+                        if(undefined != bankCardObj || bankCardObj != null){
+                            saveCardDetails = saveBankCardDetails(orderId, bankCardObj, function(errorCard, resultCard){
+                                console.log(errorCard || resultCard.message);
+                            });
+                        }
+
+                        //update collection status.
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                res.json({
+                                    status: 100,
+                                    message: "Error in connection database"
+                                });
+                                return;
+                            }
+
+                            con.query(queryUpdate, [orderId], function (err, result) {
+                                con.release();
+                                if (err) {
+                                    output = {
+                                        status: 0,
+                                        message: "Error updating payment status for order",
+                                        error: err
+                                    };
+
+                                    res.json(output);
+                                    return;
+                                } else {
+                                    output = {
+                                        status: 1,
+                                        message: "Payment status successfully updated for this order.",
+                                        message_collection: "Order has been collected",
+                                        order_id: orderId
+                                    };
+
+                                    res.json(output);
+                                    return;
+                                }
+                            });
+                        });
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'Payment was already received for this order.',
+                            order_id: orderId
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+                }
+            });
+        });
     };
 }
 
