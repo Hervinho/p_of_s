@@ -11,10 +11,7 @@ var colorsArray = [
         "#b399ff", "#ffff99", "#aaaa55", "#335966", "#bf8040", "#734d26",
         "#609f9f", "#333333"
     ],
-    hoverArray = [
-        "#0000FF", "#800080", "#C2C87D", "#129696", "##F9E79F", "#D7BDE2",
-        "#34495E", "#B370CF", "#CFD4D8", "#36CAAB", "#49A9EA", "#00FF00",
-    ];
+    hoverArray = ["#129696", "#D7BDE2", "#49A9EA"];
 
 $(document).ready(function () {
     //LoadAllShifts();
