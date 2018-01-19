@@ -3,6 +3,7 @@ var payment_types = [], paymentTypeNames = [], orderCountPaymentType = [];
 var employees = [], employeeNames = [], orderCountEmployee = [];
 var products = [], productNames = [], orderCountProduct = [];
 var product_types = [], productTypeNames = [], orderCountProductType = [];
+var maxArrayValue, maxValueIndex, topSoldProduct = {};
 
 var colorsArray = [
         "#008000", "#808080", "#800000", "#FFFF00", "#00FFFF", "#008080",
@@ -182,11 +183,13 @@ function countOrdersPerProduct(array, date){
 
         });
     }
-    var max = Math.max.apply(null, orderCountProduct), maxIndex = orderCountProduct.indexOf(max);
-    console.log('orderCountProduct: ', orderCountProduct);
-    console.log('Max value: ', max);
-    console.log('Index of max value: ', maxIndex);//index in the array of products.
-    console.log('Top sold product: ', products[maxIndex]);
+    maxArrayValue = Math.max.apply(null, orderCountProduct), maxValueIndex = orderCountProduct.indexOf(maxArrayValue);
+    topSoldProduct = products[maxValueIndex];
+
+    /*console.log('orderCountProduct: ', orderCountProduct);
+    console.log('Max value: ', maxArrayValue);
+    console.log('Index of max value: ', maxValueIndex);*/
+    console.log('Top sold product: ', topSoldProduct);
 }
 
 //function to count number of orders of certain product in given DATE RANGE
@@ -212,6 +215,10 @@ function countOrdersPerProductInDateRange(array, datefrom, dateto){
     }
     
     //console.log('orderCountProduct: ', orderCountProduct);
+    maxArrayValue = Math.max.apply(null, orderCountProduct), maxValueIndex = orderCountProduct.indexOf(maxArrayValue);
+    topSoldProduct = products[maxValueIndex];
+    
+    $('#txtTopSoldProduct').text(topSoldProduct.product_name);
 }
 
 //function to count number of orders of certain product TYPE in given date.
