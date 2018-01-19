@@ -4,6 +4,7 @@ var SHA256 = require("crypto-js/sha256");
 var moment = require('moment');
 var request = require('request');
 var emailAPI = "http://54.210.132.91:6060/notifications/email";
+var Audit = require('./Audit');
 
 var recordLogin = function (employeeId, callback) {
     var output = {},
@@ -327,6 +328,7 @@ function Employee() {
                 employee_name.substr(0,3).toUpperCase(),
             employee_phone = employeeObj.employee_phone,
             employee_email = employeeObj.employee_email,
+            added_by = employeeObj.added_by,
             employee_password = "",
             employee_status_id = 1;
         
@@ -371,6 +373,18 @@ function Employee() {
                             message: feedback,
                             createdEmployeeId: result.insertId
                         };
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Created new Employee. Code: ' + employee_code
+                        };
+                        
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         //send email to new employee with his/her employee code.
                         var messageObj = {
@@ -418,7 +432,8 @@ function Employee() {
             "WHERE employee_id=?";
         var employee_role_id = employeeObj.employee_role_id,
             employee_id = employeeObj.employee_id,
-            employee_status_id = employeeObj.employee_status_id;
+            employee_status_id = employeeObj.employee_status_id,
+            added_by = employeeObj.added_by;
 
         if ((undefined !== employee_id && employee_id != '') && (undefined !== employee_status_id && employee_status_id != '') &&
             (undefined !== employee_role_id && employee_role_id != '')
@@ -452,6 +467,19 @@ function Employee() {
                             message: feedback,
                             updatedEmployeeId: employee_id
                         };
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated Employee ID: ' + employee_id
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });

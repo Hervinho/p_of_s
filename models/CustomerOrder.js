@@ -1,6 +1,7 @@
 var connection = require('../config/connection');
 var moment = require('moment');
 var Shift = require('./Shift');
+var Audit = require('./Audit');
 
 //Function to build query string for order details.
 var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
@@ -1038,7 +1039,7 @@ function CustomerOrder() {
         var collection_status_id = 2;//order not yet collected
         var order_status_id = 1;//new order (for kitchen)
         var added_by = orderObj.added_by;
-        var bankCardObj = orderObj.bankCardObj;
+        var bankCardObj = orderObj.bankCardObj, auditObj;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
             products.length <= 0){
@@ -1065,7 +1066,20 @@ function CustomerOrder() {
             //submit customer order.
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
                 added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, function(err, result){
-                res.json(err || result);
+                    
+                    /* Insert to audit table. */
+                    auditObj = {
+                        employee_id: added_by,
+                        action_id: 1,//create
+                        description: 'Placed an order. Timestamp: ' + date_ordered
+                    };
+
+                    Audit.create(auditObj, function(errAudit, resultAudit){
+                        console.log('Audit: ', errAudit || resultAudit);
+                    });
+                    /* ------------------------- */
+
+                    res.json(err || result);
            });
         }
 

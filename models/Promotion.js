@@ -3,6 +3,7 @@ var moment = require('moment'),
     request = require('request');
 var emailAPI = "http://54.210.132.91:6060/notifications/email";
 var Customer = require('./Customer');
+var Audit = require('./Audit');
 
 //Function to build query string for order details.
 var buildQuery = function (array, promotionId) {
@@ -26,6 +27,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
         queryDelete = "DELETE FROM promotion_product WHERE promotion_id = ?",
         queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES";
     console.log('array: ', array);//TEST here when shit goes funny.
+    
     connection.acquire(function (err, con) {
         if (err) {
             output = {
@@ -38,7 +40,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
 
         con.query(queryDelete, [promotionId], function (errDelete, resultDelete) {
             con.release();
-            if (err) {
+            if (errDelete) {
                 output = {
                     status: 0,
                     message: "Error deleting promotion products",
@@ -66,8 +68,8 @@ var updatePromotionProducts = function (array, promotionId, callback) {
             
                     con.query(queryInsert, function (errInsert, resultInsert) {
                         con.release();
-                        if (err) {
-                            console.log(err.code);
+                        if (errInsert) {
+                            console.log(errInsert.code);
                             output = {
                                 status: 0,
                                 message: "Error updating promotion products",
@@ -386,6 +388,18 @@ function Promotion() {
                             id: insertedPromotionId
                         };
 
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Added promotion: ' + promotion_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });
@@ -414,7 +428,8 @@ function Promotion() {
             promotion_id = promotionObj.promotion_id,
             valid_from_date = promotionObj.valid_from_date,
             valid_to_date = promotionObj.valid_to_date,
-            promotion_price = promotionObj.promotion_price;
+            promotion_price = promotionObj.promotion_price,
+            added_by = promotionObj.employee_id;
 
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
@@ -476,6 +491,18 @@ function Promotion() {
                             updatedPromotionId: promotion_id
                         };
 
+                         /* Insert to audit table. */
+                         var auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated promotion: ' + promotion_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
                     }
                 });
@@ -498,6 +525,7 @@ function Promotion() {
             operation_value = promotionObj.operation_value,
             promotion_name = promotionObj.promotion_name,
             promotion_price = promotionObj.promotion_price,
+            added_by = promotionObj.employee_id,
             keyword, promotion_status_id,
             query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
         var emailList;
@@ -576,6 +604,18 @@ function Promotion() {
                         else{
                             console.log(feedback);
                         }
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated status of Promotion ID: ' + promotion_id
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         res.json(output);
                     }

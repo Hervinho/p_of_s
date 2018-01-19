@@ -1,5 +1,6 @@
 var connection = require('../config/connection');
 var moment = require('moment');
+var Audit = require('./Audit');
 
 function Customer() {
     //get customer email list.
@@ -232,6 +233,18 @@ function Customer() {
                             insertedCustomerId: result.inserId
                         };
 
+                         /* Insert to audit table. */
+                         auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Inserted customer: ' + customer_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+
                         res.json(output);
 
                     }
@@ -258,7 +271,8 @@ function Customer() {
             customer_gender_id = customerObj.customer_gender_id,
             customer_phone = customerObj.customer_phone,
             customer_email = customerObj.customer_email,
-            customer_id = customerObj.customer_id;
+            customer_id = customerObj.customer_id,
+            added_by = customerObj.employee_id;
 
         if ((undefined !== customer_name && customer_name != '') && (undefined !== customer_gender_id && customer_gender_id != '') &&
             (undefined !== customer_phone && customer_phone != '') && (undefined !== customer_id && customer_id != '') &&
@@ -292,6 +306,18 @@ function Customer() {
                             message: feedback,
                             updatedCustomerName: customer_name
                         };
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: added_by,
+                            action_id: 2,//update
+                            description: 'Updated customer: ' + customer_name
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         res.json(output);
 

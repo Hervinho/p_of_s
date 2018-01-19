@@ -190,7 +190,7 @@ var ShiftBookingAPIs = function (express) {
 	//book a shift.
 	express.post('/shiftbookings', function (req, res) {
 		var bookingObj = req.body;
-		//bookingObj.employee_id = employeeID;//uncomment after testing
+		bookingObj.employee_id = employeeID;
 		ShiftBooking.create(bookingObj, res);
 		
 	});
@@ -341,6 +341,7 @@ var PromotionAPIs = function(express){
 	express.put('/promotions', function (req, res) {
 		var promotionObj = req.body;
 		if(roleID == 1){
+			promotionObj.employee_id = employeeID;
 			Promotion.update(promotionObj, res);
 		}
 		else{
@@ -358,6 +359,7 @@ var PromotionAPIs = function(express){
 	express.put('/promotions/statuses', function (req, res) {
 		var promotionObj = req.body;
 		if(roleID == 1){
+			promotionObj.employee_id = employeeID;
 			Promotion.updateStatus(promotionObj, res);
 		}
 		else{
@@ -807,6 +809,7 @@ var EmployeeAPIs = function (express) {
 	//create new employee.
 	express.post('/employees', function (req, res) {
 		var employeeObj = req.body;
+		employeeObj.added_by = employeeID;
 		Employee.create(employeeObj, res);
 	});
 
@@ -818,6 +821,7 @@ var EmployeeAPIs = function (express) {
 	//update employee by admin. Can only change role and/or status.
 	express.put('/employees', function (req, res) {
 		var employeeObj = req.body;
+		employeeObj.added_by = employeeID;
 		Employee.update(employeeObj, res);
 	});
 
@@ -891,6 +895,7 @@ var CustomerAPIs = function (express) {
 	//update customer
 	express.put('/customers', function (req, res) {
 		var customerObj = req.body;
+		customerObj.employee_id = employeeID;
 		Customer.update(customerObj, res);
 	});
 };

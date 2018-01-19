@@ -4,8 +4,8 @@ var moment = require('moment');
 function Audit() {
     //get all audits.
     this.getAll = function (res) {
-        var output = {},
-            query = 'SELECT * FROM audit';
+        var output = {}, query = 'SELECT * FROM audit ' + 
+            'LEFT JOIN employee ON audit.employee_id = audit.employee_id';
 
         connection.acquire(function (err, con) {
             if (err) {

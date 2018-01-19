@@ -2,6 +2,7 @@ var connection = require('../config/connection');
 var moment = require('moment');
 var Shift = require('./Shift');
 var Promise = require('bluebird');
+var Audit = require('./Audit');
 
 function ShiftBooking(){
     //get all shift bookings.
@@ -331,6 +332,18 @@ function ShiftBooking(){
                                         message: feedback,
                                         insertedBookingId: result.insertId
                                     };
+
+                                    /* Insert to audit table. */
+                                    var auditObj = {
+                                        employee_id: employee_id,
+                                        action_id: 1,//create
+                                        description: 'Booked a shift: ' + resultShift.shift.shift_name
+                                    };
+
+                                    Audit.create(auditObj, function(errAudit, resultAudit){
+                                        console.log('Audit: ', errAudit || resultAudit);
+                                    });
+                                    /* ------------------------- */
             
                                     res.json(output);
                                 }
@@ -460,6 +473,18 @@ function ShiftBooking(){
                             message: feedback,
                             updatedBookingId: shift_booking_id
                         };
+
+                        /* Insert to audit table. */
+                        var auditObj = {
+                            employee_id: employee_id,
+                            action_id: 2,//update
+                            description: 'Updated shift booking ID: ' + shift_booking_id
+                        };
+
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
 
                         res.json(output);
                     }
