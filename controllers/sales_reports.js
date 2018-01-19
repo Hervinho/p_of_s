@@ -182,8 +182,11 @@ function countOrdersPerProduct(array, date){
 
         });
     }
-    
-    //console.log('orderCountProduct: ', orderCountProduct);
+    var max = Math.max.apply(null, orderCountProduct), maxIndex = orderCountProduct.indexOf(max);
+    console.log('orderCountProduct: ', orderCountProduct);
+    console.log('Max value: ', max);
+    console.log('Index of max value: ', maxIndex);//index in the array of products.
+    console.log('Top sold product: ', products[maxIndex]);
 }
 
 //function to count number of orders of certain product in given DATE RANGE
