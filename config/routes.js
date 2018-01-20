@@ -1182,10 +1182,24 @@ var configViews = function (express) {
 
 	});
 
-	//End of day/shift report.
+	//End of day report.
 	express.get('/report/endofday', isUserLoggedIn, function (req, res) {
 		if (roleID == 1) {
 			res.render('endof_day_report', {
+				employeeCode: employeeCode
+			});
+		} else {
+			res.render('401', {
+				employeeCode: employeeCode, roleMessage: roleMessage
+			});
+		}
+
+	});
+
+	//End of shift report.
+	express.get('/report/endofshift', isUserLoggedIn, function (req, res) {
+		if (roleID == 1) {
+			res.render('endof_shift_report', {
 				employeeCode: employeeCode
 			});
 		} else {

@@ -8,38 +8,38 @@
 
                   <div class="entertainer-layout">
                       <div class="entertainer-content">
-                        <h1>End of Day Report</h1>
+                        <h1>End of Shift Report</h1>
                         <div class="mdl-grid">
                           
 
                           <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <input class="any-date mdl-textfield__input" placeholder="Select Date" type="text" id="orderGetDate">
+                              <input class="any-date mdl-textfield__input" placeholder="Select Date" type="text" id="orderSelectDate">
                           </div>
 
-                          <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
+                          <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
                               <label class="control-label">Filter By Shift</label>
-                              <select id="orderGetShift" class="form-control" required="required">
+                              <select id="orderSelectShift" class="form-control" required="required">
 
                               </select>
-                          </div>-->
+                          </div>
 
                           <div class="mdl-cell mdl-cell--4-col mdl-cell--2-col-tablet">
-                              <button type="button" onclick="return GetOrders();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Submit </button>
+                              <button type="button" onclick="return GetAllOrders();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Submit </button>
                           </div>
 
                         </div>
 
                         <div class="mdl-grid">
                             <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--8-col-tablet ">
-                                <button type="button" onclick="return ResetFilters();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Reset Filters </button>
+                                <button type="button" onclick="return ResetAllFilters();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow"> Reset Filters </button>
                             </div>
                         </div>
 
-                        <div id="additionalInfo" class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet">
+                        <div id="additionalInfoShift" class="mdl-cell mdl-cell--4-col mdl-cell--3-col-tablet">
                         
                         </div><br><br>
 
-                          <table id="tableOrders" class="mdl-data-table mdl-js-data-table">
+                          <table id="tableOrdersInShift" class="mdl-data-table mdl-js-data-table">
                               <!-- class="mdl-data-table mdl-js-data-table" -->
                               <thead>
                                   <tr>
@@ -58,7 +58,7 @@
                           <!-- /block -->
 
                           <div hidden class="alert-info" style="overflow:auto;height:20px;">
-                              <span class="label label-default" id="labelSelectedOrder"></span>
+                              <span class="label label-default" id="labelSelectedOrderinShift"></span>
                           </div>
 
 
@@ -75,6 +75,6 @@
         </main>
         
         <!-- MAIN PAGE CONTENT END -->
-        <script type="text/javascript" src="/controllers/endof_day_report.js"></script>
+        <script type="text/javascript" src="/controllers/endof_shift_report.js"></script>
 
         <%- include layout/footer.ejs %>

@@ -1,10 +1,10 @@
-var message, customerOrderID, orderGetDateVal, orderGetShiftVal, isValidDate;
+var message, customerOrderID, orderSelectDateVal, orderSelectShiftVal, isValidDate;
 
 $(document).ready(function () {
     LoadAllShifts();
     
     $(document).on('change', '.form-control, .any-date', function () {
-        //orderGetShiftVal = $("#orderGetShift").val();
+        //orderSelectShiftVal = $("#orderSelectShift").val();
     });
 });
 
@@ -30,7 +30,7 @@ function LoadAllShifts() {
                 html += '<option value = "0">No shifts found</option>';
             }
 
-            $("#orderGetShift").html(html);
+            $("#orderSelectShift").html(html);
         },
         error: function (e) {
             console.log(e);
@@ -41,52 +41,29 @@ function LoadAllShifts() {
     });
 }
 
-function ResetFilters(){
+function ResetAllFilters(){
     
-    $("#orderGetShift").val(0);
-    $("#orderGetDate").val("");
+    $("#orderSelectShift").val(0);
+    $("#orderSelectDate").val("");
 }
 
-function GetOrders(){
-    orderGetDateVal = $("#orderGetDate").val();
-    //orderGetShiftVal = $("#orderGetShift").val();
-    isValidDate = moment(orderGetDateVal.toString(), "YYYY-MM-DD", true).isValid();
-    console.log(orderGetShiftVal);
+function GetAllOrders(){
+    orderSelectDateVal = $("#orderSelectDate").val();
+    orderSelectShiftVal = $("#orderSelectShift").val();
+    isValidDate = moment(orderSelectDateVal.toString(), "YYYY-MM-DD", true).isValid();
+    //console.log(orderSelectShiftVal);
 
-    if(isValidDate == true /*&& orderGetShiftVal == 0*/){//get by date only
-        //toastr.info("Date");
-        GetOrdersPerDate(orderGetDateVal);
-        GetAdditionalInfo(orderGetDateVal);
-    }
-    /*else if(isValidDate == true && orderGetShiftVal != 0){//get by date and shift
+    if(isValidDate == true && orderSelectShiftVal != 0){//get by date and shift
         //toastr.info("Date + Shift");
-        GetOrdersPerDateAndShift(orderGetDateVal, orderGetShiftVal);
-        GetAdditionalInfoDateAndShift(orderGetDateVal, orderGetShiftVal);
-    }*/
+        GetAllOrdersPerDateAndShift(orderSelectDateVal, orderSelectShiftVal);
+        GetAdditionalInfoDateAndShift(orderSelectDateVal, orderSelectShiftVal);
+    }
     else{
-        toastr.error("Select a date");
+        toastr.error("Select a date AND shift");
     }
 }
 
-function GetOrdersPerDate(date){
-    $.ajax({
-        type: 'GET',
-        crossDomain: true,
-        contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/customerorders/date/' + date,
-        dataType: "json",
-        cache: false,
-        success: displayOrders,
-        error: function (e) {
-            console.log(e);
-            message = "Something went wrong";
-            toastr.error(message);
-        }
-
-    });
-}
-
-function GetOrdersPerDateAndShift(date, id){
+function GetAllOrdersPerDateAndShift(date, id){
     $.ajax({
         type: 'GET',
         crossDomain: true,
@@ -94,7 +71,7 @@ function GetOrdersPerDateAndShift(date, id){
         url: '/api/v1/customerorders/shifts/' + id + '/date/' + date,
         dataType: "json",
         cache: false,
-        success: displayOrders,
+        success: displayShiftOrders,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -104,9 +81,9 @@ function GetOrdersPerDateAndShift(date, id){
     });
 }
 
-function getOrderDetails(id){
+function getOrderDetailsForShift(id){
     customerOrderID = id;
-    $("#labelSelectedOrder").text(id);
+    $("#labelSelectedOrderinShift").text(id);
 
     $.ajax({
         type: 'GET',
@@ -115,7 +92,7 @@ function getOrderDetails(id){
         url: '/api/v1/customerorderdetails/' + id,
         dataType: "json",
         cache: false,
-        success: displayOrderDetails,
+        success: displayShiftOrderDetails,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -143,23 +120,6 @@ function getCardPaymentDetails(id){
     });
 }
 
-function GetAdditionalInfo(date){
-    $.ajax({
-        type: 'GET',
-        crossDomain: true,
-        contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/customerorders/total/date/' + date,
-        dataType: "json",
-        cache: false,
-        success: displayAdditionalInfo,
-        error: function (e) {
-            message = "Something went wrong";
-            toastr.error(message);
-        }
-
-    });
-}
-
 function GetAdditionalInfoDateAndShift(date, id){
     $.ajax({
         type: 'GET',
@@ -178,7 +138,8 @@ function GetAdditionalInfoDateAndShift(date, id){
 }
 
 /* ---- AJAX Callback Functions ---- */
-function displayOrders(data){
+function displayShiftOrders(data){
+    //console.log(data);
     var html = '';
     if (data && data.status == 1 && data.customer_orders.length > 0) {
         var customer_orders = data.customer_orders;
@@ -188,7 +149,7 @@ function displayOrders(data){
                 customer_orders[key].payment_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 'R ' + customer_orders[key].total_amount + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 customer_orders[key].employee_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewCustomerOrder" onclick="return getOrderDetails(\'' + customer_orders[key].customer_order_id + '\' )">' +
+                '<a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon modal-trigger"  data-target="#dialogViewCustomerOrder" onclick="return getOrderDetailsForShift(\'' + customer_orders[key].customer_order_id + '\' )">' +
                 '<i class="material-icons">visibility</i></a></td>' +
                 '</tr>';
         }
@@ -196,16 +157,16 @@ function displayOrders(data){
         html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
     }
     //console.log(html);
-    $("#tableOrders tbody").html(html);
+    $("#tableOrdersInShift tbody").html(html);
 }
 
-function displayOrderDetails(data){
-    //console.log(data.customer_order_details[0]);
+function displayShiftOrderDetails(data){
+    //console.log(data);
     var html = '';
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
         for (var key = 0, size = customer_order_details.length; key < size; key++) {
-            
+            //console.log('Item: ', customer_order_details[key]);
             if(customer_order_details[key].topping_name == null){
                 customer_order_details[key].topping_name = '-';
             }
@@ -264,5 +225,5 @@ function displayAdditionalInfo(data){
         '<p><strong>Total: R 0</strong></p>';
     }
 
-    $("#additionalInfo ").html(html + html_message);
+    $("#additionalInfoShift ").html(html + html_message);
 }
