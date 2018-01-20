@@ -264,17 +264,6 @@ function Shift() {
                             deletedShiftId: shiftId
                         };
 
-                         /* Insert to audit table. */
-                         var auditObj = {
-                            employee_id: added_by,
-                            action_id: 3,//delete
-                            description: 'Deleted shift ID: ' + shiftId
-                        };
-
-                        Audit.create(auditObj, function(errAudit, resultAudit){
-                            console.log('Audit: ', errAudit || resultAudit);
-                        });
-                        /* ------------------------- */
 
                         res.json(output);
                     }
