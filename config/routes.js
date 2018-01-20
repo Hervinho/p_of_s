@@ -321,6 +321,7 @@ var PromotionAPIs = function(express){
 	//create promotion. Only by Admin
 	express.post('/promotions', function (req, res) {
 		var promotionObj = req.body;
+		//console.log('roleID: ', roleID);
 		if(roleID == 1){
 			promotionObj.employee_id = employeeID;
 			Promotion.create(promotionObj, res);
@@ -331,10 +332,6 @@ var PromotionAPIs = function(express){
 				message: roleMessage
 			});
 		}
-		//Just for testing
-		/*promotionObj.products = [{product_id:1}, {product_id:2}];
-		promotionObj.employee_id = 1;
-		Promotion.create(promotionObj, res);*/
 	});
 
 	//update promotion. Only by Admin

@@ -307,7 +307,7 @@ function Promotion() {
             valid_to_date = promotionObj.valid_to_date,
             promotion_price = promotionObj.promotion_price,
             added_by = promotionObj.employee_id;
-
+        console.log('Promo products: ', products);
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
             (undefined !== promotion_price && promotion_price != '') && (undefined !== added_by && added_by != '')
@@ -371,10 +371,10 @@ function Promotion() {
                                 return;
                             }
                 
-                            con.query(queryInsert, function (err, result) {
+                            con.query(queryInsert, function (errProduct, resultProduct) {
                                 con.release();
-                                if (err) {
-                                    console.log('Error: ', err.code);
+                                if (errProduct) {
+                                    console.log('Error: ', errProduct);
                                 } else {
                                     console.log('Promo products Successfully inserted.');
                                 }

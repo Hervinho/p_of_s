@@ -125,11 +125,12 @@ function LoadAllPromotionStatuses(){
 }
 
 function LoadAllProducts() {
+    //only the active ones.
     $.ajax({
         type: 'GET',
         crossDomain: true,
         contentType: 'application/json; charset=utf-8',
-        url: '/api/v1/products',
+        url: '/api/v1/products/statuses/1',
         dataType: "json",
         cache: false,
         success: function (data) {
@@ -154,8 +155,14 @@ function LoadAllProducts() {
 
             //Also Populate productss in the dialogViewPromotion and dialogAddPromotion
             var htmlLabel = '<label class="mdl-textfield__label" for="">Products</label>';
-            $("#txtAddProductCheckboxes").html(htmlCheckbox + htmlLabel);
-            $("#txtViewProductCheckboxes").html(htmlCheckbox + htmlLabel);
+            $("#txtAddProductCheckboxes").html(htmlCheckbox);//htmlCheckbox + htmlLabel
+            $("#txtViewProductCheckboxes").html(htmlCheckbox);//htmlCheckbox + htmlLabel
+
+            //First uncheck all checkboxes.
+            $("input:checkbox[name=product]").each(function () {
+                //this.checked = false;
+                $('input:checkbox').removeAttr('checked');
+            });
         },
         error: function (e) {
             console.log(e);

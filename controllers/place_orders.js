@@ -142,7 +142,7 @@
         }
 
 
-        function getProduct() {
+        function getProducts() {
             $.ajax({
                 type: 'GET',
                 crossDomain: true,
@@ -261,7 +261,7 @@
                                 }
                             }
                         });
-                        getProduct();
+                        getProducts();
                     }
                 },
                 error: function (e) {
