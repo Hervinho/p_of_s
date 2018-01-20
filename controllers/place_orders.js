@@ -26,8 +26,20 @@
         getPayments();
         getToppings();
         getBaseTypes();
-
         getAccountTypes();
+        getProductTypes();
+
+        //onChange: to filter products by type.
+        $(document).on('change', '#prodTypeSelect', function () {
+            var typeId = $("#prodTypeSelect").val();
+            
+            if(typeId != 0){
+                filterProductsByType(typeId);
+            } else{
+                getProducts();
+            }
+
+        });
 
         function getAccountTypes() {
             $.ajax({
@@ -60,6 +72,52 @@
             });
         };
 
+        function filterProductsByType(productTypeId) {
+            $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/products/types/' + productTypeId,
+                dataType: "json",
+                cache: false,
+                beforeSend: function () {
+                    var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
+                    $("#tablePlaceOrders tbody").html(wait);
+                },
+                success: handleDisplayProducts,
+                error: function (e) {
+                    console.log(e);
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+        
+            });
+        };
+
+        function getProductTypes() {
+            $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/producttypes',
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    $.each(data.product_types, function (key, value) {
+                        $('#prodTypeSelect')
+                            .append($("<option></option>")
+                                .attr("value", value.product_type_id)
+                                .text(value.product_type_name));
+                    });
+                },
+                error: function (e) {
+                    console.log(e);
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+        
+            });
+        }
 
         function getToppings() {
             $.ajax({
@@ -193,8 +251,6 @@
             });
         }
 
-
-
         // $('#order-list').append('<h1>Hello</h1>');
 
         function getCart() {
@@ -272,8 +328,6 @@
             });
         }
 
-
-
         function handleDisplayProducts(data) {
             var html = '';
 
@@ -311,8 +365,8 @@
                         '<option value="20">Medium</option>' +
                         '<option value="30">Large</option>' +
                         '</select> </td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' >' + _toppingsHtml + '</select>"</td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="basetype' + key + '" data-key="' + key + '" ' + disabled + ' >' + _basetypesHtml + '</select>"</td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' disabled>' + _toppingsHtml + '</select>"</td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="basetype' + key + '" data-key="' + key + '" ' + disabled + ' disabled>' + _basetypesHtml + '</select>"</td>' +
                         '<td class="mdl-data-table__cell--non-numeric">  <input class="quantity" type="number" value="' + quantity[key] + '" data-key="' + key + '" id="quantity' + key + '" /> </td>' +
                         '<td class="mdl-data-table__cell--non-numeric"> <input class="total" type="text" value="R ' + total[key] + '" id="total' + key + '" disabled></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
@@ -335,6 +389,8 @@
                     if (quantity[key] > 0) {
                         size = $('#size' + key).val();
                         $('#size' + key).attr('disabled', false);
+                        $('#topping' + key).attr('disabled', false);//topping
+                        $('#basetype' + key).attr('disabled', false);//basetype
                         $('#add' + key).attr('disabled', false);
                     } else {
                         $('#size' + key).attr('disabled', true);
@@ -457,9 +513,8 @@
             }
 
             console.log(carts);
-            toastr.info("Submitted");
 
-            //Submit.
+            //Submit order into the system..
             $.ajax({
                 type: 'POST',
                 crossDomain: true,
