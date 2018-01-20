@@ -682,10 +682,10 @@ var CustomerOrderAPIs = function (express) {
 	//create new customer order.
 	express.post('/customerorders', function (req, res) {
 		var orderObj = req.body;
-		//orderObj.added_by = employeeID;
+		orderObj.added_by = employeeID;
 		
 		/* ------ONLY for testing without UI------ */
-		orderObj.added_by = 1;
+		/*orderObj.added_by = 1;
 		orderObj.orderItems = [
 			{
 				product_id: 2,
@@ -706,7 +706,7 @@ var CustomerOrderAPIs = function (express) {
 		];
 		orderObj.bankCardObj = {
 			account_type_id: 1, card_number: '1234', card_holder: 'John Doe',validity: '07/17 - 07/21'
-		};
+		};*/
 		
 		/* -------------- */
 		CustomerOrder.create(orderObj, res);

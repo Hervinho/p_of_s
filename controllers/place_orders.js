@@ -403,38 +403,64 @@
             }
         }
 
+        //checkbox for payment on collection.
+        $(document).on('change', '#payOnCollection', function () {
+            var isChecked = document.getElementById("payOnCollection").checked;
+
+            if (isChecked == true) {
+                $('.mdl-card ').hide();
+                $('#placeOrder').removeAttr('disabled');
+
+            } else {
+                $('.mdl-card ').show();
+                $('#placeOrder').attr('disabled', true);
+            }
+
+        });
+
         $('#placeOrder').click(function () {
             carts.customer_id = $('#customerSelect').val();
             carts.payment_type_id = $('#paymentSelect').val();
+            var isChecked = document.getElementById("payOnCollection").checked;
 
-            // card values
-            if (carts.payment_type_id === '2') {
-                carts.bankCardObj = {
-                    account_type_id: $('#cardType').val(),
-                    card_number: $('#cardNumber').val(),
-                    card_holder: $('#cardHolder').val(),
-                    validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val() + '/' + $('#toCardYear').val()
-                };
+            //if payment on collection is false, you pay before submitting and collect card/cash
+            if (isChecked == false) {
 
-                if (($('#fromCardYear').val() >= $('#toCardYear').val()) ||
-                    $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
-                    $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
+                // card values
+                if (carts.payment_type_id === '2') {
+                    carts.bankCardObj = {
+                        account_type_id: $('#cardType').val(),
+                        card_number: $('#cardNumber').val(),
+                        card_holder: $('#cardHolder').val(),
+                        validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val() + '/' + $('#toCardYear').val()
+                    };
 
-                    toastr.error('Invalid Card Date Range!');
-                    return;
+                    if (($('#fromCardYear').val() >= $('#toCardYear').val()) ||
+                        $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
+                        $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
+
+                        toastr.error('Invalid Card Date Range!');
+                        return;
+                    }
+
+                    //if bank card dialog is filled, payment received.
+                    carts.payment_status_id = 1;
+
+                } else {//payment type is cash, payment status is 1 (PAID)
+                    carts.bankCardObj = null;
+                    carts.payment_status_id = 1;
                 }
-
-                //if bank card dialog is filled, payment received.
-                carts.payment_status_id = 1;
             } else {
+                //Payment will be received upon collection
                 carts.bankCardObj = null;
+                carts.payment_status_id = 2;
             }
 
             console.log(carts);
             toastr.info("Submitted");
 
             //Submit.
-            /*$.ajax({
+            $.ajax({
                 type: 'POST',
                 crossDomain: true,
                 data: JSON.stringify(carts),
@@ -459,7 +485,7 @@
                     toastr.error(message);
                 }
 
-            });*/
+            });
 
         });
 
@@ -470,6 +496,8 @@
             total_calc = '';
             $('#calc_total').val('R 0.00');
             $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
+            $('.mdl-card ').show();
+            document.getElementById("payOnCollection").checked = false;
         });
 
         $.each(['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', '.'], function (key, value) {

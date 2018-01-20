@@ -115,6 +115,8 @@ function handleOrderDetailsData(data) {
                 html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].topping_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                customer_order_details[key].base_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_quantity + '</td>' +
                 '</tr>';
             }            
