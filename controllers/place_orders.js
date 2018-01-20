@@ -152,9 +152,9 @@
                 cache: false,
                 beforeSend: function () {
                     var wait = '<span class="mdl-chip mdl-color--blue-300"><span class="mdl-chip__text"><b>Waiting for data...</b></span></span>';
-                    $("#tblPlaceOrders tbody").html(wait);
+                    $("#tablePlaceOrders tbody").html(wait);
                 },
-                success: handleOrdersData,
+                success: handleDisplayProducts,
                 error: function (e) {
                     message = "Something went wrong";
                     toastr.error(message);
@@ -274,7 +274,7 @@
 
 
 
-        function handleOrdersData(data) {
+        function handleDisplayProducts(data) {
             var html = '';
 
             if (data && data.status == 1 && data.products.length > 0) {
@@ -325,9 +325,9 @@
                 html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
             }
             //console.log(html);
-            $("#tblPlaceOrders tbody").html(html);
+            $("#tablePlaceOrders tbody").html(html);
             if (data && data.status == 1 && data.products.length > 0) {
-                $('#tblPlaceOrders .quantity').change(function () {
+                $('#tablePlaceOrders .quantity').change(function () {
                     var key = $(this).data('key');
                     quantity[key] = $(this).val();
                     var size = 0;
@@ -348,7 +348,7 @@
 
                 });
 
-                $('#tblPlaceOrders .size').change(function () {
+                $('#tablePlaceOrders .size').change(function () {
                     var key = $(this).data('key');
                     var size = $('#size' + key).val();
                     total[key] -= parseInt(sizes[key]);
@@ -357,7 +357,7 @@
                     $('#total' + key).val('R ' + total[key]);
                 });
 
-                $('#tblPlaceOrders .add-cart').click(function () {
+                $('#tablePlaceOrders .add-cart').click(function () {
                     var key = $(this).data('key');
                     $('#add' + key).attr('disabled', true);
                     $('#quantity' + key).attr('disabled', true);
@@ -379,7 +379,7 @@
                 });
 
 
-                $('#tblPlaceOrders .remove-cart').click(function () {
+                $('#tablePlaceOrders .remove-cart').click(function () {
                     var key = $(this).data('key');
                     carts.total_amount = (parseInt(carts.total_amount) - total[key]).toString();
 
