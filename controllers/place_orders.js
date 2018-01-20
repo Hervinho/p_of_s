@@ -12,31 +12,43 @@
             payment_type_id: '0',
             customer_id: '0',
             orderItems: [],
-            bankCardObj: { 
+            bankCardObj: {
                 account_type_id: 1,
                 card_number: '',
                 card_holder: '',
                 validity: ''
-            } 
+            }
         };
         var customer, payment_type;
 
         getCustomers();
         getPayments();
+        getToppings();
 
-        function getToppings(id){
-              $.ajax({
+        getAccountTypes();
+
+        function getAccountTypes() {
+            $.ajax({
                 type: 'GET',
                 crossDomain: true,
                 contentType: 'application/json; charset=utf-8',
-                url: '/api/v1/customers',
+                url: '/api/v1/accounttypes',
                 dataType: "json",
                 cache: false,
                 beforeSend: function () {
 
                 },
                 success: function (data) {
-                   
+                    if (data.status === 1) {
+                        $.each(data.account_types, function (key, value) {
+                            $('#cardType')
+                                .append($("<option></option>")
+                                    .attr("value", value.account_type_id)
+                                    .text(value.account_type_name));
+                        });
+
+                    }
+
                 },
                 error: function (e) {
                     message = "Something went wrong";
@@ -45,10 +57,36 @@
 
             });
         };
-        
-        
-        function getCardTypes(){
-             $.ajax({
+
+
+        function getToppings() {
+            $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/toppings',
+                dataType: "json",
+                cache: false,
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if (data.status === 1) {
+                        toppings = data.toppings;
+                    }
+
+                },
+                error: function (e) {
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+
+            });
+        };
+
+
+        function getCardTypes() {
+            $.ajax({
                 type: 'GET',
                 crossDomain: true,
                 contentType: 'application/json; charset=utf-8',
@@ -76,8 +114,8 @@
 
             });
         }
-        
-        
+
+
         function getProduct() {
             $.ajax({
                 type: 'GET',
@@ -136,6 +174,12 @@
         function getCart() {
 
             var html = '';
+            console.log(carts.orderItems);
+            if (carts.orderItems.length > 0) {
+                $('#checkoutBtn').removeAttr('disabled');
+            } else {
+                $('#checkoutBtn').attr('disabled', true);
+            }
 
             $.each(carts.orderItems, function (key, value) {
                 var _product = products.find(function (product) {
@@ -183,12 +227,13 @@
                             } else {
                                 $('.cash').hide();
                                 $('.card').show();
-                                carts.bankCardObj ={
+                                carts.bankCardObj = {
                                     account_type_id: 1,
                                     card_number: '',
                                     card_holder: '',
                                     validity: ''
-                                };
+                                }
+                            }
                         });
                         getProduct();
                     }
@@ -208,11 +253,21 @@
 
             if (data && data.status == 1 && data.products.length > 0) {
                 products = data.products;
+
                 for (var key = 0, size = products.length; key < size; key++) {
                     quantity.push(0);
                     total.push(0);
                     sizes.push(0);
-
+                    var _toppingsHtml = '';
+                    var disabled = '';
+                    if (products[key].product_type_id === 1) {
+                        toppings.forEach(function (el) {
+                            _toppingsHtml += '<option value=' + el.topping_id + '>' + el.topping_name + '</option>';
+                        });
+                    } else {
+                        disabled = 'disabled';
+                        _toppingsHtml += '<option value="0"></option>';
+                    }
                     html += '<tr >' +
                         '<td class="mdl-data-table__cell--non-numeric">' + products[key].product_name + '</td>' +
                         '<td class="mdl-data-table__cell--non-numeric truncate">R ' + products[key].product_price + '</td>' +
@@ -221,7 +276,7 @@
                         '<option value="20">Medium</option>' +
                         '<option value="30">Large</option>' +
                         '</select> </td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" disabled="' + (products[key].product_type_id === 1) + '"</td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' >' + _toppingsHtml + '</select>"</td>' +
                         '<td class="mdl-data-table__cell--non-numeric">  <input class="quantity" type="number" value="' + quantity[key] + '" data-key="' + key + '" id="quantity' + key + '" /> </td>' +
                         '<td class="mdl-data-table__cell--non-numeric"> <input class="total" type="text" value="R ' + total[key] + '" id="total' + key + '" disabled></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
@@ -313,15 +368,24 @@
         $('#placeOrder').click(function () {
             carts.customer_id = $('#customerSelect').val();
             carts.payment_type_id = $('#paymentSelect').val();
-            
+
             // card values
-            carts.bankCardObj ={
-                account_type_id: $('#cardType').val(),
-                card_number: $('#cardNumber').val(),
-                card_holder: $('#cardHolder').val(),
-                validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val()+ '/' +$('#toCardYear').val()
-            };
-            
+            if (carts.payment_type_id === '2') {
+                carts.bankCardObj = {
+                    account_type_id: $('#cardType').val(),
+                    card_number: $('#cardNumber').val(),
+                    card_holder: $('#cardHolder').val(),
+                    validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val() + '/' + $('#toCardYear').val()
+                };
+            }
+
+            if (($('#fromCardYear').val() >= $('#toCardMonth').val()) ||
+                $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
+                $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
+
+                toastr.error('Invalid Card Date Range!');
+                return;
+            }
             //console.log(carts);
 
             //Submit.
@@ -355,6 +419,14 @@
         });
 
 
+        var total_calc = '';
+
+        $('.form-close').click(function () {
+            total_calc = '';
+            $('#calc_total').val('R 0.00');
+            $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
+        });
+
         $.each(['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', '.'], function (key, value) {
             if (key === 9) {
                 $('.calc-grid').append('<div class="mdl-cell mdl-cell--4-col"> <a class="mdl-button mdl-js-button mdl-button--fab number-calc" data-action=' + -1 + '> <i class="material-icons">' +
@@ -366,7 +438,6 @@
             }
         });
 
-        var total_calc = '';
         $('#calc_total').val('R 0.00');
         $('#calc_change').val('R ' + (0 - parseFloat(carts.total_amount)).toFixed(2));
 
@@ -387,18 +458,16 @@
                 $('#calc_total').val('R ' + total_calc);
                 $('#calc_change').val('R ' + (parseFloat(total_calc) - remainder).toFixed(2));
             }
-            
-            if((parseFloat(total_calc) - remainder).toFixed(2) > -1){
-                $('#checkoutBtn').removeClass('hide-btn'); 
-                $('#checkoutBtn').addClass('show-btn');
-            }
-            else{
-                $('#checkoutBtn').removeClass('show-btn');
-                $('#checkoutBtn').addClass('hide-btn');
-                  
+
+            if ((parseFloat(total_calc) - remainder).toFixed(2) > -1) {
+                $('#placeOrder').removeAttr('disabled');
+
+            } else {
+
+                $('#placeOrder').attr('disabled', true);
             }
         });
-        
- 
+
+
     }); // end of document ready
 }(jQuery)); // end of jQuery name space
