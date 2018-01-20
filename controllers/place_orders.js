@@ -6,6 +6,7 @@
         var quantity = [];
         var sizes = [];
         var toppings = [];
+        var basetypes = [];
         var pSizes = ['Small', 'Medium', 'Large'];
         var carts = {
             total_amount: '0',
@@ -24,6 +25,7 @@
         getCustomers();
         getPayments();
         getToppings();
+        getBaseTypes();
 
         getAccountTypes();
 
@@ -84,6 +86,30 @@
             });
         };
 
+        function getBaseTypes() {
+            $.ajax({
+                type: 'GET',
+                crossDomain: true,
+                contentType: 'application/json; charset=utf-8',
+                url: '/api/v1/basetypes',
+                dataType: "json",
+                cache: false,
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if (data.status === 1) {
+                        basetypes = data.base_types;
+                    }
+
+                },
+                error: function (e) {
+                    message = "Something went wrong";
+                    toastr.error(message);
+                }
+
+            });
+        };
 
         function getCardTypes() {
             $.ajax({
@@ -220,7 +246,7 @@
                                     .text(value.payment_type_name));
                         });
                         $('#paymentSelect').change(function () {
-                            if ($(this).val() === 'Cash') {
+                            if ($(this).val() === '1') {
                                 $('.cash').show();
                                 $('.card').hide();
                                 carts.bankCardObj = null;
@@ -258,15 +284,24 @@
                     quantity.push(0);
                     total.push(0);
                     sizes.push(0);
-                    var _toppingsHtml = '';
+                    var _toppingsHtml = '',
+                        _basetypesHtml = '';
                     var disabled = '';
                     if (products[key].product_type_id === 1) {
+                        //toppings
                         toppings.forEach(function (el) {
                             _toppingsHtml += '<option value=' + el.topping_id + '>' + el.topping_name + '</option>';
                         });
+
+                        //basetypes.
+                        basetypes.forEach(function (el) {
+                            _basetypesHtml += '<option value=' + el.base_type_id + '>' + el.base_type_name + '</option>';
+                        });
+
                     } else {
                         disabled = 'disabled';
-                        _toppingsHtml += '<option value="0"></option>';
+                        _toppingsHtml = '<option value="0"></option>';
+                        _basetypesHtml = '<option value="0"></option>';
                     }
                     html += '<tr >' +
                         '<td class="mdl-data-table__cell--non-numeric">' + products[key].product_name + '</td>' +
@@ -277,6 +312,7 @@
                         '<option value="30">Large</option>' +
                         '</select> </td>' +
                         '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' >' + _toppingsHtml + '</select>"</td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="basetype' + key + '" data-key="' + key + '" ' + disabled + ' >' + _basetypesHtml + '</select>"</td>' +
                         '<td class="mdl-data-table__cell--non-numeric">  <input class="quantity" type="number" value="' + quantity[key] + '" data-key="' + key + '" id="quantity' + key + '" /> </td>' +
                         '<td class="mdl-data-table__cell--non-numeric"> <input class="total" type="text" value="R ' + total[key] + '" id="total' + key + '" disabled></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
@@ -332,6 +368,8 @@
                     carts.orderItems.push({
                         key: key,
                         product_size_id: sizes[key] === "0" ? 1 : (parseInt(sizes[key]) / 10),
+                        topping_id: parseInt($('#topping' + key).val()),
+                        base_type_id: parseInt($('#basetype' + key).val()),
                         product_id: data.products[key].product_id,
                         product_quantity: quantity[key],
                         amount: total[key]
@@ -377,19 +415,26 @@
                     card_holder: $('#cardHolder').val(),
                     validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val() + '/' + $('#toCardYear').val()
                 };
+
+                if (($('#fromCardYear').val() >= $('#toCardYear').val()) ||
+                    $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
+                    $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
+
+                    toastr.error('Invalid Card Date Range!');
+                    return;
+                }
+
+                //if bank card dialog is filled, payment received.
+                carts.payment_status_id = 1;
+            } else {
+                carts.bankCardObj = null;
             }
 
-            if (($('#fromCardYear').val() >= $('#toCardMonth').val()) ||
-                $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
-                $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
-
-                toastr.error('Invalid Card Date Range!');
-                return;
-            }
-            //console.log(carts);
+            console.log(carts);
+            toastr.info("Submitted");
 
             //Submit.
-            $.ajax({
+            /*$.ajax({
                 type: 'POST',
                 crossDomain: true,
                 data: JSON.stringify(carts),
@@ -414,7 +459,7 @@
                     toastr.error(message);
                 }
 
-            });
+            });*/
 
         });
 
@@ -466,6 +511,17 @@
 
                 $('#placeOrder').attr('disabled', true);
             }
+        });
+
+        $('.card input').bind('change', function () {
+            if ($('#cardNumber').val().length === 16 && $('#cardHolder').val() !== '' &&
+                $('#fromCardMonth').val().length === 2 && $('#fromCardYear').val().length === 2 &&
+                $('#toCardMonth').val().length === 2 && $('#toCardYear').val().length === 2) {
+                $('#placeOrder').removeAttr('disabled');
+            } else {
+                $('#placeOrder').attr('disabled', true);
+            }
+
         });
 
 

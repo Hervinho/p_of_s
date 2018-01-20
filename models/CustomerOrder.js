@@ -1056,6 +1056,7 @@ function CustomerOrder() {
 
             output = {status: 0, message: feedback};
             res.json(output);
+            return;
         }
         else{
             if(customer_id == '' || customer_id == null){
@@ -1067,17 +1068,19 @@ function CustomerOrder() {
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
                 added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, function(err, result){
                     
-                    /* Insert to audit table. */
-                    auditObj = {
-                        employee_id: added_by,
-                        action_id: 1,//create
-                        description: 'Placed an order. Timestamp: ' + date_ordered
-                    };
+                    if(result){
+                        /* Insert to audit table. */
+                        auditObj = {
+                            employee_id: added_by,
+                            action_id: 1,//create
+                            description: 'Placed an order. Timestamp: ' + date_ordered
+                        };
 
-                    Audit.create(auditObj, function(errAudit, resultAudit){
-                        console.log('Audit: ', errAudit || resultAudit);
-                    });
-                    /* ------------------------- */
+                        Audit.create(auditObj, function(errAudit, resultAudit){
+                            console.log('Audit: ', errAudit || resultAudit);
+                        });
+                        /* ------------------------- */
+                        }
 
                     res.json(err || result);
            });

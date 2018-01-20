@@ -167,7 +167,14 @@ function LoadAllProducts() {
 }
 
 function ViewPromotionInfo(id){
-    //promotionID = id;
+    
+    //First uncheck all checkboxes.
+    $("input:checkbox[name=product]").each(function () {
+        //this.checked = false;
+        $('input:checkbox').removeAttr('checked');
+    });
+
+    promotionID = id;
     $("#lbSelectedPromotion").text(id);
 
     $.ajax({
@@ -197,10 +204,6 @@ function ViewPromotionInfo(id){
             $("#txtViewPromotionPrice").val(promotionPrice);
             $("#txtViewPromotionAddedBy").val(promotionAddedBy);
 
-            //First uncheck all checkboxes.
-            $("input:checkbox[name=product]").each(function () {
-                this.checked = false;
-            });
             console.log(products);
             //Only check checkboxes having products of the promotion.
             for(var key = 0, size = products.length; key < size; key++){
