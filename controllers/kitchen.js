@@ -105,13 +105,20 @@ function handleOrdersData(data) {
 }
 
 function handleOrderDetailsData(data) {
-    //console.log(data.customer_order_details[0]);
+    console.log(data.customer_order_details[0]);
     var html = '';
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
         for (var key = 0, size = customer_order_details.length; key < size; key++) {
             //show only if product type != drink.
-            if(customer_order_details[key].product_type_id != 3){
+            //if(customer_order_details[key].product_type_id != 3){
+                if(customer_order_details[key].topping_name == null){
+                    customer_order_details[key].topping_name = '-';
+                }
+                if(customer_order_details[key].base_type_name == null){
+                    customer_order_details[key].base_type_name = '-';
+                }
+                
                 html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
@@ -119,7 +126,7 @@ function handleOrderDetailsData(data) {
                 customer_order_details[key].base_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
                 customer_order_details[key].product_quantity + '</td>' +
                 '</tr>';
-            }            
+            //}            
         }
 
     } else {

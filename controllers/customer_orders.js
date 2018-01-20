@@ -218,7 +218,7 @@ function handleOrdersData(data) {
 }
 
 function handleOrderDetailsData(data) {
-    //console.log(data.customer_order_details[0]);
+    console.log(data.customer_order_details[0]);
     var html = '';
     if (data && data.status == 1 && data.customer_order_details.length > 0) {
         var customer_order_details = data.customer_order_details;
@@ -244,7 +244,7 @@ function handleOrderDetailsData(data) {
         html += '<span class="mdl-chip mdl-color--red-300"><span class="mdl-chip__text"><b>Oops!! No data found.</b></span></span>';
     }
     //console.log(html);
-    $("#tblCustomerOrderDetails tbody").html(html);
+    $("#tblReadyCustomerOrderDetails tbody").html(html);
 
     //if order was paid with card, get details of the card.
     ViewCardPaymentDetails(customerOrderID);
