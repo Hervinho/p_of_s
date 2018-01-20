@@ -1226,7 +1226,7 @@ function CustomerOrder() {
             feedback, queryFind = 'SELECT * FROM customer_order WHERE customer_order_id = ?',
             queryUpdate = 'UPDATE customer_order SET payment_status_id = 1, collection_status_id = 1 ' +
             'WHERE customer_order_id = ?';
-        var orderId = orderObj.order_id, bankCardObj = orderObj.bankCardObj;
+        var orderId = orderObj.order_id, bankCardObj = orderObj.bankCardObj, added_by = orderObj.added_by;
 
         connection.acquire(function (err, con) {
             if (err) {
@@ -1249,7 +1249,8 @@ function CustomerOrder() {
                     res.json(output);
                     return;
                 } else {
-                    //check if order was not paid.
+                    /* check if order was not paid. */
+                    //if order was not yet paid for.
                     if (resultOrder[0].payment_status_id != 1) {
                         
                         //Handle payment. If card is used, save card details.
@@ -1284,10 +1285,22 @@ function CustomerOrder() {
                                 } else {
                                     output = {
                                         status: 1,
-                                        message: "Payment status successfully updated for this order.",
+                                        message: "Payment successfully received. Order can now be collected.",
                                         message_collection: "Order has been collected",
                                         order_id: orderId
                                     };
+
+                                    /* Insert to audit table. */
+                                    var auditObj = {
+                                        employee_id: added_by,
+                                        action_id: 2,//update
+                                        description: 'Received payment and handled collection for order #: ' + orderId
+                                    };
+
+                                    Audit.create(auditObj, function(errAudit, resultAudit){
+                                        console.log('Audit: ', errAudit || resultAudit);
+                                    });
+                                    /* ------------------------- */
 
                                     res.json(output);
                                     return;

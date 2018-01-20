@@ -1,4 +1,10 @@
 var message, customerOrderID, orderObj, order_total_amount, payment_type;
+var orderCollectObj, bankCardObj = {
+    account_type_id: 1,
+    card_number: '',
+    card_holder: '',
+    validity: ''
+};
 
 $(document).ready(function () {
     checkoutInit();
@@ -28,7 +34,7 @@ function LoadAllReadyOrders() {
 }
 
 function ViewOrderDetails(id) {
-    //customerOrderID = id;
+    customerOrderID = id;
     $("#lbSelectedReadyCustomerOrder").text(id);
 
     $.ajax({
@@ -49,6 +55,9 @@ function ViewOrderDetails(id) {
 }
 
 function UpdateCollectionStatus(id, totalAmount, paymentType) {
+    //customerOrderID = id;
+    $("#lbSelectedReadyCustomerOrder").text(id);
+    
     $.ajax({
         type: 'PUT',
         crossDomain: true,
@@ -67,10 +76,13 @@ function UpdateCollectionStatus(id, totalAmount, paymentType) {
                 }, 500);
             } else {
                 toastr.error(data.message);
-                $("#lbSelectedReadyCustomerOrder").text('');
+                //$("#lbSelectedReadyCustomerOrder").text('');
+
+                /* -- Display cash or card dialog to receive payment for that order --*/
                 order_total_amount = totalAmount;
                 $('#calc_change').val('R ' + (0 - parseFloat(totalAmount)).toFixed(2));
                 payment_type = paymentType;
+                
                 // check payment type
                 if (paymentType === '1') {
                     $('.cash').show();
@@ -84,10 +96,11 @@ function UpdateCollectionStatus(id, totalAmount, paymentType) {
                           card_number: '',
                           card_holder: '',
                           validity: ''
-                      }*/
+                    }*/
                 }
 
                 $('#dialogCheckout').show();
+                //$('#dialogCheckout1').show();
             }
         },
         error: function (e) {
@@ -101,11 +114,13 @@ function UpdateCollectionStatus(id, totalAmount, paymentType) {
 
 //Update payment and collection status for order.
 //Called if order was processed and is ready, but was not yet paid for.
-function UpdatePaymentAndCollectionStatus() {
+function UpdatePaymentAndCollectionStatus(obj) {
+    //console.log('Object: ', obj);
+    
     $.ajax({
         type: 'PUT',
         crossDomain: true,
-        data: JSON.stringify(orderObj),
+        data: JSON.stringify(obj),
         contentType: 'application/json; charset=utf-8',
         url: '/api/v1/customerorders/collection/payment',
         dataType: "json",
@@ -113,10 +128,11 @@ function UpdatePaymentAndCollectionStatus() {
         success: function (data) {
             if (data.status == 1) {
                 toastr.success(data.message);
+                
                 //Reload page.
                 setTimeout(function () {
                     location.reload();
-                }, 500);
+                }, 600);
             } else {
                 toastr.error(data.message);
                 $("#lbSelectedReadyCustomerOrder").text('');
@@ -138,7 +154,7 @@ function handleOrdersData(data) {
     if (data && data.status == 1 && data.ready_orders.length > 0) {
         var ready_orders = data.ready_orders;
         for (var key = 0, size = ready_orders.length; key < size; key++) {
-            console.log(ready_orders[key]);
+            //console.log(ready_orders[key]);
             html += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
                 ready_orders[key].customer_order_id + '</td><td class="mdl-data-table__cell--non-numeric truncate">' +
                 ready_orders[key].customer_order_timestamp + '</td><td class="mdl-data-table__cell--non-numeric">' +
@@ -175,6 +191,9 @@ function handleOrderDetailsData(data) {
     $("#tblReadyCustomerOrderDetails tbody").html(html);
 }
 
+/* ******************************************** */
+
+//Added by Jo
 function checkoutInit() {
 
     $('#placeOrder').text('Confirm Order');
@@ -247,7 +266,7 @@ function checkoutInit() {
 
     // Confirm Order on click
     $('#placeOrder').click(function () {
-        if (payment_type === '2') {
+        if (payment_type === '2') {//if payment is CARD
             if (($('#fromCardYear').val() >= $('#toCardYear').val()) ||
                 $('#fromCardYear').val().length > 2 || $('#toCardYear').val().length > 2 ||
                 $('#fromCardMonth').val().length > 2 || $('#toCardMonth').val().length > 2) {
@@ -255,11 +274,27 @@ function checkoutInit() {
                 toastr.error('Invalid Card Date Range!');
                 return;
             }
+
+            bankCardObj = {
+                account_type_id: $('#cardType').val(),
+                card_number: $('#cardNumber').val(),
+                card_holder: $('#cardHolder').val(),
+                validity: $('#fromCardMonth').val() + '/' + $('#fromCardYear').val() + ' - ' + $('#toCardMonth').val() + '/' + $('#toCardYear').val()
+            };
+        }
+        else{//if payment is CASH
+            bankCardObj = null;
         }
 
         // update order here
-        alert('update order');
+        orderCollectObj = {
+            order_id: $("#lbSelectedReadyCustomerOrder").html().toString(), //customerOrderID
+            bankCardObj: bankCardObj
+        };
 
+        //update collection AND payment status here.
+        //console.log('Object: ', orderCollectObj);
+        UpdatePaymentAndCollectionStatus(orderCollectObj);
 
     });
 
