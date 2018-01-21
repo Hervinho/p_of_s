@@ -1,4 +1,4 @@
-var message, customerOrderID, orderObj, order_total_amount, payment_type;
+var message, customerOrderID, orderObj, order_total_amount, payment_type, myOrder, myOrderWithDetails;
 var orderCollectObj, bankCardObj = {
     account_type_id: 1,
     card_number: '',
@@ -70,10 +70,11 @@ function UpdateCollectionStatus(id, totalAmount, paymentType) {
                 toastr.success(data.message);
                 $("#lbSelectedReadyCustomerOrder").text('');
 
+                GetOrderWithItsDetails(id);
                 //Reload page.
-                setTimeout(function () {
+                /*setTimeout(function () {
                     location.reload();
-                }, 500);
+                }, 500);*/
             } else {
                 toastr.error(data.message);
                 //$("#lbSelectedReadyCustomerOrder").text('');
@@ -115,7 +116,6 @@ function UpdateCollectionStatus(id, totalAmount, paymentType) {
 //Update payment and collection status for order.
 //Called if order was processed and is ready, but was not yet paid for.
 function UpdatePaymentAndCollectionStatus(obj) {
-    //console.log('Object: ', obj);
     
     $.ajax({
         type: 'PUT',
@@ -128,16 +128,36 @@ function UpdatePaymentAndCollectionStatus(obj) {
         success: function (data) {
             if (data.status == 1) {
                 toastr.success(data.message);
-                
+
+                GetOrderWithItsDetails(id);
                 //Reload page.
-                setTimeout(function () {
+                /*setTimeout(function () {
                     location.reload();
-                }, 600);
+                }, 600);*/
             } else {
                 toastr.error(data.message);
                 $("#lbSelectedReadyCustomerOrder").text('');
             }
         },
+        error: function (e) {
+            console.log(e);
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+//get order with its details, to be printed
+function GetOrderWithItsDetails(id){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/customerorders/details/' + id,
+        dataType: "json",
+        cache: false,
+        success: getFullOrderWithDetails,
         error: function (e) {
             console.log(e);
             message = "Something went wrong";
@@ -199,6 +219,18 @@ function handleOrderDetailsData(data) {
     }
     //console.log(html);
     $("#tblReadyCustomerOrderDetails tbody").html(html);
+}
+
+function getFullOrderWithDetails(data) {
+    if (data.status == 1) {
+        console.log(data);
+        
+        //Print here.
+        myOrder = data.customer_order;
+        myOrderWithDetails = data.customer_order_details;
+    } else {
+        console.log('Cannot print');
+    }
 }
 
 /* ******************************************** */

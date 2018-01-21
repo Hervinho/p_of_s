@@ -78,7 +78,7 @@ var PettyCashAPIs = function(express){
 	});
 };
 
-//Just for testing. They get called inside the models.
+//Just for testing. They get called INSIDE the models INSTEAD.
 var AuditAPIs = function(express){
 	//get all audits.
 	express.get('/audits', function (req, res) {
@@ -704,6 +704,13 @@ var CustomerOrderAPIs = function (express) {
 	express.get('/customerorders/:id', function (req, res) {
 		var orderId = req.params.id;
 		CustomerOrder.getOne(orderId, res);
+	});
+
+	//get a specific order, along with its items and employee who placed it.
+	//used to print ticket on collection.
+	express.get('/customerorders/details/:id', function (req, res) {
+		var orderId = req.params.id;
+		CustomerOrder.getOneWithDetails(orderId, res);
 	});
 
 	//create new customer order.

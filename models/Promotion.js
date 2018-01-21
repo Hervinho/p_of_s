@@ -214,7 +214,7 @@ function Promotion() {
     //get a specific promotion.
     this.getOne = function (id, res) {
         var output = {}, promoProducts = [];
-            query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?",
+        var query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?",
             queryDetails = "SELECT * FROM promotion_product LEFT JOIN product ON promotion_product.product_id = product.product_id " +
                 "WHERE promotion_product.promotion_id = ?";
 
@@ -243,13 +243,15 @@ function Promotion() {
                                 return;
                             }
                 
-                            con.query(queryDetails, [id], function (err, resultDetails) {
+                            con.query(queryDetails, [id], function (errDetails, resultDetails) {
                                 con.release();
-                                if (err) {
+                                if (errDetails) {
                                     output = {
                                         status: 0,
                                         message: "Error getting promotion products",
-                                        error:err
+                                        promotion: result[0],
+                                        products: null,
+                                        error:errDetails
                                     };
 
                                     res.json(output);

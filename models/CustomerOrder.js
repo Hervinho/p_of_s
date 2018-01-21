@@ -112,7 +112,8 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
                             feedback = 'Customer order successfully inserted.';
                             output = {
                                 status: 1,
-                                message: feedback
+                                message: feedback,
+                                order_id: insertedOrderID
                             };
                             callback(null, output);
                         }
@@ -707,6 +708,108 @@ function CustomerOrder() {
         });
     };
 
+    //get a specific order, along with its items and employee who placed it.
+    this.getOneWithDetails = function (id, res) {
+        var output = {},
+            orderDetails = [];
+        var query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+            'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +
+            'WHERE customer_order_id = ?',
+            queryDetails = 'SELECT * FROM customer_order_details ' +
+            'LEFT JOIN product ON customer_order_details.product_id = product.product_id ' +
+            'LEFT JOIN product_size ON customer_order_details.product_size_id = product_size.product_size_id ' +
+            'LEFT JOIN topping ON customer_order_details.topping_id = topping.topping_id ' +
+            'LEFT JOIN base_type ON customer_order_details.base_type_id = base_type.base_type_id ' +
+            'WHERE customer_order_id = ?'
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                output = {
+                    status: 100,
+                    message: "Error connecting to database"
+                };
+
+                res.json(output);
+                return;
+            }
+
+            con.query(query, [id], function (err, result) {
+                con.release();
+                if (err) {
+                    output = {
+                        status: 0,
+                        message: 'Error getting customer order.',
+                        error,
+                        err
+                    };
+
+                    res.json(output);
+                    return;
+                } else {
+                    if (result.length > 0) {
+
+                        connection.acquire(function (err, con) {
+                            if (err) {
+                                output = {
+                                    status: 100,
+                                    message: "Error connecting to database"
+                                };
+
+                                res.json(output);
+                                return;
+                            }
+
+                            con.query(queryDetails, [id], function (errDetails, resultDetails) {
+                                con.release();
+                                if (errDetails) {
+                                    output = {
+                                        status: 0,
+                                        message: 'Error getting promotion products',
+                                        customer_order: result[0],
+                                        customer_order_details: null,
+                                        error: errDetails
+                                    };
+
+                                    res.json(output);
+                                    return;
+
+                                } else {
+                                    //console.log('Res: ', resultDetails);
+                                    if (resultDetails.length > 0) {
+                                        output = {
+                                            status: 1,
+                                            customer_order: result[0],
+                                            customer_order_details: resultDetails
+                                        };
+                                    } else {
+                                        output = {
+                                            status: 1,
+                                            customer_order: result[0],
+                                            customer_order_details: null
+                                        };
+                                    }
+
+                                    res.json(output);
+                                    return;
+                                }
+                            });
+                        });
+
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such customer order found'
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+
+                }
+            });
+        });
+    };
+
     //get total amount from orders in a previous shift (from current datetime)
     this.getTotalAmountFromPreviousShift = function(res){
         var current_time = moment().format("HH:mm:ss");
@@ -1226,19 +1329,19 @@ function CustomerOrder() {
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
                 added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, function(err, result){
                     
-                    if(result){
+                    if (result) {
                         /* Insert to audit table. */
                         auditObj = {
                             employee_id: added_by,
-                            action_id: 1,//create
+                            action_id: 1, //create
                             description: 'Placed an order. Timestamp: ' + date_ordered
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, function (errAudit, resultAudit) {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
-                        }
+                    }
 
                     res.json(err || result);
            });
@@ -1339,13 +1442,13 @@ function CustomerOrder() {
                                 return;
                             }
 
-                            con.query(queryUpdate, [orderId], function (err, result) {
+                            con.query(queryUpdate, [orderId], function (errUpdate, resultUpdate) {
                                 con.release();
-                                if (err) {
+                                if (errUpdate) {
                                     output = {
                                         status: 0,
                                         message: "Error updating collection status for order",
-                                        error: err
+                                        error: errUpdate
                                     };
 
                                     res.json(output);
