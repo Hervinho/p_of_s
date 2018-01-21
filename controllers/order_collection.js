@@ -232,11 +232,12 @@ function getFullOrderWithDetails(data) {
 
         /* Populate div for receipt */
         //order.
-        htmlOrder += '<p><strong>*** Point Of Sale ***</strong></p>' +
+        htmlOrder += '<p><strong> Point Of Sale System</strong></p>' +
+            '<p><strong> -------------------------- </strong></p>' +
             '<p><strong>Order Number:</strong> ' + myOrder.customer_order_id + '</p>' +
             '<p><strong>Order Timestamp:</strong> ' + myOrder.customer_order_timestamp + '</p>' +
-            '<p><strong>Captured by:</strong> ' + myOrder.employee_name + '</p>' +
-            '<p><strong>Total:</strong> R' + myOrder.total_amount + '</p>';
+            '<p><strong>Captured by:</strong> ' + myOrder.employee_name + '</p><br><br>' +
+            '<p><strong>Order Items</p><p><strong> ----------------- </strong></p>';
         
         //details.
         for (var key = 0, size = myOrderWithDetails.length; key < size; key++) {
@@ -248,18 +249,30 @@ function getFullOrderWithDetails(data) {
                 myOrderWithDetails[key].base_type_name = '-';
             }
 
-            htmlOrderDetails += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
-                myOrderWithDetails[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                myOrderWithDetails[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                myOrderWithDetails[key].topping_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                myOrderWithDetails[key].base_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                myOrderWithDetails[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
-                'R ' + myOrderWithDetails[key].amount + '</td></tr>';
+            htmlOrderDetails += '<p>' + myOrderWithDetails[key].product_name + ' | ' +
+                myOrderWithDetails[key].product_size_name + ' | ' +
+                myOrderWithDetails[key].topping_name + ' | ' +
+                myOrderWithDetails[key].base_type_name + ' | Quantity: ' +
+                myOrderWithDetails[key].product_quantity + ' | R' +
+                myOrderWithDetails[key].amount + '</p>';
         }
 
+        htmlOrderDetails += '<br><br><p><strong>Total:</strong> R' + myOrder.total_amount + '</p>';
         $("#orderReceiptInfo").html(htmlOrder);
-        $("#tblOrderReceiptDetails tbody").html(htmlOrderDetails);
-        //$('#orderReceipt').attr('hidden', false);
+        $("#orderReceiptDetails").html(htmlOrderDetails);
+
+        //print to pdf
+        var doc = new jsPDF();
+        var specialElementHandlers = {
+            '#editor': function (element, renderer) {
+                return true;
+            }
+        };
+        doc.fromHTML($('#orderReceipt').html(), 15, 15, {
+            'width': 700,
+            'elementHandlers': specialElementHandlers
+        });
+        doc.save('Customer_Receipt.pdf');
 
     } else {
         console.log('Cannot print');
