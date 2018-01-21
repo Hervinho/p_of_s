@@ -126,18 +126,18 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
 
 };
 
-//Function to Get grand total cash amount of all orders in previous shift.
+//Function to Get grand total amount of all orders (where payment_status_id = 1) in previous shift.
 //Can also be used to get total from any given shift, providing start end time.
 var getPreviousShiftTotal = function(start, end, callback){
     var feedback, output = {};
     var query = "SELECT SUM(total_amount) AS grand_total FROM customer_order WHERE customer_order_timestamp BETWEEN '" + 
-        start + "' AND '" + end + "'";
+        start + "' AND '" + end + "' AND payment_status_id = 1";
 
         connection.acquire(function (err, con) {
             if (err) {
                 output = {
                     status: 100,
-                    message: "Error in connection database"
+                    message: "Error connecting to database"
                 };
                 
                 callback(null, output);

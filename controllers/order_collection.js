@@ -222,12 +222,45 @@ function handleOrderDetailsData(data) {
 }
 
 function getFullOrderWithDetails(data) {
+    console.log(data);
+    var htmlOrder = '', htmlOrderDetails = '';
+
     if (data.status == 1) {
-        console.log(data);
         
-        //Print here.
         myOrder = data.customer_order;
         myOrderWithDetails = data.customer_order_details;
+
+        /* Populate div for receipt */
+        //order.
+        htmlOrder += '<p><strong>*** Point Of Sale ***</strong></p>' +
+            '<p><strong>Order Number:</strong> ' + myOrder.customer_order_id + '</p>' +
+            '<p><strong>Order Timestamp:</strong> ' + myOrder.customer_order_timestamp + '</p>' +
+            '<p><strong>Captured by:</strong> ' + myOrder.employee_name + '</p>' +
+            '<p><strong>Total:</strong> R' + myOrder.total_amount + '</p>';
+        
+        //details.
+        for (var key = 0, size = myOrderWithDetails.length; key < size; key++) {
+            
+            if(myOrderWithDetails[key].topping_name == null){
+                myOrderWithDetails[key].topping_name = '-';
+            }
+            if(myOrderWithDetails[key].base_type_name == null){
+                myOrderWithDetails[key].base_type_name = '-';
+            }
+
+            htmlOrderDetails += '<tr ><td class="mdl-data-table__cell--non-numeric">' +
+                myOrderWithDetails[key].product_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                myOrderWithDetails[key].product_size_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                myOrderWithDetails[key].topping_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                myOrderWithDetails[key].base_type_name + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                myOrderWithDetails[key].product_quantity + '</td><td class="mdl-data-table__cell--non-numeric">' +
+                'R ' + myOrderWithDetails[key].amount + '</td></tr>';
+        }
+
+        $("#orderReceiptInfo").html(htmlOrder);
+        $("#tblOrderReceiptDetails tbody").html(htmlOrderDetails);
+        $('#orderReceipt').attr('hidden', false);
+
     } else {
         console.log('Cannot print');
     }
