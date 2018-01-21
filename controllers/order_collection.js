@@ -259,7 +259,7 @@ function getFullOrderWithDetails(data) {
 
         $("#orderReceiptInfo").html(htmlOrder);
         $("#tblOrderReceiptDetails tbody").html(htmlOrderDetails);
-        $('#orderReceipt').attr('hidden', false);
+        //$('#orderReceipt').attr('hidden', false);
 
     } else {
         console.log('Cannot print');

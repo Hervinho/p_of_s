@@ -6,6 +6,12 @@
             <div class="entertainer-content">
                 <div class="mdl-grid back-end-content">
 
+                    <div class="extra-button mdl-cell mdl-cell--12-col">
+                      <a data-target="#dialogAddShift" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored no-shadow modal-trigger">
+                          <i class="material-icons">add</i>
+                      </a>
+                    </div>
+
                   <div class="entertainer-layout">
                       <div class="entertainer-content">
                        <h1>Shifts</h1> 
@@ -35,6 +41,7 @@
 
                     <!-- Dialog -->
                     <% include partials/view/dialogViewShift.ejs %>
+                    <% include partials/add/dialogAddShift.ejs %>
 
                 </div>
             </div>
