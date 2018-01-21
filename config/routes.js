@@ -655,6 +655,11 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getTotalAmountFromPreviousShift(res);
 	});
 
+	//check if orders have been placed in current shift. Used for petty cash.
+	express.get('/customerorders/pettycash/check', function (req, res) {
+		CustomerOrder.checkPreviousOrdersInShift(res);
+	});
+
 	//get total amount from orders of a specific date. For End of day report
 	express.get('/customerorders/total/date/:date', function (req, res) {
 		var date = req.params.date;

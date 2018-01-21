@@ -167,6 +167,46 @@ var getPreviousShiftTotal = function(start, end, callback){
         });
 };
 
+//count number of orders in current shift.
+var countOrdersInCurrentShift = function(start, end, callback){
+    var feedback, output = {};
+    var query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
+    console.log(start + ' - ' + end);
+        connection.acquire(function (err, con) {
+            if (err) {
+                output = {
+                    status: 100,
+                    message: "Error in connection database"
+                };
+                
+                callback(null, output);
+            }
+
+            con.query(query, [start, end], function (err, result) {
+                con.release();
+                
+                if (err) {
+                    output = {
+                        status: 0,
+                        message: "Error getting all orders in current shift",
+                        error: err
+                    };
+                    
+                    callback(null, output);
+                } else {
+                    console.log('Orders in current shift: ', result.length);
+                    output = {
+                        status: 1,
+                        message: 'Total number of orders in current shift retrieved',
+                        count: result.length
+                    };
+                    //console.log('getPreviousShiftTotal: ', result[0].grand_total);
+                    callback(null, output);
+                }
+            });
+        });
+};
+
 function CustomerOrder() {
     //get all customer orders.
     this.getAll = function (res) {
@@ -1021,6 +1061,83 @@ function CustomerOrder() {
             return;
         }
 
+    };
+
+    //get number of orders in current shift.
+    this.checkPreviousOrdersInShift = function(res){
+        var today = moment().format("YYYY-MM-DD"), current_time = moment().format("HH:mm:ss");
+        var output ={}, queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time > '" + 
+        current_time + "'";
+        var start, end;
+
+        connection.acquire(function (err, con) {
+            if (err) {
+                res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                });
+                return;
+            }
+
+            con.query(queryGetShift, function (errShift, resultShift) {
+                con.release();
+                if (errShift) {
+                    output = {
+                        status: 0,
+                        message: 'Error getting shift',
+                        error: errShift
+                    };
+                    
+                    res.json(output);
+                    return;
+                } else {
+                    if (resultShift.length > 0) {
+                        //console.log('resultShift: ', resultShift);
+                        start = moment(today + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        end = moment(today + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+
+                        countOrdersInCurrentShift(start, end, function(errCount, resultCount){
+                            if(errCount){
+                                res.json(errCount);
+                                return;
+                            }
+                            else{
+                                console.log('resultCount: ', resultCount);
+                                if(resultCount.count == 0){
+                                    output = {
+                                        status: 1,
+                                        message: 'No order placed during this shift yet. You can capture petty cash.',
+                                        count: resultCount.count
+                                    };
+                                }
+                                else{
+                                    output = {
+                                        status: 0,
+                                        message: 'Orders have already been placed during this shift.',
+                                        count: resultCount.count
+                                    };
+                                }
+
+                                res.json(output);
+                                return;
+                            }
+
+                        });
+
+                    } else {
+                        output = {
+                            status: 0,
+                            message: 'No such shift found'
+                        };
+
+                        res.json(output);
+                        return;
+                    }
+                    
+                }
+            });
+        });
+        
     };
 
     //submit customer order.
