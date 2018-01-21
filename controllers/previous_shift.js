@@ -39,7 +39,7 @@ $(document).ready(function () {
  }
 
  function CapturePettyCash(){
-    //console.log($("#txtPettyCash").val());
+    
     var obj = {amount: $("#txtPettyCash").val()};
 
     $.ajax({
@@ -60,6 +60,7 @@ $(document).ready(function () {
             }
         },
         error: function (e) {
+            console.log(e);
             message = "Something went wrong";
             toastr.error(message);
         }
@@ -91,7 +92,7 @@ $(document).ready(function () {
     console.log(data);
 
     if(data.status == 1){
-        //prompt to capture petty cash.
+        //enable button to capture petty cash.
         toastr.info(data.message);
         $('#captureButton').attr('disabled', false);
     }
