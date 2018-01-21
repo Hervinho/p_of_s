@@ -1106,14 +1106,14 @@ function CustomerOrder() {
                                 if(resultCount.count == 0){
                                     output = {
                                         status: 1,
-                                        message: 'No order placed during this shift yet. You can capture petty cash.',
+                                        message: 'No order placed during this shift yet. Please capture petty cash.',
                                         count: resultCount.count
                                     };
                                 }
                                 else{
                                     output = {
                                         status: 0,
-                                        message: 'Orders have already been placed during this shift.',
+                                        message: 'Cannot capture petty cash. Orders have already been placed during this shift.',
                                         count: resultCount.count
                                     };
                                 }
@@ -1138,6 +1138,47 @@ function CustomerOrder() {
             });
         });
         
+    };
+
+    //count number of orders in current shift. Same as the on above but this guy can be used ni other models.
+    //used for PETTY CASH
+    this.countOrdersInCurrentShiftV2 = function(start, end, callback){
+        var feedback, output = {};
+        var query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
+        console.log(start + ' - ' + end);
+            connection.acquire(function (err, con) {
+                if (err) {
+                    output = {
+                        status: 100,
+                        message: "Error in connection database"
+                    };
+                    
+                    callback(null, output);
+                }
+    
+                con.query(query, [start, end], function (err, result) {
+                    con.release();
+                    
+                    if (err) {
+                        output = {
+                            status: 0,
+                            message: "Error getting all orders in current shift",
+                            error: err
+                        };
+                        
+                        callback(null, output);
+                    } else {
+                        console.log('Orders in current shift: ', result.length);
+                        output = {
+                            status: 1,
+                            message: 'Total number of orders in current shift retrieved',
+                            count: result.length
+                        };
+                        //console.log('getPreviousShiftTotal: ', result[0].grand_total);
+                        callback(null, output);
+                    }
+                });
+            });
     };
 
     //submit customer order.
@@ -1438,6 +1479,7 @@ function CustomerOrder() {
             });
         });
     };
+
 }
 
 module.exports = new CustomerOrder();

@@ -5,16 +5,21 @@
                 width: 100px !important;
             }
         </style>
+        
         <!-- MAIN PAGE CONTENT START -->
         <main class="mdl-layout__content mdl-color--white">
             <div class="entertainer-content">
                 <div class="mdl-grid back-end-content">
+
                     <div id="PreviousShiftInfo" class="mdl-cell mdl-cell--6-col mdl-cell--3-col-tablet">
                         
                     </div>
 
                     <div class="entertainer-layout">
                         <div class="entertainer-content">
+                            <a disabled id="captureButton" data-target="#dialogCapturePettyCash" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color-text--white no-shadow modal-trigger">
+                                Capture Petty Cash
+                            </a><br>
 
                             <h1>Place New Order</h1>
                             <div class="mdl-grid">
@@ -71,6 +76,7 @@
 
                     <!-- Dialog -->
                     <% include partials/view/dialogViewCheckout.ejs %>
+                    <% include partials/add/dialogCapturePettyCash.ejs %>
 
                 </div>
             </div>

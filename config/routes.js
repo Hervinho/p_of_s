@@ -73,7 +73,7 @@ var PettyCashAPIs = function(express){
 	//create new audits.
 	express.post('/pettycash', function (req, res) {
 		var pettyCashObj = req.body;
-		//pettyCashObj.employee_id = employeeID;
+		pettyCashObj.employee_id = employeeID;
 		PettyCash.create(pettyCashObj, res);
 	});
 };
