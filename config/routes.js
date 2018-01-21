@@ -25,6 +25,7 @@ var BaseType = require('../models/BaseType');
 var AccountType = require('../models/AccountType');
 var CardPayment = require('../models/CardPayment');
 var Topping = require('../models/Topping');
+var PettyCash = require('../models/PettyCash');
 
 //global variables.
 var employeeID, employeeCode, roleID, profileObject, shiftMessage, 
@@ -54,6 +55,21 @@ function isUserLoggedIn(req, res, next) {
 /*********** APIs Configurations ************/
 /* ---------------------------------------- */
 
+var PettyCashAPIs = function(express){
+	//get all petty cash captured.
+	express.get('/pettycash', function (req, res) {
+		PettyCash.getAll(res);
+	});
+
+	//create new audits.
+	express.post('/pettycash', function (req, res) {
+		var pettyCashObj = req.body;
+		//pettyCashObj.employee_id = employeeID;
+		PettyCash.create(pettyCashObj, res);
+	});
+};
+
+//Just for testing. They get called inside the models.
 var AuditAPIs = function(express){
 	//get all audits.
 	express.get('/audits', function (req, res) {
@@ -655,7 +671,7 @@ var CustomerOrderAPIs = function (express) {
 		CustomerOrder.getTotalAmountFromPreviousShift(res);
 	});
 
-	//check if orders have been placed in current shift. Used for petty cash.
+	//check if orders have been placed in current shift. Used to check for PETTY CASH.
 	express.get('/customerorders/pettycash/check', function (req, res) {
 		CustomerOrder.checkPreviousOrdersInShift(res);
 	});
@@ -1304,6 +1320,7 @@ module.exports = {
 		CardPaymentAPIs(apiRoutes);
 		ToppingAPIs(apiRoutes);
 		AuditAPIs(apiRoutes);
+		PettyCashAPIs(apiRoutes);
 	},
 	configureAllViews: function (viewRoutes) {
 		configViews(viewRoutes);

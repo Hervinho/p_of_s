@@ -1063,7 +1063,7 @@ function CustomerOrder() {
 
     };
 
-    //get number of orders in current shift.
+    //get number of orders in current shift. Used to check for PETTY CASH
     this.checkPreviousOrdersInShift = function(res){
         var today = moment().format("YYYY-MM-DD"), current_time = moment().format("HH:mm:ss");
         var output ={}, queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time > '" + 

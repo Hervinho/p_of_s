@@ -3,27 +3,35 @@ var connection = require('../config/connection');
 function Gender() {
   //get all statuses.
   this.getAll = function (res) {
-    var output = {}, query = 'SELECT * FROM gender';
+    var output = {},
+      query = 'SELECT * FROM gender';
 
     connection.acquire(function (err, con) {
       if (err) {
-        res.json({ status: 100, message: "Error in connection database" });
+        res.json({
+          status: 100,
+          message: "Error in connection database"
+        });
         return;
       }
-      
+
       con.query(query, function (err, result) {
         con.release();
-        if(err){
-            res.json(err);
-        }
-        else{
-          if(result.length > 0){
-            output = {status: 1, genders: result};
-        }
-        else{
-            output = {status: 0, message:'No genders found'};
-        }
-        res.json(output);
+        if (err) {
+          res.json(err);
+        } else {
+          if (result.length > 0) {
+            output = {
+              status: 1,
+              genders: result
+            };
+          } else {
+            output = {
+              status: 0,
+              message: 'No genders found'
+            };
+          }
+          res.json(output);
         }
       });
     });
@@ -31,28 +39,36 @@ function Gender() {
 
   //get a single gender.
   this.getOne = function (id, res) {
-    var output = {}, query = 'SELECT * FROM gender WHERE gender_id = ?';
+    var output = {},
+      query = 'SELECT * FROM gender WHERE gender_id = ?';
 
     connection.acquire(function (err, con) {
       if (err) {
-        res.json({ status: 100, message: "Error in connection database" });
+        res.json({
+          status: 100,
+          message: "Error in connection database"
+        });
         return;
       }
 
       con.query(query, id, function (err, result) {
         con.release();
-        if(err){
+        if (err) {
           res.json(err);
-      }
-      else{
-        if(result.length > 0){
-          output = {status: 1, gender: result[0]};
-      }
-      else{
-          output = {status: 0, message:'No such gender found'};
-      }
-      res.json(output);
-      }
+        } else {
+          if (result.length > 0) {
+            output = {
+              status: 1,
+              gender: result[0]
+            };
+          } else {
+            output = {
+              status: 0,
+              message: 'No such gender found'
+            };
+          }
+          res.json(output);
+        }
       });
     });
   };
@@ -66,7 +82,10 @@ function Gender() {
     if (undefined !== gender_name && gender_name != '') {
       connection.acquire(function (err, con) {
         if (err) {
-          res.json({ status: 100, message: "Error in connection database" });
+          res.json({
+            status: 100,
+            message: "Error in connection database"
+          });
           return;
         }
 
@@ -108,7 +127,10 @@ function Gender() {
     if (undefined !== gender_name && gender_name != '' && undefined !== gender_id && gender_id != '') {
       connection.acquire(function (err, con) {
         if (err) {
-          res.json({ status: 100, message: "Error in connection database" });
+          res.json({
+            status: 100,
+            message: "Error in connection database"
+          });
           return;
         }
 
@@ -121,7 +143,10 @@ function Gender() {
               //Update.
               connection.acquire(function (err, con) {
                 if (err) {
-                  res.json({ status: 100, message: "Error in connection database" });
+                  res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                  });
                   return;
                 }
 
