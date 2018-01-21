@@ -57,6 +57,7 @@ function GetAllOrders(){
         //toastr.info("Date + Shift");
         GetAllOrdersPerDateAndShift(orderSelectDateVal, orderSelectShiftVal);
         GetAdditionalInfoDateAndShift(orderSelectDateVal, orderSelectShiftVal);
+        GetPettyCashInfo(orderSelectDateVal, orderSelectShiftVal);
     }
     else{
         toastr.error("Select a date AND shift");
@@ -129,6 +130,23 @@ function GetAdditionalInfoDateAndShift(date, id){
         dataType: "json",
         cache: false,
         success: displayAdditionalInfo,
+        error: function (e) {
+            message = "Something went wrong";
+            toastr.error(message);
+        }
+
+    });
+}
+
+function GetPettyCashInfo(date, id){
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        contentType: 'application/json; charset=utf-8',
+        url: '/api/v1/pettycash/shifts/' + id + '/date/' + date,
+        dataType: "json",
+        cache: false,
+        success: displayPettyCashInfo,
         error: function (e) {
             message = "Something went wrong";
             toastr.error(message);
@@ -215,7 +233,7 @@ function displayCardDetails(data){
 
 function displayAdditionalInfo(data){
     var message = data.message, total = data.total, html_message = '';
-    var html = '<h5>Day Info</h5>';
+    var html = '<h5>Shift Info</h5>';
 
     if(data.status == 1){
         html_message += '<p><strong>Total sales amount: R'+ data.total + '</strong></p>';
@@ -226,4 +244,21 @@ function displayAdditionalInfo(data){
     }
 
     $("#additionalInfoShift ").html(html + html_message);
+}
+
+function displayPettyCashInfo(data){
+    //console.log(data.petty_cash[0]);
+    var message = data.message, amount = data.petty_cash.amount, html = '';
+
+    if(data.status == 1){
+        html += '<p><strong>Petty Cash captured: R'+ data.petty_cash[0].amount + '</strong></p>' +
+        '<p><strong>Petty Cash captured by: '+ data.petty_cash[0].employee_name + ' - ' + data.petty_cash[0].employee_code + 
+        '</strong></p>';
+    }
+    else{
+        html += '<p style="color: red;"><strong>Petty Cash captured: </strong>'+ data.message + '</p>';
+    }
+
+    console.log(html);
+    $("#additionalInfoShift").append(html);
 }

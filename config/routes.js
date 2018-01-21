@@ -61,6 +61,15 @@ var PettyCashAPIs = function(express){
 		PettyCash.getAll(res);
 	});
 
+	//get petty cash captured during a shift of specific date.
+	express.get('/pettycash/shifts/:id/date/:date', function (req, res) {
+		var pettyCashObj = {
+			shift_id: req.params.id,
+			date: req.params.date
+		};
+		PettyCash.getPerDayAndShift(pettyCashObj, res);
+	});
+
 	//create new audits.
 	express.post('/pettycash', function (req, res) {
 		var pettyCashObj = req.body;
