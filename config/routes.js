@@ -1232,7 +1232,7 @@ var configViews = function (express) {
 
 	//End of shift report.
 	express.get('/report/endofshift', isUserLoggedIn, function (req, res) {
-		if (roleID == 1) {
+		/*if (roleID == 1) {
 			res.render('endof_shift_report', {
 				employeeCode: employeeCode
 			});
@@ -1240,7 +1240,10 @@ var configViews = function (express) {
 			res.render('401', {
 				employeeCode: employeeCode, roleMessage: roleMessage
 			});
-		}
+		}*/
+		res.render('endof_shift_report', {
+			employeeCode: employeeCode
+		});
 
 	});
 
