@@ -343,6 +343,7 @@
                     var disabled = '';
                     if (products[key].product_type_id === 1) {
                         //toppings
+                        //_toppingsHtml = '<option value="0"></option>';
                         toppings.forEach(function (el) {
                             _toppingsHtml += '<option value=' + el.topping_id + '>' + el.topping_name + '</option>';
                         });
@@ -365,8 +366,8 @@
                         '<option value="20">Medium</option>' +
                         '<option value="30">Large</option>' +
                         '</select> </td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' >' + _toppingsHtml + '</select></td>' +
-                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="basetype' + key + '" data-key="' + key + '" ' + disabled + ' >' + _basetypesHtml + '</select></td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="topping' + key + '" data-key="' + key + '" ' + disabled + ' disabled>' + _toppingsHtml + '</select></td>' +
+                        '<td class="mdl-data-table__cell--non-numeric"><select class="topping" id="basetype' + key + '" data-key="' + key + '" ' + disabled + ' disabled>' + _basetypesHtml + '</select></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">  <input class="quantity" type="number" value="' + quantity[key] + '" data-key="' + key + '" id="quantity' + key + '" /> </td>' +
                         '<td class="mdl-data-table__cell--non-numeric"> <input class="total" type="text" value="R ' + total[key] + '" id="total' + key + '" disabled></td>' +
                         '<td class="mdl-data-table__cell--non-numeric">' +
@@ -400,7 +401,11 @@
                     }
                     var price = data.products[key].product_price;
                     sizes[key] = size;
-                    console.log('topping: ' + topping, 'type: ' + typeof topping);
+                    
+                    /*$(document).on('change', '#topping' + key, function () {
+                        console.log('topping: ' + $('#topping' + key).val(), 'type: ' + typeof topping);
+                    });*/
+
                     //increase amount by 10 if topping is chosen.
                     if(topping > 0){
                         total[key] = (price + parseInt(sizes[key]) + 10) * quantity[key];
