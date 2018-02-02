@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function ShiftBookingStatus() {
     //get all statuses.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM booking_status';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function ShiftBookingStatus() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);

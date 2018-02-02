@@ -1,13 +1,13 @@
-var connection = require('../config/connection');
-var Audit = require('./Audit');
+const connection = require('../config/connection');
+const Audit = require('./Audit');
 
 function Shift() {
     //get all shifts.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM shift';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -16,7 +16,7 @@ function Shift() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -39,11 +39,11 @@ function Shift() {
     };
 
     //get a single shift.
-    this.getOne = function (shiftId, res) {
-        var output = {},
+    this.getOne = (shiftId, res) => {
+        let output = {},
             query = 'SELECT * FROM shift WHERE shift_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -52,7 +52,7 @@ function Shift() {
                 return;
             }
 
-            con.query(query, [shiftId], function (err, result) {
+            con.query(query, [shiftId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -75,11 +75,11 @@ function Shift() {
     };
 
     //get details of a specific shift. Same as getOne, but this one returns a callback.
-    this.getFiltered = function (shiftId, callback) {
-        var output = {},
+    this.getFiltered = (shiftId, callback) => {
+        let output = {},
             query = 'SELECT * FROM shift WHERE shift_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -88,7 +88,7 @@ function Shift() {
                 return;
             }
 
-            con.query(query, [shiftId], function (err, result) {
+            con.query(query, [shiftId], (err, result) => {
                 con.release();
                 if (err) {
                     callback(null, err);
@@ -114,10 +114,10 @@ function Shift() {
     };
 
     //create new shift.
-    this.create = function (shiftObj, res) {
-        var feedback, output = {},
+    this.create = (shiftObj, res) => {
+        let feedback, output = {},
             query = "INSERT INTO shift (shift_name, shift_start_time, shift_end_time) VALUES (?,?,?)";
-        var shift_name = shiftObj.shift_name,
+        let shift_name = shiftObj.shift_name,
             shift_start_time = shiftObj.shift_start_time,
             shift_end_time = shiftObj.shift_end_time,
             added_by = shiftObj.added_by;
@@ -125,7 +125,7 @@ function Shift() {
 
         if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
             (undefined !== shift_end_time && shift_end_time != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -134,7 +134,7 @@ function Shift() {
                     return;
                 }
 
-                con.query(query, [shift_name, shift_start_time, shift_end_time], function (err, result) {
+                con.query(query, [shift_name, shift_start_time, shift_end_time], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -147,13 +147,13 @@ function Shift() {
                         };
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: added_by,
                             action_id: 1,//create
                             description: 'Created shift: ' + shift_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -173,10 +173,10 @@ function Shift() {
     };
 
     //update shift.
-    this.update = function (shiftObj, res) {
-        var feedback, output = {},
+    this.update = (shiftObj, res) => {
+        let feedback, output = {},
             query = "UPDATE shift SET shift_name=?, shift_start_time=?, shift_end_time=? WHERE shift_id=?";
-        var shift_name = shiftObj.shift_name,
+        let shift_name = shiftObj.shift_name,
             shift_start_time = shiftObj.shift_start_time,
             shift_end_time = shiftObj.shift_end_time,
             shift_id = shiftObj.shift_id,
@@ -184,7 +184,7 @@ function Shift() {
 
         if ((undefined !== shift_name && shift_name != '') && (undefined !== shift_start_time && shift_start_time != '') &&
             (undefined !== shift_end_time && shift_end_time != '') && (undefined !== shift_id && shift_id != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -193,7 +193,7 @@ function Shift() {
                     return;
                 }
 
-                con.query(query, [shift_name, shift_start_time, shift_end_time, shift_id], function (err, result) {
+                con.query(query, [shift_name, shift_start_time, shift_end_time, shift_id], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -206,13 +206,13 @@ function Shift() {
                         };
 
                          /* Insert to audit table. */
-                         var auditObj = {
+                         let auditObj = {
                             employee_id: added_by,
                             action_id: 2,//update
                             description: 'Updated shift: ' + shift_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -233,11 +233,11 @@ function Shift() {
     };
 
     //delete shift.
-    this.delete = function (shiftObj, res) {
-        var feedback, output = {}, query = "DELETE FROM shift WHERE shift_id=?";
-        var shiftId = shiftObj.shift_id, added_by = shiftObj.added_by;
+    this.delete = (shiftObj, res) => {
+        let feedback, output = {}, query = "DELETE FROM shift WHERE shift_id=?";
+        let shiftId = shiftObj.shift_id, added_by = shiftObj.added_by;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -246,7 +246,7 @@ function Shift() {
                     return;
                 }
 
-                con.query(query, [shiftId], function (err, result) {
+                con.query(query, [shiftId], (err, result) => {
                     con.release();
                     if (err) {
                         output = {

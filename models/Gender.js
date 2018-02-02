@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function Gender() {
   //get all statuses.
-  this.getAll = function (res) {
-    var output = {},
+  this.getAll = (res) => {
+    let output = {},
       query = 'SELECT * FROM gender';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -15,7 +15,7 @@ function Gender() {
         return;
       }
 
-      con.query(query, function (err, result) {
+      con.query(query, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -38,11 +38,11 @@ function Gender() {
   };
 
   //get a single gender.
-  this.getOne = function (id, res) {
-    var output = {},
+  this.getOne = (id, res) => {
+    let output = {},
       query = 'SELECT * FROM gender WHERE gender_id = ?';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -51,7 +51,7 @@ function Gender() {
         return;
       }
 
-      con.query(query, id, function (err, result) {
+      con.query(query, id, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -74,13 +74,13 @@ function Gender() {
   };
 
   //create gender.
-  this.create = function (genderObj, res) {
-    var output = {},
+  this.create = (genderObj, res) => {
+    let output = {},
       query = "INSERT iNTO gender(gender_name) VALUES(?)";
-    var feedback, gender_name = genderObj.gender_name;
+    let feedback, gender_name = genderObj.gender_name;
 
     if (undefined !== gender_name && gender_name != '') {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -89,7 +89,7 @@ function Gender() {
           return;
         }
 
-        con.query(query, [gender_name], function (err, result) {
+        con.query(query, [gender_name], (err, result) => {
           con.release();
           if (err) {
             res.json(err);
@@ -117,15 +117,15 @@ function Gender() {
   };
 
   //update gender.
-  this.update = function (genderObj, res) {
-    var output = {},
+  this.update = (genderObj, res) => {
+    let output = {},
       queryFind = 'SELECT * FROM gender WHERE gender_id = ?',
       query = "UPDATE gender SET gender_name = ? WHERE gender_id = ?";
-    var feedback, gender_name = genderObj.gender_name,
+    let feedback, gender_name = genderObj.gender_name,
       gender_id = genderObj.gender_id;
 
     if (undefined !== gender_name && gender_name != '' && undefined !== gender_id && gender_id != '') {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -134,14 +134,14 @@ function Gender() {
           return;
         }
 
-        con.query(queryFind, gender_id, function (err, result) {
+        con.query(queryFind, gender_id, (err, result) => {
           con.release();
           if (err) {
             res.json(err);
           } else {
             if (result.length > 0) {
               //Update.
-              connection.acquire(function (err, con) {
+              connection.acquire((err, con) => {
                 if (err) {
                   res.json({
                     status: 100,
@@ -150,7 +150,7 @@ function Gender() {
                   return;
                 }
 
-                con.query(query, [gender_name, gender_id], function (err, result) {
+                con.query(query, [gender_name, gender_id], (err, result) => {
                   con.release();
                   if (err) {
                     res.json(err);

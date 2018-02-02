@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function Supplier() {
     //get all suppliers.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM supplier';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function Supplier() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -38,11 +38,11 @@ function Supplier() {
     };
 
     //get a single supplier.
-    this.getOne = function (supplierId, res) {
-        var output = {},
+    this.getOne = (supplierId, res) => {
+        let output = {},
             query = 'SELECT * FROM supplier WHERE supplier_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -51,7 +51,7 @@ function Supplier() {
                 return;
             }
 
-            con.query(query, supplierId, function (err, result) {
+            con.query(query, supplierId, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -74,10 +74,10 @@ function Supplier() {
     };
 
     //add new supplier.
-    this.create = function (supplierObj, res) {
-        var output = {},
+    this.create = (supplierObj, res) => {
+        let output = {},
             feedback, query = "INSERT iNTO supplier VALUES(?,?,?,?,?)";
-        var supplier_name = supplierObj.supplier_name,
+        let supplier_name = supplierObj.supplier_name,
             supplier_location = supplierObj.supplier_location,
             supplier_phone = supplierObj.supplier_phone,
             supplier_email = supplierObj.supplier_email;
@@ -85,7 +85,7 @@ function Supplier() {
         if ((undefined !== supplier_name && supplier_name != '') && (undefined !== supplier_location && supplier_location != '') &&
             (undefined !== supplier_phone && supplier_phone != '') && (undefined !== supplier_email && supplier_email != '')
         ) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -94,7 +94,7 @@ function Supplier() {
                     return;
                 }
 
-                con.query(query, [null, supplier_name, supplier_location, supplier_phone, supplier_email], function (err, result) {
+                con.query(query, [null, supplier_name, supplier_location, supplier_phone, supplier_email], (err, result) => {
                     con.release();
                     if (err) {
                         if(err.code == 'ER_DUP_ENTRY'){
@@ -135,10 +135,10 @@ function Supplier() {
     };
 
     //update supplier.
-    this.update = function (supplierObj, res) {
-        var output = {},
+    this.update = (supplierObj, res) => {
+        let output = {},
             feedback, query = "UPDATE supplier SET supplier_name=?, supplier_location=?, supplier_phone=?, supplier_email=? WHERE supplier_id=?";
-        var supplier_name = supplierObj.supplier_name,
+        let supplier_name = supplierObj.supplier_name,
             supplier_location = supplierObj.supplier_location,
             supplier_phone = supplierObj.supplier_phone,
             supplier_email = supplierObj.supplier_email,
@@ -148,7 +148,7 @@ function Supplier() {
             (undefined !== supplier_phone && supplier_phone != '') && (undefined !== supplier_email && supplier_email != '') &&
             (undefined !== supplier_id && supplier_id != '')
         ) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -157,7 +157,7 @@ function Supplier() {
                     return;
                 }
 
-                con.query(query, [supplier_name, supplier_location, supplier_phone, supplier_email, supplier_id], function (err, result) {
+                con.query(query, [supplier_name, supplier_location, supplier_phone, supplier_email, supplier_id], (err, result) => {
                     con.release();
                     if (err) {
                         if(err.code == 'ER_DUP_ENTRY'){
@@ -174,6 +174,7 @@ function Supplier() {
                                 error: err
                             };
                         }
+
                         res.json(output);
                     } else {
                         feedback = 'Supplier successfully updated';
@@ -182,6 +183,7 @@ function Supplier() {
                             message: feedback,
                             updatedSupplierName: supplier_name
                         };
+                        
                         res.json(output);
                     }
                 });

@@ -1,17 +1,17 @@
-var connection = require('../config/connection');
-var crypto = require("crypto-js");
-var SHA256 = require("crypto-js/sha256");
-var moment = require('moment');
-var request = require('request');
-var emailAPI = "http://54.210.132.91:6060/notifications/email";
-var Audit = require('./Audit');
+const connection = require('../config/connection');
+const crypto = require("crypto-js");
+const SHA256 = require("crypto-js/sha256");
+const moment = require('moment');
+const request = require('request');
+const emailAPI = "";
+const Audit = require('./Audit');
 
-var recordLogin = function (employeeId, callback) {
-    var output = {},
+let recordLogin = (employeeId, callback) => {
+    let output = {},
         now = moment().format('YYYY-MM-DD HH:mm:ss');
-    var query = "INSERT INTO login_record VALUES(?,?)";
+    let query = "INSERT INTO login_record VALUES(?,?)";
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
         if (err) {
             output = {
                 status: 100,
@@ -22,7 +22,7 @@ var recordLogin = function (employeeId, callback) {
         }
 
 
-        con.query(query, [employeeId, now], function (err, result) {
+        con.query(query, [employeeId, now], (err, result) => {
             con.release();
             if (err) {
                 output = {
@@ -44,12 +44,12 @@ var recordLogin = function (employeeId, callback) {
 
 function Employee() {
     //Count total number of active male/females employees.
-    this.countAllByGender = function (genderId, res) {
-        var query = 'SELECT COUNT(*) AS empGenderCount FROM employee WHERE employee_status_id = 1 ' +
+    this.countAllByGender = (genderId, res) => {
+        let query = 'SELECT COUNT(*) AS empGenderCount FROM employee WHERE employee_status_id = 1 ' +
         'AND employee_gender_id = ?';
 
-        connection.acquire(function (err, con) {
-        con.query(query, genderId, function (err, result) {
+        connection.acquire((err, con) => {
+        con.query(query, genderId, (err, result) => {
             con.release();
             res.json(result);
         });
@@ -57,12 +57,12 @@ function Employee() {
     };
 
     //Count total number of active employees of a certain role.
-    this.countAllByRole = function (roleId, res) {
-        var query = 'SELECT COUNT(*) AS empRoleCount FROM employee WHERE employee_status_id = 1 ' +
+    this.countAllByRole = (roleId, res) => {
+        let query = 'SELECT COUNT(*) AS empRoleCount FROM employee WHERE employee_status_id = 1 ' +
         'AND employee_role_id = ?';
 
-        connection.acquire(function (err, con) {
-        con.query(query, roleId, function (err, result) {
+        connection.acquire((err, con) => {
+        con.query(query, roleId, (err, result) => {
             con.release();
             res.json(result);
         });
@@ -70,11 +70,11 @@ function Employee() {
     };
 
     //get all employees
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = "SELECT * FROM employee";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -83,7 +83,7 @@ function Employee() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -106,11 +106,11 @@ function Employee() {
     };
 
     //get all employees of a certain status (active/inactive)
-    this.getByStatus = function (statusId, res) {
-        var output = {},
+    this.getByStatus = (statusId, res) => {
+        let output = {},
             query = "SELECT * FROM employee WHERE employee_status_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -119,7 +119,7 @@ function Employee() {
                 return;
             }
 
-            con.query(query, [statusId], function (err, result) {
+            con.query(query, [statusId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -142,11 +142,11 @@ function Employee() {
     };
 
     //get all employees of a certain role
-    this.getByRole = function (roleId, res) {
-        var output = {},
+    this.getByRole = (roleId, res) => {
+        let output = {},
             query = "SELECT * FROM employee WHERE employee_role_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -155,7 +155,7 @@ function Employee() {
                 return;
             }
 
-            con.query(query, [roleId], function (err, result) {
+            con.query(query, [roleId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -178,11 +178,11 @@ function Employee() {
     };
 
     //get a single employee.
-    this.getOne = function (employeeId, res) {
-        var output = {},
+    this.getOne = (employeeId, res) => {
+        let output = {},
             query = "SELECT * FROM employee WHERE employee_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -191,7 +191,7 @@ function Employee() {
                 return;
             }
 
-            con.query(query, [employeeId], function (err, result) {
+            con.query(query, [employeeId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -214,18 +214,18 @@ function Employee() {
     };
 
     //Employee login
-    this.login = function (req, res) {
-        var employeeObj = req.body;
+    this.login = (req, res) => {
+        let employeeObj = req.body;
         console.log(employeeObj);
-        var output = {},
+        let output = {},
             feedback, query = "SELECT * FROM employee WHERE employee_code = ? AND employee_password = ?";
             //"AND employee_status_id = 1";
-        var employee_code = employeeObj.employee_code,
+        let employee_code = employeeObj.employee_code,
             employee_password = String(employeeObj.employee_password);
 
         if ((undefined !== employee_code && employee_code != '') && (undefined !== employee_password && employee_password != '')) {
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -237,13 +237,13 @@ function Employee() {
                 employee_password = SHA256(employee_password).toString();
                 //console.log('Password: ', employee_password);
                 
-                con.query(query, [employee_code, employee_password], function (err, result) {
+                con.query(query, [employee_code, employee_password], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
-                            var employee = result[0];
+                            let employee = result[0];
                             
                             if(employee.employee_status_id != 1){
                                 output = {
@@ -258,7 +258,7 @@ function Employee() {
                             feedback = "Login success";
 
                             //Record login attempt into login_record table.
-                            recordLogin(employee.employee_id, function (err, result) {
+                            recordLogin(employee.employee_id, (err, result) => {
                                 if (err) {
                                     output = {
                                         status: 1,
@@ -308,7 +308,7 @@ function Employee() {
     };
 
     //Employee logout.
-	this.logout = function (req, res) {
+	this.logout = (req, res) => {
 		//clear session content
 		req.PhemePointOfSaleProjectSession.reset();
 
@@ -316,10 +316,10 @@ function Employee() {
 	};
 
     //create employee.
-    this.create = function (employeeObj, res) {
-        var output = {},
+    this.create = (employeeObj, res) => {
+        let output = {},
             feedback, query = "INSERT INTO employee VALUES(?,?,?,?,?,?,?,?,?,?,?)";
-        var employee_id_number = employeeObj.employee_id_number,
+        let employee_id_number = employeeObj.employee_id_number,
             employee_dob = employeeObj.employee_dob
             employee_name = employeeObj.employee_name,
             employee_gender_id = employeeObj.employee_gender_id,
@@ -339,7 +339,7 @@ function Employee() {
         ) {
             //employee_dob = moment(employee_dob).format('YYYY-MM-DD');
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -348,7 +348,7 @@ function Employee() {
                     return;
                 }
 
-                con.query(query, [null, employee_id_number, employee_dob, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_status_id], function (err, result) {
+                con.query(query, [null, employee_id_number, employee_dob, employee_name, employee_gender_id, employee_role_id, employee_code, employee_phone, employee_email, employee_password, employee_status_id], (err, result) => {
                     con.release();
                     if (err) {
                         if (err.code == 'ER_DUP_ENTRY') {
@@ -375,19 +375,19 @@ function Employee() {
                         };
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: added_by,
                             action_id: 1,//create
                             description: 'Created new Employee. Code: ' + employee_code
                         };
                         
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
 
                         //send email to new employee with his/her employee code.
-                        var messageObj = {
+                        let messageObj = {
                             subject: 'Welcome To the Point Of Sale staff',
                             destination: employee_email,
                             content: [
@@ -426,11 +426,11 @@ function Employee() {
     };
 
     //update employee by admin. Can only change role and/or status.
-    this.update = function (employeeObj, res) {
-        var output = {},
+    this.update = (employeeObj, res) => {
+        let output = {},
             feedback, query = "UPDATE employee SET employee_role_id=?, employee_status_id=? " +
             "WHERE employee_id=?";
-        var employee_role_id = employeeObj.employee_role_id,
+        let employee_role_id = employeeObj.employee_role_id,
             employee_id = employeeObj.employee_id,
             employee_status_id = employeeObj.employee_status_id,
             added_by = employeeObj.added_by;
@@ -439,7 +439,7 @@ function Employee() {
             (undefined !== employee_role_id && employee_role_id != '')
         ) {
             
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -448,7 +448,7 @@ function Employee() {
                     return;
                 }
 
-                con.query(query, [employee_role_id, employee_status_id, employee_id], function (err, result) {
+                con.query(query, [employee_role_id, employee_status_id, employee_id], (err, result) => {
                     con.release();
                     if (err) {
                         //console.log(err);
@@ -469,13 +469,13 @@ function Employee() {
                         };
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: added_by,
                             action_id: 2,//update
                             description: 'Updated Employee ID: ' + employee_id
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -495,10 +495,10 @@ function Employee() {
     };
 
     //update employee info/profile. Done by employee him/herself.
-    this.updateProfile = function (employeeObj, res) {
-        var output = {}, feedback, 
+    this.updateProfile = (employeeObj, res) => {
+        let output = {}, feedback, 
             query = "UPDATE employee SET employee_phone=?, employee_email=? WHERE employee_id=?";
-        var employee_id = employeeObj.employee_id,
+        let employee_id = employeeObj.employee_id,
             employee_phone = employeeObj.employee_phone,
             employee_email = employeeObj.employee_email;
 
@@ -506,7 +506,7 @@ function Employee() {
             (undefined !== employee_id && employee_id != '')
         ) {
             
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -515,7 +515,7 @@ function Employee() {
                     return;
                 }
 
-                con.query(query, [employee_phone, employee_email, employee_id], function (err, result) {
+                con.query(query, [employee_phone, employee_email, employee_id], (err, result) => {
                     con.release();
                     if (err) {
                         
@@ -555,11 +555,11 @@ function Employee() {
     };
 
     //Reset Password.
-    this.resetPassword = function (passwordObj, res) {
-        var output = {},
+    this.resetPassword = (passwordObj, res) => {
+        let output = {},
             feedback, queryFind = "SELECT employee_password FROM employee WHERE employee_id=?",
             queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id=?";
-        var employee_id = passwordObj.employee_id,
+        let employee_id = passwordObj.employee_id,
             new_password = String(passwordObj.new_password),
             current_password = String(passwordObj.current_password);
 
@@ -570,7 +570,7 @@ function Employee() {
             new_password = SHA256(new_password).toString();
             current_password = SHA256(current_password).toString();
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -580,13 +580,13 @@ function Employee() {
                 }
 
                 //First check that current password provided is legit.
-                con.query(queryFind, [employee_id], function (err, result) {
+                con.query(queryFind, [employee_id], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
-                            var currentPasswordInDB = result[0].employee_password;
+                            let currentPasswordInDB = result[0].employee_password;
                             
                             if(current_password == currentPasswordInDB){
                                 console.log('Current password provided matches the one in DB');
@@ -601,7 +601,7 @@ function Employee() {
                                 }
                                 
                                 //update new password here.
-                                connection.acquire(function (err, con) {
+                                connection.acquire((err, con) => {
                                     if (err) {
                                         res.json({
                                             status: 100,
@@ -610,7 +610,7 @@ function Employee() {
                                         return;
                                     }
 
-                                    con.query(queryUpdate, [new_password, employee_id], function (err, result) {
+                                    con.query(queryUpdate, [new_password, employee_id], (err, result) => {
                                         con.release();
                                         if (err) {
                                             output = {
@@ -669,12 +669,12 @@ function Employee() {
     };
 
     //Forgot Password.
-    this.ForgotPassword = function (employeeObj, res) {
-        var output = {},
+    this.ForgotPassword = (employeeObj, res) => {
+        let output = {},
             feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id = 1",
             queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=? " +
             "AND employee_status_id = 1";
-        var employee_id_number = employeeObj.employee_id_number,
+        let employee_id_number = employeeObj.employee_id_number,
             new_password = String(employeeObj.new_password),
             employee_code = employeeObj.employee_code;
 
@@ -684,7 +684,7 @@ function Employee() {
             //Encrypt password.
             new_password = SHA256(new_password).toString();
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -694,7 +694,7 @@ function Employee() {
                 }
 
                 //First check employee with such ID number and Code exists in the DB.
-                con.query(queryFind, [employee_id_number, employee_code], function (err, result) {
+                con.query(queryFind, [employee_id_number, employee_code], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -702,7 +702,7 @@ function Employee() {
                         if (result.length > 0) {
                             console.log('Such employee exists.');
 
-                            var currentPasswordInDB = result[0].employee_password;
+                            let currentPasswordInDB = result[0].employee_password;
                             
                             //Ensure that new_password is different than current password in DB.
                             if(new_password == currentPasswordInDB){
@@ -714,7 +714,7 @@ function Employee() {
                             }
 
                             //update new password here.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                     if (err) {
                                         res.json({
                                             status: 100,
@@ -723,7 +723,7 @@ function Employee() {
                                         return;
                                     }
 
-                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], function (err, result) {
+                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], (err, result) => {
                                         con.release();
                                         if (err) {
                                             output = {
@@ -771,12 +771,12 @@ function Employee() {
     };
 
     //Set up new password by new employee.
-    this.SetUpNewPassword = function (employeeObj, res) {
-        var output = {},
+    this.SetUpNewPassword = (employeeObj, res) => {
+        let output = {},
             feedback, queryFind = "SELECT * FROM employee WHERE employee_id_number=? AND employee_code=? AND employee_status_id = 1",
             queryUpdate = "UPDATE employee SET employee_password=? WHERE employee_id_number=? AND employee_code=? " +
             "AND employee_status_id = 1";
-        var employee_id_number = employeeObj.employee_id_number,
+        let employee_id_number = employeeObj.employee_id_number,
             new_password = String(employeeObj.new_password),
             employee_code = employeeObj.employee_code;
 
@@ -786,7 +786,7 @@ function Employee() {
             //Encrypt password.
             new_password = SHA256(new_password).toString();
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -796,7 +796,7 @@ function Employee() {
                 }
 
                 //First check employee with such ID number and Code exists in the DB.
-                con.query(queryFind, [employee_id_number, employee_code], function (err, result) {
+                con.query(queryFind, [employee_id_number, employee_code], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -805,7 +805,7 @@ function Employee() {
                             console.log('Such employee indeed exists.');
 
                             //update new password here.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                     if (err) {
                                         res.json({
                                             status: 100,
@@ -814,7 +814,7 @@ function Employee() {
                                         return;
                                     }
 
-                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], function (err, result) {
+                                    con.query(queryUpdate, [new_password, employee_id_number, employee_code], (err, result) => {
                                         con.release();
                                         if (err) {
                                             output = {

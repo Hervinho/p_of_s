@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function EmployeeStatus(){
     //get all employee statuses.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = "SELECT * FROM employee_status";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function EmployeeStatus(){
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);

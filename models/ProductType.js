@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function ProductType() {
   //get all product ype.
-  this.getAll = function (res) {
-    var output = {},
+  this.getAll = (res) => {
+    let output = {},
       query = 'SELECT * FROM product_type';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -15,7 +15,7 @@ function ProductType() {
         return;
       }
 
-      con.query(query, function (err, result) {
+      con.query(query, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -38,11 +38,11 @@ function ProductType() {
   };
 
   //get a single product type.
-  this.getOne = function (id, res) {
-    var output = {},
+  this.getOne = (id, res) => {
+    let output = {},
       query = 'SELECT * FROM product_type WHERE product_type_id = ?';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -51,7 +51,7 @@ function ProductType() {
         return;
       }
 
-      con.query(query, id, function (err, result) {
+      con.query(query, id, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -74,13 +74,14 @@ function ProductType() {
   };
 
   //create product type.
-  this.create = function (productTypeObj, res) {
-    var output = {},
+  this.create = (productTypeObj, res) => {
+    let output = {},
       query = "INSERT iNTO product_type(product_type_name, product_type_desc) VALUES(?,?)";
-    var feedback, product_type_name = productTypeObj.product_type_name, product_type_desc = productTypeObj.product_type_desc;
+    let feedback, product_type_name = productTypeObj.product_type_name,
+      product_type_desc = productTypeObj.product_type_desc;
 
     if ((undefined !== product_type_name && product_type_name != '') && (undefined !== product_type_desc && product_type_desc != '')) {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -89,7 +90,7 @@ function ProductType() {
           return;
         }
 
-        con.query(query, [product_type_name, product_type_desc], function (err, result) {
+        con.query(query, [product_type_name, product_type_desc], (err, result) => {
           con.release();
           if (err) {
             res.json(err);
@@ -117,15 +118,16 @@ function ProductType() {
   };
 
   //update payment method.
-  this.update = function (productTypeObj, res) {
-    var output = {},
+  this.update = (productTypeObj, res) => {
+    let output = {},
       queryFind = 'SELECT * FROM product_type WHERE product_type_id = ?',
       query = "UPDATE product_type SET product_type_name = ?, product_type_desc = ? WHERE product_type_id = ?";
-    var feedback, product_type_name = productTypeObj.product_type_name, product_type_desc = productTypeObj.product_type_desc, 
+    let feedback, product_type_name = productTypeObj.product_type_name,
+      product_type_desc = productTypeObj.product_type_desc,
       product_type_id = productTypeObj.product_type_id;
 
     if ((undefined !== product_type_name && product_type_name != '') && (undefined !== product_type_desc && product_type_desc != '') && (undefined !== product_type_id && product_type_id != '')) {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -134,14 +136,14 @@ function ProductType() {
           return;
         }
 
-        con.query(queryFind, product_type_id, function (err, result) {
+        con.query(queryFind, product_type_id, (err, result) => {
           con.release();
           if (err) {
             res.json(err);
           } else {
             if (result.length > 0) {
               //Update.
-              connection.acquire(function (err, con) {
+              connection.acquire((err, con) => {
                 if (err) {
                   res.json({
                     status: 100,
@@ -150,7 +152,7 @@ function ProductType() {
                   return;
                 }
 
-                con.query(query, [product_type_name, product_type_desc, product_type_id], function (err, result) {
+                con.query(query, [product_type_name, product_type_desc, product_type_id], (err, result) => {
                   con.release();
                   if (err) {
                     res.json(err);

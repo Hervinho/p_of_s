@@ -1,19 +1,19 @@
 //Node modules
-var express = require('express');
-var bodyParser = require("body-parser");
-var app = express();
-var engine = require('ejs-locals');
-var session = require('client-sessions');
+const express = require('express');
+const bodyParser = require("body-parser");
+const app = express();
+const engine = require('ejs-locals');
+const session = require('client-sessions');
 
 //Required files
-var connection = require('./config/connection');
-var routes = require('./config/routes');
+const connection = require('./config/connection');
+const routes = require('./config/routes');
 
 //Designated port for the application
-var PORT = 8080;
+const PORT = 8080;
 
 // get an instance of the router for api routes
-var apiRoutes = express.Router(), viewRoutes = express.Router();
+let apiRoutes = express.Router(), viewRoutes = express.Router();
 
 //Set up session.
 app.use(session({
@@ -50,7 +50,7 @@ routes.configureAllAPIs(apiRoutes);
 routes.configureIndex(app);
 routes.configureAllViews(viewRoutes);
 
-var server = app.listen(PORT, function(){
+let server = app.listen(PORT, function(){
   console.info('Server listening on port ' + server.address().port);
 });
 

@@ -1,14 +1,14 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function CardPayment() {
 
     //get all details of all bank cards used for orders.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM card_payment ' +
             'LEFT JOIN customer_order ON card_payment.order_id = customer_order.customer_order_id';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -17,7 +17,7 @@ function CardPayment() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -40,11 +40,11 @@ function CardPayment() {
     };
 
     //get all details of all bank cards used for a certain order.
-    this.getOnePerOrder = function (orderId, res) {
-        var output = {}, query = 'SELECT * FROM card_payment ' + 
+    this.getOnePerOrder = (orderId, res) => {
+        let output = {}, query = 'SELECT * FROM card_payment ' + 
             'LEFT JOIN account_type ON card_payment.account_type_id = account_type.account_type_id WHERE order_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -53,7 +53,7 @@ function CardPayment() {
                 return;
             }
 
-            con.query(query, [orderId], function (err, result) {
+            con.query(query, [orderId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);

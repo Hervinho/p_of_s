@@ -1,13 +1,13 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function AccountType() {
 
     //get all account types.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM account_type';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -16,7 +16,7 @@ function AccountType() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);

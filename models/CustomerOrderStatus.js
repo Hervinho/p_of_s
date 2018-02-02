@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function CustomerOrderStatus() {
     //get all customer order statuses.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order_status';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function CustomerOrderStatus() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -38,11 +38,11 @@ function CustomerOrderStatus() {
     };
 
     //get a single customer order status.
-    this.getOne = function (id, res) {
-        var output = {},
+    this.getOne = (id, res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order_status WHERE customer_order_status_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -51,7 +51,7 @@ function CustomerOrderStatus() {
                 return;
             }
 
-            con.query(query, id, function (err, result) {
+            con.query(query, id, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -74,14 +74,14 @@ function CustomerOrderStatus() {
     };
 
     //create customer order status.
-    this.create = function (customerOrderStatusObj, res) {
-        var output = {},
+    this.create = (customerOrderStatusObj, res) => {
+        let output = {},
             query = "INSERT iNTO customer_order_status(customer_order_status_name, customer_order_status_desc) VALUES(?,?)";
-        var feedback, customer_order_status_name = customerOrderStatusObj.customer_order_status_name,
+        let feedback, customer_order_status_name = customerOrderStatusObj.customer_order_status_name,
             customer_order_status_desc = customerOrderStatusObj.customer_order_status_desc;
 
         if ((undefined !== customer_order_status_name && customer_order_status_name != '') && (undefined !== customer_order_status_desc && customer_order_status_desc != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -90,7 +90,7 @@ function CustomerOrderStatus() {
                     return;
                 }
 
-                con.query(query, [customer_order_status_name, customer_order_status_desc], function (err, result) {
+                con.query(query, [customer_order_status_name, customer_order_status_desc], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -118,16 +118,16 @@ function CustomerOrderStatus() {
     };
 
     //update customer order status.
-    this.update = function (customerOrderStatusObj, res) {
-        var output = {},
+    this.update = (customerOrderStatusObj, res) => {
+        let output = {},
             queryFind = 'SELECT * FROM customer_order_status WHERE customer_order_status_id = ?',
             query = "UPDATE customer_order_status SET customer_order_status_name = ?, customer_order_status_desc = ? WHERE customer_order_status_id = ?";
-        var feedback, customer_order_status_name = customerOrderStatusObj.customer_order_status_name,
+        let feedback, customer_order_status_name = customerOrderStatusObj.customer_order_status_name,
             customer_order_status_desc = customerOrderStatusObj.customer_order_status_desc,
             customer_order_status_id = customerOrderStatusObj.customer_order_status_id;
 
         if ((undefined !== customer_order_status_name && customer_order_status_name != '') && (undefined !== customer_order_status_desc && customer_order_status_desc != '') && (undefined !== customer_order_status_id && customer_order_status_id != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -136,14 +136,14 @@ function CustomerOrderStatus() {
                     return;
                 }
 
-                con.query(queryFind, customer_order_status_id, function (err, result) {
+                con.query(queryFind, customer_order_status_id, (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
                             //Update.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                 if (err) {
                                     res.json({
                                         status: 100,
@@ -152,7 +152,7 @@ function CustomerOrderStatus() {
                                     return;
                                 }
 
-                                con.query(query, [customer_order_status_name, customer_order_status_desc, customer_order_status_id], function (err, result) {
+                                con.query(query, [customer_order_status_name, customer_order_status_desc, customer_order_status_id], (err, result) => {
                                     con.release();
                                     if (err) {
                                         res.json(err);

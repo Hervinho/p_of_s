@@ -1,76 +1,96 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function Role() {
   //get all roles.
-  this.getAll = function (res) {
-    var output = {}, query = 'SELECT * FROM role';
+  this.getAll = (res) => {
+    let output = {},
+      query = 'SELECT * FROM role';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
-        res.json({ status: 100, message: "Error in connection database" });
+        res.json({
+          status: 100,
+          message: "Error in connection database"
+        });
         return;
       }
-      
-      con.query(query, function (err, result) {
+
+      con.query(query, (err, result) => {
         con.release();
-        if(err){
-            res.json(err);
-        }
-        else{
-          if(result.length > 0){
-            output = {status: 1, roles: result};
-        }
-        else{
-            output = {status: 0, message:'No roles found'};
-        }
-        res.json(output);
+        if (err) {
+          res.json(err);
+        } else {
+          if (result.length > 0) {
+            output = {
+              status: 1,
+              roles: result
+            };
+          } else {
+            output = {
+              status: 0,
+              message: 'No roles found'
+            };
+          }
+          res.json(output);
         }
       });
     });
   };
 
   //get a single role.
-  this.getOne = function (id, res) {
-    var output = {}, query = 'SELECT * FROM role WHERE Role_id = ?';
+  this.getOne = (id, res) => {
+    let output = {},
+      query = 'SELECT * FROM role WHERE Role_id = ?';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
-        res.json({ status: 100, message: "Error in connection database" });
+        res.json({
+          status: 100,
+          message: "Error in connection database"
+        });
         return;
       }
 
-      con.query(query, id, function (err, result) {
+      con.query(query, id, (err, result) => {
         con.release();
-        if(err){
+        if (err) {
           res.json(err);
-      }
-      else{
-        if(result.length > 0){
-          output = {status: 1, role: result[0]};
-      }
-      else{
-          output = {status: 0, message:'No such role found'};
-      }
-      res.json(output);
-      }
+        } else {
+          if (result.length > 0) {
+            output = {
+              status: 1,
+              role: result[0]
+            };
+          } else {
+            output = {
+              status: 0,
+              message: 'No such role found'
+            };
+          }
+          res.json(output);
+        }
       });
     });
   };
 
   //create role.
-  this.create = function (roleObj, res) {
-    var output = {},
+  this.create = (roleObj, res) => {
+    let output = {},
       query = "INSERT iNTO role(role_name, role_desc) VALUES(?,?)";
-    var feedback, role_name = roleObj.role_name, role_desc = roleObj.role_desc;
+    let feedback, role_name = roleObj.role_name,
+      role_desc = roleObj.role_desc;
 
     if ((undefined !== role_name && role_name != '') && (undefined !== role_desc && role_desc != '')) {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
-          res.json({ status: 100, message: "Error in connection database" });
+          res.json({
+            status: 100,
+            message: "Error in connection database"
+          });
           return;
         }
 
-        con.query(query, [role_name, role_desc], function (err, result) {
+        con.query(query, [role_name, role_desc], (err, result) => {
           con.release();
           if (err) {
             res.json(err);
@@ -98,33 +118,41 @@ function Role() {
   };
 
   //update role.
-  this.update = function (roleObj, res) {
-    var output = {},
+  this.update = (roleObj, res) => {
+    let output = {},
       queryFind = 'SELECT * FROM role WHERE role_id = ?',
       query = "UPDATE role SET role_name = ?, role_desc = ? WHERE role_id = ?";
-    var feedback, role_name = roleObj.role_name, role_desc = roleObj.role_desc, role_id = roleObj.role_id;
+    let feedback, role_name = roleObj.role_name,
+      role_desc = roleObj.role_desc,
+      role_id = roleObj.role_id;
 
     if ((undefined !== role_name && role_name != '') && (undefined !== role_desc && role_desc != '') && (undefined !== role_id && role_id != '')) {
       connection.acquire(function (err, con) {
         if (err) {
-          res.json({ status: 100, message: "Error in connection database" });
+          res.json({
+            status: 100,
+            message: "Error in connection database"
+          });
           return;
         }
 
-        con.query(queryFind, role_id, function (err, result) {
+        con.query(queryFind, role_id, (err, result) => {
           con.release();
           if (err) {
             res.json(err);
           } else {
             if (result.length > 0) {
               //Update.
-              connection.acquire(function (err, con) {
+              connection.acquire((err, con) => {
                 if (err) {
-                  res.json({ status: 100, message: "Error in connection database" });
+                  res.json({
+                    status: 100,
+                    message: "Error in connection database"
+                  });
                   return;
                 }
 
-                con.query(query, [role_name, role_desc, role_id], function (err, result) {
+                con.query(query, [role_name, role_desc, role_id], (err, result) => {
                   con.release();
                   if (err) {
                     res.json(err);

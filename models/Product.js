@@ -1,13 +1,13 @@
-var connection = require('../config/connection');
-var Audit = require('./Audit');
+const connection = require('../config/connection');
+const Audit = require('./Audit');
 
 function Product() {
     //get all products.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM product LEFT JOIN employee ON product.added_by = employee.employee_id';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -16,7 +16,7 @@ function Product() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -39,11 +39,11 @@ function Product() {
     };
 
     //get all products of a specific type.
-    this.getByType = function (productTypeId, res) {
-        var output = {},
+    this.getByType = (productTypeId, res) => {
+        let output = {},
             query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_type_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -52,7 +52,7 @@ function Product() {
                 return;
             }
 
-            con.query(query, [productTypeId], function (err, result) {
+            con.query(query, [productTypeId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -75,11 +75,11 @@ function Product() {
     };
 
     //get all products of specific satus.
-    this.getByStatus = function (productStatusId, res) {
-        var output = {},
+    this.getByStatus = (productStatusId, res) => {
+        let output = {},
             query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_status_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -88,7 +88,7 @@ function Product() {
                 return;
             }
 
-            con.query(query, [productStatusId], function (err, result) {
+            con.query(query, [productStatusId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -111,11 +111,11 @@ function Product() {
     };
 
     //get a specific product.
-    this.getOne = function (productId, res) {
-        var output = {},
+    this.getOne = (productId, res) => {
+        let output = {},
             query = 'SELECT * FROM product  LEFT JOIN employee ON product.added_by = employee.employee_id WHERE product_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -124,7 +124,7 @@ function Product() {
                 return;
             }
 
-            con.query(query, [productId], function (err, result) {
+            con.query(query, [productId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -147,22 +147,22 @@ function Product() {
     };
 
     //add new product.
-    this.create = function (productObj, res) {
-        var output = {},
+    this.create = (productObj, res) => {
+        let output = {},
             feedback, query = "INSERT INTO product VALUES(?,?,?,?,?,?,?)";
-        var product_type_id = productObj.product_type_id,
+        let product_type_id = productObj.product_type_id,
             product_status_id = 2,
             product_name = productObj.product_name,
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
             added_by = productObj.employee_id;
-        var auditObj;
+        let auditObj;
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
             (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
             (undefined !== added_by && added_by != '')
         ) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -171,7 +171,7 @@ function Product() {
                     return;
                 }
 
-                con.query(query, [null, product_type_id, product_status_id, product_name, product_desc, product_price, added_by], function (err, result) {
+                con.query(query, [null, product_type_id, product_status_id, product_name, product_desc, product_price, added_by], (err, result) => {
                     con.release();
                     if (err) {
                         output = {
@@ -196,7 +196,7 @@ function Product() {
                             description: 'Created new product: ' + product_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -216,22 +216,22 @@ function Product() {
     };
 
     //update product.
-    this.update = function (productObj, res) {
-        var output = {},
+    this.update = (productObj, res) => {
+        let output = {},
             feedback, query = "UPDATE product SET product_type_id=?, product_status_id=?,product_name=?, product_desc=?, product_price=? WHERE product_id=?";
-        var product_type_id = productObj.product_type_id,
+        let product_type_id = productObj.product_type_id,
             product_status_id = productObj.product_status_id,
             product_name = productObj.product_name,
             product_price = productObj.product_price,
             product_desc = productObj.product_desc,
             product_id = productObj.product_id;
-        var auditObj, added_by = productObj.employee_id;
+        let auditObj, added_by = productObj.employee_id;
 
         if ((undefined !== product_type_id && product_type_id != '') && (undefined !== product_name && product_name != '') &&
             (undefined !== product_price && product_price != '') && (undefined !== product_desc && product_desc != '') &&
             (undefined !== product_id && product_id != '') && (undefined !== product_status_id && product_status_id != '')
         ) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -240,7 +240,7 @@ function Product() {
                     return;
                 }
 
-                con.query(query, [product_type_id, product_status_id, product_name, product_desc, product_price, product_id], function (err, result) {
+                con.query(query, [product_type_id, product_status_id, product_name, product_desc, product_price, product_id], (err, result) => {
                     con.release();
                     if (err) {
                         output = {
@@ -265,7 +265,7 @@ function Product() {
                             description: 'Updated product: ' + product_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */

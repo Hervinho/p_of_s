@@ -1,9 +1,9 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function CustomerOrderDetails() {
     //get details (products, amount) of a specific order.
-    this.getOne = function (orderId, res) {
-        var output = {},
+    this.getOne = (orderId, res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order_details ' +
                 'LEFT JOIN product ON customer_order_details.product_id = product.product_id ' +
                 'LEFT JOIN product_size ON customer_order_details.product_size_id = product_size.product_size_id ' +
@@ -11,7 +11,7 @@ function CustomerOrderDetails() {
                 'LEFT JOIN base_type ON customer_order_details.base_type_id = base_type.base_type_id ' +
                 'WHERE customer_order_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -20,7 +20,7 @@ function CustomerOrderDetails() {
                 return;
             }
 
-            con.query(query, orderId, function (err, result) {
+            con.query(query, orderId, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);

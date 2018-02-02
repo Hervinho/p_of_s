@@ -1,27 +1,28 @@
-var connection = require('../config/connection');
-var moment = require('moment');
-var Audit = require('./Audit');
-var CustomerOrder = require('./CustomerOrder');
+const connection = require('../config/connection');
+const moment = require('moment');
+const Audit = require('./Audit');
+const CustomerOrder = require('./CustomerOrder');
 
-var capturePettyCash = function (pettyCashObj, callback) {
-    var now = moment().format("YYYY-MM-DD HH:mm:ss");
-    var output = {}, query = "INSERT INTO petty_cash VALUES(?,?,?,?)";
-    var employee_id = pettyCashObj.employee_id,
+let capturePettyCash = (pettyCashObj, callback) => {
+    let now = moment().format("YYYY-MM-DD HH:mm:ss");
+    let output = {},
+        query = "INSERT INTO petty_cash VALUES(?,?,?,?)";
+    let employee_id = pettyCashObj.employee_id,
         amount = pettyCashObj.amount;
 
     if ((undefined !== employee_id && employee_id != '') && (undefined !== amount && amount != '')) {
-        
-        connection.acquire(function (err, con) {
+
+        connection.acquire((err, con) => {
             if (err) {
                 output = {
                     status: 100,
                     message: "Error in connection database"
                 }
-                
+
                 callback(null, output);
             }
 
-            con.query(query, [null, employee_id, amount, now], function (err, result) {
+            con.query(query, [null, employee_id, amount, now], (err, result) => {
                 con.release();
                 if (err) {
                     output = {
@@ -29,7 +30,7 @@ var capturePettyCash = function (pettyCashObj, callback) {
                         message: 'Error capturing petty cash',
                         error: err
                     };
-                    
+
                     callback(null, output);
                 } else {
                     output = {
@@ -39,13 +40,13 @@ var capturePettyCash = function (pettyCashObj, callback) {
                     };
 
                     /* Insert to audit table. */
-                    var auditObj = {
+                    let auditObj = {
                         employee_id: employee_id,
-                        action_id: 1,//create
+                        action_id: 1, //create
                         description: 'Captured petty cash at beginning of shift. Amount: ' + amount
                     };
 
-                    Audit.create(auditObj, function(errAudit, resultAudit){
+                    Audit.create(auditObj, (errAudit, resultAudit) => {
                         console.log('Audit: ', errAudit || resultAudit);
                     });
                     /* ------------------------- */
@@ -60,18 +61,18 @@ var capturePettyCash = function (pettyCashObj, callback) {
             status: 0,
             message: feedback
         };
-        
+
         callback(null, output);
     }
 };
 
 function PettyCash() {
     //get all pety cash captured.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM petty_cash LEFT JOIN employee ON petty_cash.employee_id = employee.employee_id';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -80,7 +81,7 @@ function PettyCash() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -103,17 +104,17 @@ function PettyCash() {
     };
 
     //get petty cash captured in a shift.
-    this.getPerDayAndShift = function (pettyCashObj, res) {
-        var output = {},
+    this.getPerDayAndShift = (pettyCashObj, res) => {
+        let output = {},
             queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?',
             query = 'SELECT * FROM petty_cash LEFT JOIN employee ON petty_cash.employee_id = employee.employee_id ' +
             'WHERE petty_cash.timestamp BETWEEN ? AND ?';
-        var shift_id = pettyCashObj.shift_id,
+        let shift_id = pettyCashObj.shift_id,
             date = pettyCashObj.date;
-        var start_date_time, end_date_time;
+        let start_date_time, end_date_time;
 
         if ((undefined !== shift_id && shift_id != '') && (undefined !== date && date != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -122,7 +123,7 @@ function PettyCash() {
                     return;
                 }
 
-                con.query(queryFindShift, [shift_id], function (errShift, resultShift) {
+                con.query(queryFindShift, [shift_id], (errShift, resultShift) => {
                     con.release();
                     if (errShift) {
                         output = {
@@ -140,7 +141,7 @@ function PettyCash() {
                             console.log(start_date_time, end_date_time);
 
                             //Now get all petty cah captures during the date + shift that was provided.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                 if (err) {
                                     res.json({
                                         status: 100,
@@ -149,7 +150,7 @@ function PettyCash() {
                                     return;
                                 }
 
-                                con.query(query, [start_date_time, end_date_time], function (err, result) {
+                                con.query(query, [start_date_time, end_date_time], (err, result) => {
                                     con.release();
                                     if (err) {
                                         output = {
@@ -208,16 +209,16 @@ function PettyCash() {
     };
 
     //capture petty cash.
-    this.create = function (pettyCashObj, res) {
-        var today = moment().format("YYYY-MM-DD"),
+    this.create = (pettyCashObj, res) => {
+        let today = moment().format("YYYY-MM-DD"),
             current_time = moment().format("HH:mm:ss");
-        var output = {},
+        let output = {},
             queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time +
             "' AND shift_end_time > '" + current_time + "'";
-        var start, end;
+        let start, end;
 
         //First check if any orders were already placed during this shift.
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -227,7 +228,7 @@ function PettyCash() {
             }
 
             //get current shift.
-            con.query(queryGetShift, function (errShift, resultShift) {
+            con.query(queryGetShift, (errShift, resultShift) => {
                 con.release();
                 if (errShift) {
                     output = {
@@ -245,9 +246,9 @@ function PettyCash() {
                         end = moment(today + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
 
                         //Now check if any orders were placed during this shift.
-                        CustomerOrder.countOrdersInCurrentShiftV2(start, end, function (errCount, resultCount) {
+                        CustomerOrder.countOrdersInCurrentShiftV2(start, end, (errCount, resultCount) => {
                             if (errCount) {
-                                
+
                                 res.json(errCount);
                                 return;
                             } else {
@@ -256,14 +257,13 @@ function PettyCash() {
                                 //if no orders have been placed yet, you can capture petty cash.
                                 if (resultCount.count == 0) {
                                     console.log('No order placed during this shift yet. You can capture petty cash.');
-                                    
+
                                     //capture petty cash here.
-                                    capturePettyCash(pettyCashObj, function(errPetty, resultPetty){
-                                        if(errPetty){
+                                    capturePettyCash(pettyCashObj, function (errPetty, resultPetty) {
+                                        if (errPetty) {
                                             res.json(errPetty);
                                             return;
-                                        }
-                                        else{
+                                        } else {
                                             res.json(resultPetty);
                                             return;
                                         }

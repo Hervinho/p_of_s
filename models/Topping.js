@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function Topping() {
     //get all toppings.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM topping';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function Topping() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -38,11 +38,11 @@ function Topping() {
     };
 
     //get a single topping.
-    this.getOne = function (id, res) {
-        var output = {},
+    this.getOne = (id, res) => {
+        let output = {},
             query = 'SELECT * FROM topping WHERE topping_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -51,7 +51,7 @@ function Topping() {
                 return;
             }
 
-            con.query(query, id, function (err, result) {
+            con.query(query, id, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -74,13 +74,13 @@ function Topping() {
     };
 
     //create topping.
-    this.create = function (toppingObj, res) {
-        var output = {},
+    this.create = (toppingObj, res) => {
+        let output = {},
             query = "INSERT INTO topping VALUES(?,?)";
-        var feedback, topping_name = toppingObj.topping_name;
+        let feedback, topping_name = toppingObj.topping_name;
 
         if ((undefined !== topping_name && topping_name != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -89,7 +89,7 @@ function Topping() {
                     return;
                 }
 
-                con.query(query, [null, topping_name], function (err, result) {
+                con.query(query, [null, topping_name], (err, result) => {
                     con.release();
                     if (err) {
                         output = {
@@ -123,16 +123,16 @@ function Topping() {
     };
 
     //update topping.
-    this.update = function (toppingObj, res) {
-        var output = {},
+    this.update = (toppingObj, res) => {
+        let output = {},
             queryFind = 'SELECT * FROM topping WHERE topping_id = ?',
             query = "UPDATE topping SET topping_name = ? WHERE topping_id = ?";
-        var feedback, topping_name = toppingObj.topping_name,
+        let feedback, topping_name = toppingObj.topping_name,
             topping_desc = toppingObj.topping_desc,
             topping_id = toppingObj.topping_id;
 
         if ((undefined !== topping_name && topping_name != '') && (undefined !== topping_id && topping_id != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -141,14 +141,14 @@ function Topping() {
                     return;
                 }
 
-                con.query(queryFind, topping_id, function (err, result) {
+                con.query(queryFind, topping_id, (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
                             //Update.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                 if (err) {
                                     res.json({
                                         status: 100,
@@ -157,7 +157,7 @@ function Topping() {
                                     return;
                                 }
 
-                                con.query(query, [topping_name, topping_id], function (err, result) {
+                                con.query(query, [topping_name, topping_id], (err, result) => {
                                     con.release();
                                     if (err) {
                                         res.json(err);

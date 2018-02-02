@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function PromotionStatus() {
     //get all promotion statuses.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM promotion_status';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -15,7 +15,7 @@ function PromotionStatus() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -38,11 +38,11 @@ function PromotionStatus() {
     };
 
     //get a single promotion status.
-    this.getOne = function (id, res) {
-        var output = {},
+    this.getOne = (id, res) => {
+        let output = {},
             query = 'SELECT * FROM promotion_status WHERE promotion_status_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -51,7 +51,7 @@ function PromotionStatus() {
                 return;
             }
 
-            con.query(query, id, function (err, result) {
+            con.query(query, id, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -74,10 +74,10 @@ function PromotionStatus() {
     };
 
     //create promotion status.
-    this.create = function (promotionStatusObj, res) {
-        var output = {},
+    this.create = (promotionStatusObj, res) => {
+        let output = {},
             query = "INSERT iNTO promotion_status(promotion_status_name, promotion_status_desc) VALUES(?,?)";
-        var feedback, promotion_status_name = promotionStatusObj.promotion_status_name,
+        let feedback, promotion_status_name = promotionStatusObj.promotion_status_name,
             promotion_status_desc = promotionStatusObj.promotion_status_desc;
 
         if ((undefined !== promotion_status_name && promotion_status_name != '') && (undefined !== promotion_status_desc && promotion_status_desc != '')) {
@@ -90,7 +90,7 @@ function PromotionStatus() {
                     return;
                 }
 
-                con.query(query, [promotion_status_name, promotion_status_desc], function (err, result) {
+                con.query(query, [promotion_status_name, promotion_status_desc], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -118,16 +118,16 @@ function PromotionStatus() {
     };
 
     //update promotion status.
-    this.update = function (promotionStatusObj, res) {
-        var output = {},
+    this.update = (promotionStatusObj, res) => {
+        let output = {},
             queryFind = 'SELECT * FROM promotion_status WHERE promotion_status_id = ?',
             query = "UPDATE promotion_status SET promotion_status_name = ?, promotion_status_desc = ? WHERE promotion_status_id = ?";
-        var feedback, promotion_status_name = promotionStatusObj.promotion_status_name,
+        let feedback, promotion_status_name = promotionStatusObj.promotion_status_name,
             promotion_status_desc = promotionStatusObj.promotion_status_desc,
             promotion_status_id = promotionStatusObj.promotion_status_id;
 
         if ((undefined !== promotion_status_name && promotion_status_name != '') && (undefined !== promotion_status_desc && promotion_status_desc != '') && (undefined !== promotion_status_id && promotion_status_id != '')) {
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -136,14 +136,14 @@ function PromotionStatus() {
                     return;
                 }
 
-                con.query(queryFind, promotion_status_id, function (err, result) {
+                con.query(queryFind, promotion_status_id, (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
                     } else {
                         if (result.length > 0) {
                             //Update.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                 if (err) {
                                     res.json({
                                         status: 100,
@@ -152,7 +152,7 @@ function PromotionStatus() {
                                     return;
                                 }
 
-                                con.query(query, [promotion_status_name, promotion_status_desc, promotion_status_id], function (err, result) {
+                                con.query(query, [promotion_status_name, promotion_status_desc, promotion_status_id], (err, result) => {
                                     con.release();
                                     if (err) {
                                         res.json(err);
@@ -187,7 +187,6 @@ function PromotionStatus() {
             };
             res.json(output);
         }
-
 
     };
 }

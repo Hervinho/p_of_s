@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function ProductStatus() {
   //get all product statuses.
-  this.getAll = function (res) {
-    var output = {},
+  this.getAll = (res) => {
+    let output = {},
       query = 'SELECT * FROM product_status';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -15,7 +15,7 @@ function ProductStatus() {
         return;
       }
 
-      con.query(query, function (err, result) {
+      con.query(query, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -38,11 +38,11 @@ function ProductStatus() {
   };
 
   //get a single product status.
-  this.getOne = function (id, res) {
-    var output = {},
+  this.getOne = (id, res) => {
+    let output = {},
       query = 'SELECT * FROM product_status WHERE product_status_id = ?';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -51,7 +51,7 @@ function ProductStatus() {
         return;
       }
 
-      con.query(query, id, function (err, result) {
+      con.query(query, id, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -74,13 +74,14 @@ function ProductStatus() {
   };
 
   //create product status.
-  this.create = function (productTypeObj, res) {
-    var output = {},
+  this.create = (productTypeObj, res) => {
+    let output = {},
       query = "INSERT iNTO product_status(product_status_name, product_status_desc) VALUES(?,?)";
-    var feedback, product_status_name = productTypeObj.product_status_name, product_status_desc = productTypeObj.product_status_desc;
+    let feedback, product_status_name = productTypeObj.product_status_name,
+      product_status_desc = productTypeObj.product_status_desc;
 
     if ((undefined !== product_status_name && product_status_name != '') && (undefined !== product_status_desc && product_status_desc != '')) {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -89,7 +90,7 @@ function ProductStatus() {
           return;
         }
 
-        con.query(query, [product_status_name, product_status_desc], function (err, result) {
+        con.query(query, [product_status_name, product_status_desc], (err, result) => {
           con.release();
           if (err) {
             res.json(err);
@@ -117,15 +118,16 @@ function ProductStatus() {
   };
 
   //update product status.
-  this.update = function (productTypeObj, res) {
-    var output = {},
+  this.update = (productTypeObj, res) => {
+    let output = {},
       queryFind = 'SELECT * FROM product_status WHERE product_status_id = ?',
       query = "UPDATE product_status SET product_status_name = ?, product_status_desc = ? WHERE product_status_id = ?";
-    var feedback, product_status_name = productTypeObj.product_status_name, product_status_desc = productTypeObj.product_status_desc, 
+    let feedback, product_status_name = productTypeObj.product_status_name,
+      product_status_desc = productTypeObj.product_status_desc,
       product_status_id = productTypeObj.product_status_id;
 
     if ((undefined !== product_status_name && product_status_name != '') && (undefined !== product_status_desc && product_status_desc != '') && (undefined !== product_status_id && product_status_id != '')) {
-      connection.acquire(function (err, con) {
+      connection.acquire((err, con) => {
         if (err) {
           res.json({
             status: 100,
@@ -134,14 +136,14 @@ function ProductStatus() {
           return;
         }
 
-        con.query(queryFind, product_status_id, function (err, result) {
+        con.query(queryFind, product_status_id, (err, result) => {
           con.release();
           if (err) {
             res.json(err);
           } else {
             if (result.length > 0) {
               //Update.
-              connection.acquire(function (err, con) {
+              connection.acquire((err, con) => {
                 if (err) {
                   res.json({
                     status: 100,
@@ -150,7 +152,7 @@ function ProductStatus() {
                   return;
                 }
 
-                con.query(query, [product_status_name, product_status_desc, product_status_id], function (err, result) {
+                con.query(query, [product_status_name, product_status_desc, product_status_id], (err, result) => {
                   con.release();
                   if (err) {
                     res.json(err);

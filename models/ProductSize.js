@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
+const connection = require('../config/connection');
 
 function ProductSize() {
   //get all product sizes.
-  this.getAll = function (res) {
-    var output = {},
+  this.getAll = (res) => {
+    let output = {},
       query = 'SELECT * FROM product_size';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -15,7 +15,7 @@ function ProductSize() {
         return;
       }
 
-      con.query(query, function (err, result) {
+      con.query(query, (err, result) => {
         con.release();
         if (err) {
           res.json(err);
@@ -38,11 +38,11 @@ function ProductSize() {
   };
 
   //get a single product size.
-  this.getOne = function (id, res) {
-    var output = {},
+  this.getOne = (id, res) => {
+    let output = {},
       query = 'SELECT * FROM product_size WHERE product_size_id = ?';
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
       if (err) {
         res.json({
           status: 100,
@@ -51,7 +51,7 @@ function ProductSize() {
         return;
       }
 
-      con.query(query, id, function (err, result) {
+      con.query(query, id, (err, result) => {
         con.release();
         if (err) {
           res.json(err);

@@ -1,16 +1,16 @@
-var connection = require('../config/connection');
-var moment = require('moment');
-var Shift = require('./Shift');
-var Promise = require('bluebird');
-var Audit = require('./Audit');
+const connection = require('../config/connection');
+const moment = require('moment');
+const Shift = require('./Shift');
+const Promise = require('bluebird');
+const Audit = require('./Audit');
 
 function ShiftBooking(){
     //get all shift bookings.
-    this.getAll = function(res){
-        var output = {}, query = "SELECT * FROM shift_booking " +
+    this.getAll = (res) => {
+        let output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id";
         
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -19,7 +19,7 @@ function ShiftBooking(){
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -42,12 +42,12 @@ function ShiftBooking(){
     };
 
     //get all bookings of specific shift.
-    this.getPerShift = function(shiftId, res){
-        var output = {}, query = "SELECT * FROM shift_booking " +
+    this.getPerShift = (shiftId, res) => {
+        let output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
             "WHERE shift_booking.shift_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -56,7 +56,7 @@ function ShiftBooking(){
                 return;
             }
 
-            con.query(query, [shiftId], function (err, result) {
+            con.query(query, [shiftId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -79,12 +79,12 @@ function ShiftBooking(){
     };
 
     //get all shifts of a certain status. (booked/cancelled)
-    this.getPerStatus = function(statusId, res){
-        var output = {}, query = "SELECT * FROM shift_booking " +
+    this.getPerStatus = (statusId, res) => {
+        let output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
             "WHERE shift_booking.booking_status_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -93,7 +93,7 @@ function ShiftBooking(){
                 return;
             }
 
-            con.query(query, [statusId], function (err, result) {
+            con.query(query, [statusId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -116,12 +116,12 @@ function ShiftBooking(){
     };
 
     //get all bookings of a specific employee.
-    this.getPerEmployee = function(employeeId, res){
-        var output = {}, query = "SELECT * FROM shift_booking " +
+    this.getPerEmployee = (employeeId, res) => {
+        let output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
             "WHERE shift_booking.employee_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -130,7 +130,7 @@ function ShiftBooking(){
                 return;
             }
 
-            con.query(query, [employeeId], function (err, result) {
+            con.query(query, [employeeId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -153,12 +153,12 @@ function ShiftBooking(){
     };
 
     //get a specific booking.
-    this.getOne = function(bookingId, res){
-        var output = {}, query = "SELECT * FROM shift_booking " +
+    this.getOne = (bookingId, res) => {
+        let output = {}, query = "SELECT * FROM shift_booking " +
             "LEFT JOIN employee ON shift_booking.employee_id = employee.employee_id " +
             "WHERE shift_booking_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -167,7 +167,7 @@ function ShiftBooking(){
                 return;
             }
 
-            con.query(query, [bookingId], function (err, result) {
+            con.query(query, [bookingId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -191,19 +191,19 @@ function ShiftBooking(){
 
     //check if employee has booked for shift on a specific day.
     //Used to allow/deny employee from placing orders.
-    this.checkShiftForEmployee = function(employeeId){//with Bluebird promise
-        var output = {}, query = "SELECT * FROM shift_booking WHERE employee_id = ? AND booking_date = ?", shift_id;
-        var shiftDetails, shift_start_time, shift_end_time;
-        var today = moment().format("YYYY-MM-DD"), today_datetime = moment().format("YYYY-MM-DD HH:mm:ss");
+    this.checkShiftForEmployee = (employeeId) => {//with Bluebird promise
+        let output = {}, query = "SELECT * FROM shift_booking WHERE employee_id = ? AND booking_date = ?", shift_id;
+        let shiftDetails, shift_start_time, shift_end_time;
+        let today = moment().format("YYYY-MM-DD"), today_datetime = moment().format("YYYY-MM-DD HH:mm:ss");
         
         /*
         //just for testing...
-        var today = moment("2018-01-08").format("YYYY-MM-DD"), curent_time = moment().format("HH:mm:ss"), 
+        let today = moment("2018-01-08").format("YYYY-MM-DD"), curent_time = moment().format("HH:mm:ss"), 
             today_datetime = moment("2018-01-08" + " " + curent_time).format("YYYY-MM-DD HH:mm:ss");
         */
         
-        return new Promise(function (resolve, reject) {
-            connection.acquire(function (err, con) {
+        return new Promise((resolve, reject) => {
+            connection.acquire((err, con) => {
                 if (err) {
                     output = {
                         status: 100,
@@ -213,7 +213,7 @@ function ShiftBooking(){
                 }
                 
                 //check first if employee has booked for today.
-                con.query(query, [employeeId, today], function (err, result) {
+                con.query(query, [employeeId, today], (err, result) => {
                     con.release();
                     if (err) {
                         reject(err);
@@ -222,8 +222,8 @@ function ShiftBooking(){
                             //get start and end times of employee's shift booking.
                             //Then check if current datetime is between the booked shift start and end times.
                             shift_id = result[0].shift_id;
-                            shiftDetails = Shift.getFiltered(shift_id, function (err, resultShift) {
-                                var start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
+                            shiftDetails = Shift.getFiltered(shift_id, (err, resultShift) => {
+                                let start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
                                 shift_start_time = moment(today + ' ' + start).format("YYYY-MM-DD HH:mm:ss");
                                 shift_end_time = moment(today + ' ' + end).format("YYYY-MM-DD HH:mm:ss");
                                 
@@ -266,11 +266,11 @@ function ShiftBooking(){
     };
 
     //book a shift.
-    this.create = function(bookingObj, res){
-        var output = {}, feedback, query = "INSERT INTO shift_booking VALUES(?,?,?,?,?,?)";
-        var employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
+    this.create = (bookingObj, res) => {
+        let output = {}, feedback, query = "INSERT INTO shift_booking VALUES(?,?,?,?,?,?)";
+        let employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
         booking_status_id = 1, timestamp = moment().format("YYYY-MM-DD HH:mm:ss"), today = moment().format('YYYY-MM-DD');
-        var shiftObj, shift_start_time, shift_end_time;
+        let shiftObj, shift_start_time, shift_end_time;
 
         if((undefined !== employee_id && employee_id != '') && (undefined !== shift_id && shift_id != '') && 
             (undefined !== booking_date && booking_date != '')
@@ -288,8 +288,8 @@ function ShiftBooking(){
             }
 
             //Get booked shift details. Then compare times.
-            shiftDetails = Shift.getFiltered(shift_id, function (err, resultShift) {
-                var start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
+            shiftDetails = Shift.getFiltered(shift_id, (err, resultShift) => {
+                let start = resultShift.shift.shift_start_time, end = resultShift.shift.shift_end_time;
                     shift_start_time = moment(booking_date + ' ' + start).format("YYYY-MM-DD HH:mm:ss");
                     shift_end_time = moment(booking_date + ' ' + end).format("YYYY-MM-DD HH:mm:ss");
                     
@@ -299,7 +299,7 @@ function ShiftBooking(){
                     //Book before and during shift for demo purposes.
                     if ((timestamp < shift_start_time) || (timestamp > shift_start_time && timestamp < shift_end_time)) {
                         console.log('Can book during the shift');
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -308,7 +308,7 @@ function ShiftBooking(){
                                 return;
                             }
                 
-                            con.query(query, [null, employee_id, shift_id, booking_date, timestamp, booking_status_id], function (err, result) {
+                            con.query(query, [null, employee_id, shift_id, booking_date, timestamp, booking_status_id], (err, result) => {
                                 con.release();
                                 if (err) {
                                     if(err.code == 'ER_DUP_ENTRY'){
@@ -334,13 +334,13 @@ function ShiftBooking(){
                                     };
 
                                     /* Insert to audit table. */
-                                    var auditObj = {
+                                    let auditObj = {
                                         employee_id: employee_id,
                                         action_id: 1,//create
                                         description: 'Booked a shift: ' + resultShift.shift.shift_name
                                     };
 
-                                    Audit.create(auditObj, function(errAudit, resultAudit){
+                                    Audit.create(auditObj, (errAudit, resultAudit) => {
                                         console.log('Audit: ', errAudit || resultAudit);
                                     });
                                     /* ------------------------- */
@@ -414,10 +414,10 @@ function ShiftBooking(){
     };
 
     //update a booking.
-    this.update = function(bookingObj, res){
-        var output = {}, feedback, query = "UPDATE shift_booking SET shift_id=?, booking_date=?, booking_status_id=? " +
+    this.update = (bookingObj, res) => {
+        let output = {}, feedback, query = "UPDATE shift_booking SET shift_id=?, booking_date=?, booking_status_id=? " +
             "WHERE employee_id=? AND shift_booking_id=?";
-        var employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
+        let employee_id = bookingObj.employee_id, shift_id = bookingObj.shift_id, booking_date = bookingObj.booking_date, 
             booking_status_id = bookingObj.booking_status_id, shift_booking_id = bookingObj.shift_booking_id, today = moment().format('YYYY-MM-DD');
 
         if((undefined !== employee_id && employee_id != '') && (undefined !== shift_id && shift_id != '') && 
@@ -446,7 +446,7 @@ function ShiftBooking(){
                 return;
             }
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -455,7 +455,7 @@ function ShiftBooking(){
                     return;
                 }
     
-                con.query(query, [shift_id, booking_date, booking_status_id, employee_id, shift_booking_id], function (err, result) {
+                con.query(query, [shift_id, booking_date, booking_status_id, employee_id, shift_booking_id], (err, result) => {
                     con.release();
                     if (err) {
                         feedback = 'Error updating shift booking';
@@ -475,13 +475,13 @@ function ShiftBooking(){
                         };
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: employee_id,
                             action_id: 2,//update
                             description: 'Updated shift booking ID: ' + shift_booking_id
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */

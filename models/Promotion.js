@@ -1,14 +1,14 @@
-var connection = require('../config/connection');
-var moment = require('moment'),
+const connection = require('../config/connection');
+const moment = require('moment'),
     request = require('request');
-var emailAPI = "http://54.210.132.91:6060/notifications/email";
-var Customer = require('./Customer');
-var Audit = require('./Audit');
+const emailAPI = "http://54.210.132.91:6060/notifications/email";
+const Customer = require('./Customer');
+const Audit = require('./Audit');
 
 //Function to build query string for order details.
-var buildQuery = function (array, promotionId) {
-    var string = '';
-    for (var index = 0; index < array.length; index++) {
+let buildQuery = (array, promotionId) => {
+    let string = '';
+    for (let index = 0; index < array.length; index++) {
         if (index == array.length - 1) {
             string += "(" + promotionId + ", " + 
                 array[index].product_id + ")";
@@ -22,13 +22,13 @@ var buildQuery = function (array, promotionId) {
 };
 
 //function to update promo products.
-var updatePromotionProducts = function (array, promotionId, callback) {
-    var output = {},
+let updatePromotionProducts = (array, promotionId, callback) => {
+    let output = {},
         queryDelete = "DELETE FROM promotion_product WHERE promotion_id = ?",
         queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES";
     console.log('array: ', array);//TEST here when shit goes funny.
     
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
         if (err) {
             output = {
                 status: 100,
@@ -38,7 +38,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
             callback(null, output);
         }
 
-        con.query(queryDelete, [promotionId], function (errDelete, resultDelete) {
+        con.query(queryDelete, [promotionId], (errDelete, resultDelete) => {
             con.release();
             if (errDelete) {
                 output = {
@@ -52,11 +52,11 @@ var updatePromotionProducts = function (array, promotionId, callback) {
                 console.log('Promo products successfully deleted.');
 
                 //Now insert new products for this promo.
-                var builtQueryString = buildQuery(array, promotionId);
+                let builtQueryString = buildQuery(array, promotionId);
                 queryInsert += builtQueryString;
                 console.log(queryInsert);
 
-                connection.acquire(function (err, con) {
+                connection.acquire((err, con) => {
                     if (err) {
                         output = {
                             status: 100,
@@ -66,7 +66,7 @@ var updatePromotionProducts = function (array, promotionId, callback) {
                         callback(null, output);
                     }
             
-                    con.query(queryInsert, function (errInsert, resultInsert) {
+                    con.query(queryInsert, (errInsert, resultInsert) => {
                         con.release();
                         if (errInsert) {
                             console.log(errInsert.code);
@@ -96,11 +96,11 @@ var updatePromotionProducts = function (array, promotionId, callback) {
 
 function Promotion() {
     //get all promotions.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -109,7 +109,7 @@ function Promotion() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -132,8 +132,8 @@ function Promotion() {
     };
 
     //get all promotions of a certain status.
-    this.getPerStatus = function (statusId, res) {
-        var output = {},
+    this.getPerStatus = (statusId, res) => {
+        let output = {},
             query;
 
         if (statusId == 1) {
@@ -142,7 +142,7 @@ function Promotion() {
             query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_status_id = 2";
         }
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -151,7 +151,7 @@ function Promotion() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -174,13 +174,13 @@ function Promotion() {
     };
 
     //get all promotions of a certain type.
-    this.getPerProduct = function(productId, res){
-        var output = {}, query = "SELECT * FROM promotion " +
+    this.getPerProduct = (productId, res) => {
+        let output = {}, query = "SELECT * FROM promotion " +
             "LEFT JOIN promotion_product ON promotion.promotion_id = promotion_product.promotion_id " +
             "LEFT JOIN employee ON promotion.added_by = employee.employee_id " +
             "WHERE promotion_product.product_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -189,7 +189,7 @@ function Promotion() {
                 return;
             }
 
-            con.query(query, [productId], function (err, result) {
+            con.query(query, [productId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -212,13 +212,13 @@ function Promotion() {
     };
 
     //get a specific promotion.
-    this.getOne = function (id, res) {
-        var output = {}, promoProducts = [];
-        var query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?",
+    this.getOne = (id, res) => {
+        let output = {}, promoProducts = [];
+        let query = "SELECT * FROM promotion LEFT JOIN employee ON promotion.added_by = employee.employee_id WHERE promotion_id = ?",
             queryDetails = "SELECT * FROM promotion_product LEFT JOIN product ON promotion_product.product_id = product.product_id " +
                 "WHERE promotion_product.promotion_id = ?";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -227,14 +227,14 @@ function Promotion() {
                 return;
             }
 
-            con.query(query, [id], function (err, result) {
+            con.query(query, [id], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
                 } else {
                     if (result.length > 0) {
 
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -243,7 +243,7 @@ function Promotion() {
                                 return;
                             }
                 
-                            con.query(queryDetails, [id], function (errDetails, resultDetails) {
+                            con.query(queryDetails, [id], (errDetails, resultDetails) => {
                                 con.release();
                                 if (errDetails) {
                                     output = {
@@ -296,12 +296,12 @@ function Promotion() {
     };
 
     //create promotion.
-    this.create = function (promotionObj, res) {
-        var output = {},
+    this.create = (promotionObj, res) => {
+        let output = {},
             query = "INSERT INTO promotion VALUES(?,?,?,?,?,?,?,?)",
             queryInsert = "INSERT INTO promotion_product (promotion_id,product_id) VALUES",
             today = moment().format('YYYY-MM-DD'), insertedPromotionId;
-        var promotion_name = promotionObj.promotion_name,
+        let promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
             promotion_status_id = 2,
             products = promotionObj.products,
@@ -309,7 +309,8 @@ function Promotion() {
             valid_to_date = promotionObj.valid_to_date,
             promotion_price = promotionObj.promotion_price,
             added_by = promotionObj.employee_id;
-        console.log('Promo products: ', products);
+        //console.log('Promo products: ', products);
+
         if ((undefined !== promotion_name && promotion_name != '') && (undefined !== promotion_desc && promotion_desc != '') &&
             (undefined !== valid_from_date && valid_from_date != '') && (undefined !== valid_to_date && valid_to_date != '') &&
             (undefined !== promotion_price && promotion_price != '') && (undefined !== added_by && added_by != '')
@@ -334,7 +335,7 @@ function Promotion() {
                 return;
             }
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -345,7 +346,7 @@ function Promotion() {
 
                 con.query(query, [null, promotion_name, promotion_desc, promotion_status_id, valid_from_date,
                     valid_to_date, promotion_price, added_by
-                ], function (err, result) {
+                ], (err, result) => {
                     con.release();
                     if (err) {
                         feedback = 'Error adding new promotion';
@@ -360,11 +361,11 @@ function Promotion() {
                         insertedPromotionId = result.insertId;
                         
                         //insert into promotion_product bridge table.
-                        var builtQueryString = buildQuery(products, insertedPromotionId);
+                        let builtQueryString = buildQuery(products, insertedPromotionId);
                         queryInsert += builtQueryString;
                         console.log(queryInsert);
                         
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -373,7 +374,7 @@ function Promotion() {
                                 return;
                             }
                 
-                            con.query(queryInsert, function (errProduct, resultProduct) {
+                            con.query(queryInsert, (errProduct, resultProduct) => {
                                 con.release();
                                 if (errProduct) {
                                     console.log('Error: ', errProduct);
@@ -391,13 +392,13 @@ function Promotion() {
                         };
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: added_by,
                             action_id: 1,//create
                             description: 'Added promotion: ' + promotion_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -419,12 +420,12 @@ function Promotion() {
     };
 
     //update promotion.
-    this.update = function (promotionObj, res) {
-        var output = {},
+    this.update = (promotionObj, res) => {
+        let output = {},
             today = moment().format('YYYY-MM-DD'),
             query = "UPDATE promotion SET promotion_name=?, promotion_desc=?, " +
             "valid_from_date=?, valid_to_date=?, promotion_price=? WHERE promotion_id=?";
-        var promotion_name = promotionObj.promotion_name,
+        let promotion_name = promotionObj.promotion_name,
             promotion_desc = promotionObj.promotion_desc,
             products = promotionObj.products,
             promotion_id = promotionObj.promotion_id,
@@ -457,7 +458,7 @@ function Promotion() {
                 return;
             }
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -468,7 +469,7 @@ function Promotion() {
 
                 con.query(query, [promotion_name, promotion_desc, valid_from_date, valid_to_date, promotion_price,
                     promotion_id
-                ], function (err, result) {
+                ], (err, result) => {
                     con.release();
                     if (err) {
                         feedback = 'Error updating promotion';
@@ -494,16 +495,16 @@ function Promotion() {
                         };
 
                          /* Insert to audit table. */
-                         var auditObj = {
+                         let auditObj = {
                             employee_id: added_by,
                             action_id: 2,//update
                             description: 'Updated promotion: ' + promotion_name
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
-                        /* ------------------------- */
+                        /* ------------------------------------------------ */
 
                         res.json(output);
                     }
@@ -522,15 +523,15 @@ function Promotion() {
     };
 
     //change promotion status.
-    this.updateStatus = function (promotionObj, res) {
-        var promotion_id = promotionObj.promotion_id,
+    this.updateStatus = (promotionObj, res) => {
+        let promotion_id = promotionObj.promotion_id,
             operation_value = promotionObj.operation_value,
             promotion_name = promotionObj.promotion_name,
             promotion_price = promotionObj.promotion_price,
             added_by = promotionObj.employee_id,
             keyword, promotion_status_id,
             query = "UPDATE promotion SET promotion_status_id=? WHERE promotion_id=?";
-        var emailList;
+        let emailList;
         //console.log(promotionObj);
         
         if ((undefined !== promotion_id && promotion_id != '') && (undefined !== operation_value && operation_value != '') &&
@@ -544,7 +545,7 @@ function Promotion() {
                 promotion_status_id = 2;
             }
 
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -553,7 +554,7 @@ function Promotion() {
                     return;
                 }
 
-                con.query(query, [promotion_status_id, promotion_id], function (err, result) {
+                con.query(query, [promotion_status_id, promotion_id], (err, result) => {
                     con.release();
                     if (err) {
                         feedback = 'Error with promotion ' + keyword;
@@ -577,8 +578,8 @@ function Promotion() {
                             //Get email list.
                             emailList = Customer.getEmailList(function (err, result) {
                                 //console.log(result.emails);
-                                var emailArray = result.emails;
-                                var messageObj = {
+                                let emailArray = result.emails;
+                                let messageObj = {
                                     subject: 'New promo',
                                     content: ['Product Name : ' + promotion_name, 'Price: R' + promotion_price]
                                 };
@@ -608,13 +609,13 @@ function Promotion() {
                         }
 
                         /* Insert to audit table. */
-                        var auditObj = {
+                        let auditObj = {
                             employee_id: added_by,
                             action_id: 2,//update
                             description: 'Updated status of Promotion ID: ' + promotion_id
                         };
 
-                        Audit.create(auditObj, function(errAudit, resultAudit){
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */

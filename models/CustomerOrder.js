@@ -1,12 +1,12 @@
-var connection = require('../config/connection');
-var moment = require('moment');
-var Shift = require('./Shift');
-var Audit = require('./Audit');
+const connection = require('../config/connection');
+const moment = require('moment');
+const Shift = require('./Shift');
+const Audit = require('./Audit');
 
 //Function to build query string for order details.
-var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
-    var string = '';
-    for (var index = 0; index < productsArray.length; index++) {
+let buildOrderDetailsQuery = (productsArray, customerOrderId) => {
+    let string = '';
+    for (let index = 0; index < productsArray.length; index++) {
         if (index == productsArray.length - 1) {
             string += "(" + customerOrderId + ", " + 
                 productsArray[index].product_id + ", " +
@@ -30,18 +30,18 @@ var buildOrderDetailsQuery = function (productsArray, customerOrderId) {
 };
 
 //Function to insert card payment details.
-var saveBankCardDetails = function(orderId, cardObj, callback){
-    var feedback, output = {}, query = "INSERT INTO card_payment VALUES(?,?,?,?,?,?)";
-    var accTypeId = cardObj.account_type_id, cardNumber = cardObj.card_number, cardHolder = cardObj.card_holder, 
+let saveBankCardDetails = (orderId, cardObj, callback) => {
+    let feedback, output = {}, query = "INSERT INTO card_payment VALUES(?,?,?,?,?,?)";
+    let accTypeId = cardObj.account_type_id, cardNumber = cardObj.card_number, cardHolder = cardObj.card_holder, 
         validity = cardObj.validity;
 
-    connection.acquire(function (err, con) {
+    connection.acquire((err, con) => {
         if (err) {
             output = { status: 100, message: "Error in connection database" };
             callback(null, output);
         }
 
-        con.query(query, [null, orderId, accTypeId, cardNumber, cardHolder, validity], function (err, result) {
+        con.query(query, [null, orderId, accTypeId, cardNumber, cardHolder, validity], (err, result) => {
           con.release();
           if (err) {
             feedback = 'Error inserting card ingo';
@@ -64,12 +64,12 @@ var saveBankCardDetails = function(orderId, cardObj, callback){
 };
 
 //Function to  insert product order.
-var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId,
-    addedBy, collectionStatusId, insertOrder, insertOrderDetails, productsArray, bankCardObj, callback) {
-    var feedback, output = {}, saveCardDetails;
+let createCustomerOrder = (customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId,
+    addedBy, collectionStatusId, insertOrder, insertOrderDetails, productsArray, bankCardObj, callback) => {
+    let feedback, output = {}, saveCardDetails;
 
-    connection.acquire(function (err, con) {
-        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy, collectionStatusId], function (err, result) {
+    connection.acquire((err, con) => {
+        con.query(insertOrder, [customerId, date, totalAmount, paymentTypeId, paymentStatusId, orderStatusId, addedBy, collectionStatusId], (err, result) => {
             con.release();
             if (!!err) {
                 console.log(err);
@@ -86,19 +86,19 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
                 //card details will be handled here. if payment type = card.
                 console.log('bankCardObj: ', bankCardObj);
                 if(undefined != bankCardObj || bankCardObj != null){
-                    saveCardDetails = saveBankCardDetails(insertedOrderID, bankCardObj, function(error, results){
+                    saveCardDetails = saveBankCardDetails(insertedOrderID, bankCardObj, (error, results) => {
                         console.log(error || results.message);
                     });
                 }
 
                 //Building order details query that will be excuted once.
-                var builtQueryString = buildOrderDetailsQuery(productsArray, insertedOrderID);
+                let builtQueryString = buildOrderDetailsQuery(productsArray, insertedOrderID);
                 insertOrderDetails += builtQueryString;
                 //console.log('Order details query: ', insertOrderDetails);
 
                 //Now insert order details in DB.
-                connection.acquire(function (err, con) {
-                    con.query(insertOrderDetails, function (err, result) {
+                connection.acquire((err, con) => {
+                    con.query(insertOrderDetails, (err, result) => {
                         con.release();
                         if (err) {
                             console.log(err);
@@ -128,12 +128,12 @@ var createCustomerOrder = function (customerId, date, totalAmount, paymentTypeId
 
 //Function to Get grand total amount of all orders (where payment_status_id = 1) in previous shift.
 //Can also be used to get total from any given shift, providing start end time.
-var getPreviousShiftTotal = function(start, end, callback){
-    var feedback, output = {};
-    var query = "SELECT SUM(total_amount) AS grand_total FROM customer_order WHERE customer_order_timestamp BETWEEN '" + 
+let getPreviousShiftTotal = (start, end, callback) => {
+    let feedback, output = {};
+    let query = "SELECT SUM(total_amount) AS grand_total FROM customer_order WHERE customer_order_timestamp BETWEEN '" + 
         start + "' AND '" + end + "' AND payment_status_id = 1";
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 output = {
                     status: 100,
@@ -143,7 +143,7 @@ var getPreviousShiftTotal = function(start, end, callback){
                 callback(null, output);
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 
                 if (err) {
@@ -169,11 +169,11 @@ var getPreviousShiftTotal = function(start, end, callback){
 };
 
 //count number of orders in current shift.
-var countOrdersInCurrentShift = function(start, end, callback){
-    var feedback, output = {};
-    var query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
+let countOrdersInCurrentShift = (start, end, callback) => {
+    let feedback, output = {};
+    let query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
     console.log(start + ' - ' + end);
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 output = {
                     status: 100,
@@ -183,7 +183,7 @@ var countOrdersInCurrentShift = function(start, end, callback){
                 callback(null, output);
             }
 
-            con.query(query, [start, end], function (err, result) {
+            con.query(query, [start, end], (err, result) => {
                 con.release();
                 
                 if (err) {
@@ -210,12 +210,12 @@ var countOrdersInCurrentShift = function(start, end, callback){
 
 function CustomerOrder() {
     //get all customer orders.
-    this.getAll = function (res) {
-        var output = {},
+    this.getAll = (res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
             'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -224,7 +224,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, function (err, result) {
+            con.query(query, (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -247,13 +247,13 @@ function CustomerOrder() {
     };
 
     //get all customer orders that are new. Will be sent to the kitchen.
-    this.getAllNewToBePrepared = function (res) {
-        var output = {}, today = moment().format("YYYY-MM-DD"),
+    this.getAllNewToBePrepared = (res) => {
+        let output = {}, today = moment().format("YYYY-MM-DD"),
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
             'LEFT JOIN customer_order_status ON customer_order.order_status_id = customer_order_status.customer_order_status_id ' +
             'WHERE (customer_order.order_status_id = 1 OR customer_order.order_status_id = 2) AND customer_order_timestamp LIKE ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -264,7 +264,7 @@ function CustomerOrder() {
 
             today = '%' + today + '%';
 
-            con.query(query, [today], function (err, result) {
+            con.query(query, [today], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -287,15 +287,15 @@ function CustomerOrder() {
     };
 
     //get all customer orders that are ready for collection.
-    this.getAllReadyForCollection = function (res) {
-        var output = {}, today = moment().format("YYYY-MM-DD"),
+    this.getAllReadyForCollection = (res) => {
+        let output = {}, today = moment().format("YYYY-MM-DD"),
             query = 'SELECT * FROM customer_order ' +
             'LEFT JOIN customer_order_status ON customer_order.order_status_id = customer_order_status.customer_order_status_id ' +
             'WHERE customer_order.order_status_id = 3 AND customer_order_timestamp LIKE ? ' +
             'AND customer_order.collection_status_id = 2 ' +
             'ORDER BY customer_order_timestamp DESC';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -306,7 +306,7 @@ function CustomerOrder() {
 
             today = '%' + today + '%';
 
-            con.query(query, [today], function (err, result) {
+            con.query(query, [today], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -329,13 +329,13 @@ function CustomerOrder() {
     };
 
     //get all orders of a specific customer.
-    this.getAllPerCustomer = function (customerId, res) {
-        var output = {},
+    this.getAllPerCustomer = (customerId, res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
                 'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +    
                 'WHERE customer_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -344,7 +344,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, [customerId], function (err, result) {
+            con.query(query, [customerId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -368,11 +368,11 @@ function CustomerOrder() {
 
 
     //count all orders of a specific payment type.
-    this.countAllByPaymentType = function (paymentTypeId, res) {
-        var output = {},
+    this.countAllByPaymentType = (paymentTypeId, res) => {
+        let output = {},
             query = 'SELECT COUNT(*) AS ordersCountPaymentType FROM customer_order WHERE payment_type_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -381,7 +381,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, [paymentTypeId], function (err, result) {
+            con.query(query, [paymentTypeId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -393,11 +393,11 @@ function CustomerOrder() {
     };
 
     //count all orders captured by a certain employee.
-    this.countAllPerEmployee = function(employeeId, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountEmployee FROM customer_order WHERE added_by = ?';
-        var shiftCallback, shiftTimes;
+    this.countAllPerEmployee = (employeeId, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountEmployee FROM customer_order WHERE added_by = ?';
+        let shiftCallback, shiftTimes;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -406,7 +406,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, [employeeId], function (err, result) {
+            con.query(query, [employeeId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -418,13 +418,13 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product AND date.
-    this.countAllPerProductAndDate = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+    this.countAllPerProductAndDate = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp LIKE ?';
-        var productId = orderObj.product_id, date = orderObj.date;
+        let productId = orderObj.product_id, date = orderObj.date;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -435,7 +435,7 @@ function CustomerOrder() {
 
             date = '%' + date + '%';
 
-            con.query(query, [productId, date], function (err, result) {
+            con.query(query, [productId, date], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -447,13 +447,13 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product AND date range. From - to
-    this.countAllPerProductAndDateRange = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+    this.countAllPerProductAndDateRange = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?';
-        var productId = orderObj.product_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
+        let productId = orderObj.product_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
         
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -466,7 +466,7 @@ function CustomerOrder() {
             date_to = moment(date_to + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
             //console.log(date_from, date_to);
 
-            con.query(query, [productId, date_from, date_to], function (err, result) {
+            con.query(query, [productId, date_from, date_to], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -478,14 +478,14 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product TYPE and date.
-    this.countAllPerProductTypeAndDate = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+    this.countAllPerProductTypeAndDate = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
             'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp LIKE ?';
-        var productTypeId = orderObj.product_type_id, date = orderObj.date;
+        let productTypeId = orderObj.product_type_id, date = orderObj.date;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -496,7 +496,7 @@ function CustomerOrder() {
 
             date = '%' + date + '%';
 
-            con.query(query, [productTypeId, date], function (err, result) {
+            con.query(query, [productTypeId, date], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -508,14 +508,14 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product TYPE and date range. From - to.
-    this.countAllPerProductTypeAndDateRange = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+    this.countAllPerProductTypeAndDateRange = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
             'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?';
-        var productTypeId = orderObj.product_type_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
+        let productTypeId = orderObj.product_type_id, date_from = orderObj.date_from, date_to = orderObj.date_to;
         
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -528,7 +528,7 @@ function CustomerOrder() {
             date_to = moment(date_to + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
             //console.log(date_from, date_to);
 
-            con.query(query, [productTypeId, date_from, date_to], function (err, result) {
+            con.query(query, [productTypeId, date_from, date_to], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -540,15 +540,15 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product AND date AND shift. WILL NOT BE NEEDED
-    this.countAllPerProductAndDateWithShift = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
+    this.countAllPerProductAndDateWithShift = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProduct FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'WHERE customer_order_details.product_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?',
             queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?';
-        var productId = orderObj.product_id, date = orderObj.date, shiftId = orderObj.shift_id;
-        var start, end;
+        let productId = orderObj.product_id, date = orderObj.date, shiftId = orderObj.shift_id;
+        let start, end;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -557,18 +557,18 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryFindShift, [shiftId], function (errShift, resultShift) {
+            con.query(queryFindShift, [shiftId], (errShift, resultShift) => {
                 con.release();
                 if (errShift) {
                     res.json(errShift);
                 } else {
                     console.log(resultShift.length);
                     if(resultShift.length > 0){
-                        var start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
-                        var end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+                        let start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        let end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
                         console.log(start, end);
 
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -577,7 +577,7 @@ function CustomerOrder() {
                                 return;
                             }
                 
-                            con.query(query, [productId, start, end], function (errCount, resultCount) {
+                            con.query(query, [productId, start, end], (errCount, resultCount) => {
                                 con.release();
                                 if (errCount) {
                                     res.json(errCount);
@@ -605,15 +605,15 @@ function CustomerOrder() {
     };
 
     //count all orders per specific product TYPE and date AND shift. WILL NOT BE NEEDED
-    this.countAllPerProductTypeAndDateWithShift = function(orderObj, res){
-        var output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
+    this.countAllPerProductTypeAndDateWithShift = (orderObj, res) => {
+        let output = {}, query = 'SELECT COUNT(*) AS orderCountProductType FROM customer_order ' +
             'LEFT JOIN customer_order_details ON customer_order.customer_order_id = customer_order_details.customer_order_id ' +
             'LEFT JOIN product ON product.product_id = customer_order_details.product_id ' +
             'WHERE product.product_type_id = ? AND customer_order.customer_order_timestamp BETWEEN ? AND ?',
             queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?';
-        var productTypeId = orderObj.product_type_id, date = orderObj.date, shiftId = orderObj.shift_id;
+        let productTypeId = orderObj.product_type_id, date = orderObj.date, shiftId = orderObj.shift_id;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -622,7 +622,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryFindShift, [shiftId], function (errShift, resultShift) {
+            con.query(queryFindShift, [shiftId], (errShift, resultShift) => {
                 con.release();
                 if (errShift) {
                     res.json(errShift);
@@ -630,11 +630,11 @@ function CustomerOrder() {
                 } else {
                     //res.json(result);
                     if(resultShift.length > 0){
-                        var start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
-                        var end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
+                        let start = moment(date + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
+                        let end = moment(date + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
                         console.log(start, end);
 
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -643,7 +643,7 @@ function CustomerOrder() {
                                 return;
                             }
                 
-                            con.query(query, [productTypeId, start, end], function (errCount, resultCount) {
+                            con.query(query, [productTypeId, start, end], (errCount, resultCount) => {
                                 con.release();
                                 if (errCount) {
                                     res.json(errCount);
@@ -671,13 +671,13 @@ function CustomerOrder() {
     };
 
     //get a specific order.
-    this.getOne = function (orderId, res) {
-        var output = {},
+    this.getOne = (orderId, res) => {
+        let output = {},
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
                 'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +
                 'WHERE customer_order_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -686,7 +686,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, [orderId], function (err, result) {
+            con.query(query, [orderId], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -709,10 +709,10 @@ function CustomerOrder() {
     };
 
     //get a specific order, along with its items and employee who placed it.
-    this.getOneWithDetails = function (id, res) {
-        var output = {},
+    this.getOneWithDetails = (id, res) => {
+        let output = {},
             orderDetails = [];
-        var query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
+        let query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
             'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +
             'WHERE customer_order_id = ?',
             queryDetails = 'SELECT * FROM customer_order_details ' +
@@ -722,7 +722,7 @@ function CustomerOrder() {
             'LEFT JOIN base_type ON customer_order_details.base_type_id = base_type.base_type_id ' +
             'WHERE customer_order_id = ?'
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 output = {
                     status: 100,
@@ -733,7 +733,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(query, [id], function (err, result) {
+            con.query(query, [id], (err, result) => {
                 con.release();
                 if (err) {
                     output = {
@@ -748,7 +748,7 @@ function CustomerOrder() {
                 } else {
                     if (result.length > 0) {
 
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 output = {
                                     status: 100,
@@ -759,7 +759,7 @@ function CustomerOrder() {
                                 return;
                             }
 
-                            con.query(queryDetails, [id], function (errDetails, resultDetails) {
+                            con.query(queryDetails, [id], (errDetails, resultDetails) => {
                                 con.release();
                                 if (errDetails) {
                                     output = {
@@ -811,13 +811,13 @@ function CustomerOrder() {
     };
 
     //get total amount from orders in a previous shift (from current datetime)
-    this.getTotalAmountFromPreviousShift = function(res){
-        var current_time = moment().format("HH:mm:ss");
-        var queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time < '" + 
+    this.getTotalAmountFromPreviousShift = (res) => {
+        let current_time = moment().format("HH:mm:ss");
+        let queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time < '" + 
             current_time + "'";
-        var previous_shift, base_date, base_start_time, base_end_time;
+        let previous_shift, base_date, base_start_time, base_end_time;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -826,7 +826,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryGetShift, function (err, resultShift) {
+            con.query(queryGetShift, (err, resultShift) => {
                 con.release();
                 if (err) {
                     output = {
@@ -838,7 +838,7 @@ function CustomerOrder() {
                     res.json(output);
                     return;
                 } else {
-                    var shiftArraySize = resultShift.length;
+                    let shiftArraySize = resultShift.length;
 
                     if (shiftArraySize > 0) {
                         if(shiftArraySize == 1){
@@ -863,7 +863,7 @@ function CustomerOrder() {
                         console.log(base_start_time, base_end_time);
 
                         //Get grand total cash amount of all orders in previous shift.
-                        getPreviousShiftTotal(base_start_time, base_end_time, function(error, resultTotal){
+                        getPreviousShiftTotal(base_start_time, base_end_time, (error, resultTotal) => {
                             
                             if(error){
                                 res.json({
@@ -914,13 +914,13 @@ function CustomerOrder() {
     };
 
     //get total amount from orders of a specific date AND shift. For End of day report
-    this.getTotalAmountFromDateAndShift = function (orderObj, res) {
-        var output = {}, date_from, date_to, queryShift = 'SELECT * FROM shift WHERE shift_id = ?';
-        var shift_id = orderObj.shift_id;
-        var date = orderObj.date;
-        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+    this.getTotalAmountFromDateAndShift = (orderObj, res) => {
+        let output = {}, date_from, date_to, queryShift = 'SELECT * FROM shift WHERE shift_id = ?';
+        let shift_id = orderObj.shift_id;
+        let date = orderObj.date;
+        //let today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -929,7 +929,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryShift, [shift_id], function (errShift, resultShift) {
+            con.query(queryShift, [shift_id], (errShift, resultShift) => {
                 con.release();
                 if (errShift) {
                     output = {
@@ -951,7 +951,7 @@ function CustomerOrder() {
 
                     console.log('From: ' + date_from, 'To: ' + date_to);
                     //Get grand total cash amount of all orders in previous shift.
-                    getPreviousShiftTotal(date_from, date_to, function (errorTotal, resultTotal) {
+                    getPreviousShiftTotal(date_from, date_to, (errorTotal, resultTotal) => {
 
                         if (errorTotal) {
                             res.json({
@@ -985,10 +985,10 @@ function CustomerOrder() {
     };
 
     //get total amount from orders of a specific date. For End of day report
-    this.getTotalAmountFromDate = function (date, res) {
-        var output = {},
+    this.getTotalAmountFromDate = (date, res) => {
+        let output = {},
             date_from, date_to;
-        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+        //let today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
 
         date_from = moment(date + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
         date_to = moment(date + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");
@@ -998,7 +998,7 @@ function CustomerOrder() {
         date_to = moment(today + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");*/
 
         //Get grand total cash amount of all orders in previous shift.
-        getPreviousShiftTotal(date_from, date_to, function (errorTotal, resultTotal) {
+        getPreviousShiftTotal(date_from, date_to, (errorTotal, resultTotal) => {
 
             if (errorTotal) {
                 res.json({
@@ -1029,14 +1029,14 @@ function CustomerOrder() {
     };
 
     //get all orders of a specific date. End of day report.
-    this.getAllPerDate = function (date, res) {
-        var output = {}, date_from, date_to, 
+    this.getAllPerDate = (date, res) => {
+        let output = {}, date_from, date_to, 
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
             'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +    
             'WHERE customer_order_timestamp BETWEEN ? AND ?';
-        //var today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
+        //let today = moment().format("YYYY-MM-DD");//in case only getting stuff from current date.
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -1052,7 +1052,7 @@ function CustomerOrder() {
             /*date_from = moment(today + ' ' + '00:00:00').format("YYYY-MM-DD HH:mm:ss");
             date_to = moment(today + ' ' + '23:59:59').format("YYYY-MM-DD HH:mm:ss");*/
 
-            con.query(query, [date_from, date_to], function (err, result) {
+            con.query(query, [date_from, date_to], (err, result) => {
                 con.release();
                 if (err) {
                     res.json(err);
@@ -1075,16 +1075,16 @@ function CustomerOrder() {
     };
 
     //get all orders for shift on a specific day.
-    this.getPerDayAndShift = function (orderObj, res) {
-        var output = {}, queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?',
+    this.getPerDayAndShift = (orderObj, res) => {
+        let output = {}, queryFindShift = 'SELECT * FROM shift WHERE shift_id = ?',
             query = 'SELECT * FROM customer_order LEFT JOIN employee ON customer_order.added_by = employee.employee_id ' +
             'LEFT JOIN payment_type ON customer_order.payment_type_id = payment_type.payment_type_id ' +    
             'WHERE customer_order_timestamp BETWEEN ? AND ?';
-        var shift_id = orderObj.shift_id, date = orderObj.date;
-        var start_date_time, end_date_time;
+        let shift_id = orderObj.shift_id, date = orderObj.date;
+        let start_date_time, end_date_time;
 
         if((undefined !== shift_id && shift_id != '') && (undefined !== date && date != '')){
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     res.json({
                         status: 100,
@@ -1093,7 +1093,7 @@ function CustomerOrder() {
                     return;
                 }
     
-                con.query(queryFindShift, [shift_id], function (err, result) {
+                con.query(queryFindShift, [shift_id], (err, result) => {
                     con.release();
                     if (err) {
                         res.json(err);
@@ -1104,7 +1104,7 @@ function CustomerOrder() {
                             //console.log(start_date_time, end_date_time);
     
                             //Now get all orders during the date + shift that was provided.
-                            connection.acquire(function (err, con) {
+                            connection.acquire((err, con) => {
                                 if (err) {
                                     res.json({
                                         status: 100,
@@ -1113,7 +1113,7 @@ function CustomerOrder() {
                                     return;
                                 }
                     
-                                con.query(query, [start_date_time, end_date_time], function (err, resultOrders) {
+                                con.query(query, [start_date_time, end_date_time], (err, resultOrders) => {
                                     con.release();
                                     if (err) {
                                         res.json(err);
@@ -1167,13 +1167,13 @@ function CustomerOrder() {
     };
 
     //get number of orders in current shift. Used to check for PETTY CASH
-    this.checkPreviousOrdersInShift = function(res){
-        var today = moment().format("YYYY-MM-DD"), current_time = moment().format("HH:mm:ss");
-        var output ={}, queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time > '" + 
+    this.checkPreviousOrdersInShift = (res) => {
+        let today = moment().format("YYYY-MM-DD"), current_time = moment().format("HH:mm:ss");
+        let output ={}, queryGetShift = "SELECT * FROM shift WHERE shift_start_time < '" + current_time + "' AND shift_end_time > '" + 
         current_time + "'";
-        var start, end;
+        let start, end;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -1182,7 +1182,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryGetShift, function (errShift, resultShift) {
+            con.query(queryGetShift, (errShift, resultShift) => {
                 con.release();
                 if (errShift) {
                     output = {
@@ -1199,7 +1199,7 @@ function CustomerOrder() {
                         start = moment(today + ' ' + resultShift[0].shift_start_time).format("YYYY-MM-DD HH:mm:ss");
                         end = moment(today + ' ' + resultShift[0].shift_end_time).format("YYYY-MM-DD HH:mm:ss");
 
-                        countOrdersInCurrentShift(start, end, function(errCount, resultCount){
+                        countOrdersInCurrentShift(start, end, (errCount, resultCount) => {
                             if(errCount){
                                 res.json(errCount);
                                 return;
@@ -1245,11 +1245,11 @@ function CustomerOrder() {
 
     //count number of orders in current shift. Same as the on above but this guy can be used ni other models.
     //used for PETTY CASH
-    this.countOrdersInCurrentShiftV2 = function(start, end, callback){
-        var feedback, output = {};
-        var query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
+    this.countOrdersInCurrentShiftV2 = (start, end, callback) => {
+        let feedback, output = {};
+        let query = "SELECT * FROM customer_order WHERE customer_order_timestamp BETWEEN ? AND ?";
         console.log(start + ' - ' + end);
-            connection.acquire(function (err, con) {
+            connection.acquire((err, con) => {
                 if (err) {
                     output = {
                         status: 100,
@@ -1259,7 +1259,7 @@ function CustomerOrder() {
                     callback(null, output);
                 }
     
-                con.query(query, [start, end], function (err, result) {
+                con.query(query, [start, end], (err, result) => {
                     con.release();
                     
                     if (err) {
@@ -1285,22 +1285,22 @@ function CustomerOrder() {
     };
 
     //submit customer order.
-    this.create = function(orderObj, res){
-        var insertedOrderID, feedback, output = {};
-        var products = orderObj.orderItems; //array of items.
-        var date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
-        var queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?,?)";
-        var queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,topping_id,base_type_id,product_quantity,amount) VALUES ";
+    this.create = (orderObj, res) => {
+        let insertedOrderID, feedback, output = {};
+        let products = orderObj.orderItems; //array of items.
+        let date_ordered = moment().format('YYYY-MM-DD HH:mm:ss');
+        let queryInsertOrder = "INSERT INTO customer_order VALUES('',?,?,?,?,?,?,?,?)";
+        let queryInsertOrderDetails = "INSERT INTO customer_order_details (customer_order_id,product_id,product_size_id,topping_id,base_type_id,product_quantity,amount) VALUES ";
         //console.log(orderObj);
-        var customer_id = orderObj.customer_id;
-        var total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
-        var payment_type_id = orderObj.payment_type_id;
-        var payment_status_id = orderObj.payment_status_id;//order is only submitted when payment has been received.
-        //var payment_status_id = orderObj.payment_status_id;//order can be submitted withut payment (phone orders)
-        var collection_status_id = 2;//order not yet collected
-        var order_status_id = 1;//new order (for kitchen)
-        var added_by = orderObj.added_by;
-        var bankCardObj = orderObj.bankCardObj, auditObj;
+        let customer_id = orderObj.customer_id;
+        let total_amount = orderObj.total_amount;//sum of products amount, will be calculated in UI.
+        let payment_type_id = orderObj.payment_type_id;
+        let payment_status_id = orderObj.payment_status_id;//order is only submitted when payment has been received.
+        //let payment_status_id = orderObj.payment_status_id;//order can be submitted withut payment (phone orders)
+        let collection_status_id = 2;//order not yet collected
+        let order_status_id = 1;//new order (for kitchen)
+        let added_by = orderObj.added_by;
+        let bankCardObj = orderObj.bankCardObj, auditObj;
 
         if(total_amount == '' || total_amount == null || payment_type_id == '' || payment_type_id == null || payment_status_id == '' || payment_status_id == null ||
             products.length <= 0){
@@ -1327,7 +1327,7 @@ function CustomerOrder() {
             
             //submit customer order.
             createCustomerOrder(customer_id, date_ordered, total_amount, payment_type_id, payment_status_id, order_status_id,
-                added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, function(err, result){
+                added_by, collection_status_id, queryInsertOrder, queryInsertOrderDetails, products, bankCardObj, (err, result) => {
                     
                     if (result) {
                         /* Insert to audit table. */
@@ -1337,7 +1337,7 @@ function CustomerOrder() {
                             description: 'Placed an order. Timestamp: ' + date_ordered
                         };
 
-                        Audit.create(auditObj, function (errAudit, resultAudit) {
+                        Audit.create(auditObj, (errAudit, resultAudit) => {
                             console.log('Audit: ', errAudit || resultAudit);
                         });
                         /* ------------------------- */
@@ -1350,9 +1350,9 @@ function CustomerOrder() {
     };
 
     //update order status for kitchen (Ready, preparing).
-    this.updateStatus = function(orderObj, res){
-        var output = {}, feedback, queryUpdate = 'UPDATE customer_order SET order_status_id = ? WHERE customer_order_id = ?';
-        var customrOrderId = orderObj.customer_order_id, orderStatusId = orderObj.order_status_id;
+    this.updateStatus = (orderObj, res) => {
+        let output = {}, feedback, queryUpdate = 'UPDATE customer_order SET order_status_id = ? WHERE customer_order_id = ?';
+        let customrOrderId = orderObj.customer_order_id, orderStatusId = orderObj.order_status_id;
 
         if((undefined !== customrOrderId && customrOrderId != '') && (undefined !== orderStatusId && orderStatusId != '')){
             connection.acquire(function (err, con) {
@@ -1364,7 +1364,7 @@ function CustomerOrder() {
                     return;
                 }
     
-                con.query(queryUpdate, [orderStatusId, customrOrderId], function (err, result) {
+                con.query(queryUpdate, [orderStatusId, customrOrderId], (err, result) => {
                     con.release();
                     if (err) {
                         //console.log(err);
@@ -1403,12 +1403,12 @@ function CustomerOrder() {
     };
 
     //update collection status for order.
-    this.updateCollectionStatus = function (orderId, res) {
-        var output = {},
+    this.updateCollectionStatus = (orderId, res) => {
+        let output = {},
             feedback, queryFind = 'SELECT * FROM customer_order WHERE customer_order_id = ?',
             queryUpdate = 'UPDATE customer_order SET collection_status_id = 1 WHERE customer_order_id = ?';
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -1417,7 +1417,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryFind, [orderId], function (errOrder, resultOrder) {
+            con.query(queryFind, [orderId], (errOrder, resultOrder) => {
                 con.release();
                 if (errOrder) {
                     output = {
@@ -1433,7 +1433,7 @@ function CustomerOrder() {
                     if (resultOrder[0].payment_status_id == 1) {
 
                         //update collection status.
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -1442,7 +1442,7 @@ function CustomerOrder() {
                                 return;
                             }
 
-                            con.query(queryUpdate, [orderId], function (errUpdate, resultUpdate) {
+                            con.query(queryUpdate, [orderId], (errUpdate, resultUpdate) => {
                                 con.release();
                                 if (errUpdate) {
                                     output = {
@@ -1482,14 +1482,14 @@ function CustomerOrder() {
 
     //Update payment and collection status for order. Happens when order has been processed and ready for collection
     //but needs to be paid for first, before being collected.
-    this.updatePaymentAndCollectionStatus = function (orderObj, res) {
-        var output = {},
+    this.updatePaymentAndCollectionStatus = (orderObj, res) => {
+        let output = {},
             feedback, queryFind = 'SELECT * FROM customer_order WHERE customer_order_id = ?',
             queryUpdate = 'UPDATE customer_order SET payment_status_id = 1, collection_status_id = 1 ' +
             'WHERE customer_order_id = ?';
-        var orderId = orderObj.order_id, bankCardObj = orderObj.bankCardObj, added_by = orderObj.added_by;
+        let orderId = orderObj.order_id, bankCardObj = orderObj.bankCardObj, added_by = orderObj.added_by;
 
-        connection.acquire(function (err, con) {
+        connection.acquire((err, con) => {
             if (err) {
                 res.json({
                     status: 100,
@@ -1498,7 +1498,7 @@ function CustomerOrder() {
                 return;
             }
 
-            con.query(queryFind, [orderId], function (errOrder, resultOrder) {
+            con.query(queryFind, [orderId], (errOrder, resultOrder) => {
                 con.release();
                 if (errOrder) {
                     output = {
@@ -1517,13 +1517,13 @@ function CustomerOrder() {
                         //Handle payment. If card is used, save card details.
                         console.log('bankCardObj: ', bankCardObj);
                         if(undefined != bankCardObj || bankCardObj != null){
-                            saveCardDetails = saveBankCardDetails(orderId, bankCardObj, function(errorCard, resultCard){
+                            saveCardDetails = saveBankCardDetails(orderId, bankCardObj, (errorCard, resultCard) => {
                                 console.log(errorCard || resultCard.message);
                             });
                         }
 
                         //update collection status.
-                        connection.acquire(function (err, con) {
+                        connection.acquire((err, con) => {
                             if (err) {
                                 res.json({
                                     status: 100,
@@ -1532,7 +1532,7 @@ function CustomerOrder() {
                                 return;
                             }
 
-                            con.query(queryUpdate, [orderId], function (err, result) {
+                            con.query(queryUpdate, [orderId], (err, result) => {
                                 con.release();
                                 if (err) {
                                     output = {
@@ -1552,13 +1552,13 @@ function CustomerOrder() {
                                     };
 
                                     /* Insert to audit table. */
-                                    var auditObj = {
+                                    let auditObj = {
                                         employee_id: added_by,
                                         action_id: 2,//update
                                         description: 'Received payment and handled collection for order #: ' + orderId
                                     };
 
-                                    Audit.create(auditObj, function(errAudit, resultAudit){
+                                    Audit.create(auditObj, (errAudit, resultAudit) => {
                                         console.log('Audit: ', errAudit || resultAudit);
                                     });
                                     /* ------------------------- */
